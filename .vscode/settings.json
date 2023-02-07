@@ -1,0 +1,16 @@
+{
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "files.associations": {
+      "*.vue": "html"
+    },
+    "eslint.options": {
+      "configFile": "./.eslintrc.json"
+    },
+    "eslint.validate": ["javascript", "vue", "html", "typescript"],
+    "workbench.startupEditor": "none",
+    "stylelint.validate": ["css", "scss"],
+    "scss.validate": false,
+    "css.validate": false
+}
