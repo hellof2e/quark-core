@@ -4,8 +4,10 @@
     <img width="200" src="https://user-images.githubusercontent.com/14307551/197440754-08db4379-eb0f-4808-890d-690355e6e8d2.png">
   </a>
 </p>
-<h2 align="center">QuarkC — 基于 Web Components 跨框架底层</h2>
-### 介绍
+<h2 align="center">QuarkC — 基于 Web Components 跨框架底层</h2>  
+
+### 介绍  
+
 QuarkC 是一个优化 web components 开发体验的轻量级框架。部分实现思路参考[Lit](https://lit.dev/docs/getting-started/)。  
 
 ### 使用  
