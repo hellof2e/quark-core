@@ -5,7 +5,6 @@
   </a>
 </p>
 <h2 align="center">QuarkC — 基于 Web Components 跨框架底层</h2>
-<hr />
 ### 介绍
 QuarkC 是一个优化 web components 开发体验的轻量级框架。部分实现思路参考[Lit](https://lit.dev/docs/getting-started/)。  
 
