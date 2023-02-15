@@ -13,6 +13,7 @@
   },
   "scripts": {
     "init": "yarn && lerna bootstrap && yarn run link",
+    "dev": "cd example && yarn run dev --host",
     "link": "node ./scripts/link",
     "codeformat": "prettier --write *",
     "clean": "lerna clean -y",
