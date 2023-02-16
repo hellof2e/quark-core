@@ -4,11 +4,11 @@
     <img width="200" src="https://user-images.githubusercontent.com/14307551/197440754-08db4379-eb0f-4808-890d-690355e6e8d2.png">
   </a>
 </p>
-<h2 align="center">使用 Quark 构建下一代前端组件！</h2>  
+<h2 align="center"> Quark，构建下一代前端组件！ </h2>  
 
 ### 介绍  
 
-QuarkC 是一个优化 web components 开发体验的轻量级框架。部分实现思路参考[Lit](https://lit.dev/docs/getting-started/)。  
+Quark 是一个拥有完美开发体验的 web components 框架。
 
 ### 使用  
 
