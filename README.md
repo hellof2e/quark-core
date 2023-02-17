@@ -21,10 +21,14 @@ Define custom element.
 import QuarkElement, { property, customElement } from "quarkc";
 
 @customElement({ tag: "quark-count" })
-export default class Button extends QuarkElement {
-  @property()
+export default class Count extends QuarkElement {
+  @property({
+    type: Number
+  })
   count: number = 0;
-  
+  add = () => {
+    this.count += 1;
+  }
   render() {
     return (
         <button onClick={this.add}>count is: { this.count}</button>
