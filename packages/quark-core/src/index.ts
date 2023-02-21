@@ -3,7 +3,6 @@ import { PropertyDeclaration, converterFunction } from "./models";
 import DblKeyMap from "./dblKeyMap";
 import { EventController, EventHandler } from "./eventController";
 import delay from "./delay";
-
 export { createRef } from "preact";
 
 export { Fragment };

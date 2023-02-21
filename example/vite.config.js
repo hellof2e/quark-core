@@ -16,8 +16,8 @@ export default defineConfig({
 		alias: [
 			{ find: "@", replacement: resolve(__dirname, "./src") },
 			{
-				find: "quarkc",
-				replacement: resolve(__dirname, "../packages/quark-core"),
+				find: "@quarkc",
+				replacement: resolve(__dirname, "../packages/quark-core/src/index.ts"),
 			},
 		],
 	},

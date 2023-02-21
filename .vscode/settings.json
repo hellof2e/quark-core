@@ -12,5 +12,8 @@
     "workbench.startupEditor": "none",
     "stylelint.validate": ["css", "scss"],
     "scss.validate": false,
-    "css.validate": false
+    "css.validate": false,
+    "cSpell.words": [
+      "quarkc"
+    ]
 }

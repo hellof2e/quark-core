@@ -1,11 +1,11 @@
-
 import QuarkElement, {
   Fragment,
   property,
   state,
   createRef,
   customElement,
-} from "quarkc";
+// @ts-ignore
+} from "@quarkc";
 import style from "./style.css";
 
 @customElement({ tag: "quark-count", style })
