@@ -1,4 +1,5 @@
-import QuarkElement, {
+import {
+  QuarkElement,
   Fragment,
   property,
   state,
@@ -12,9 +13,11 @@ import style from "./style.css";
 class QuarkButton extends QuarkElement {
   @property()
   count: number = 0;
+  
   add = () => {
     this.count = Number(this.count) + 1;
   }
+  
   render() {
     return (
       <Fragment>

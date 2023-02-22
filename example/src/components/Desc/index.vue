@@ -6,7 +6,4 @@
 </template>
 <script>
   import '../Count'
-  export default {
-
-  }
 </script>

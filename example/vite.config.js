@@ -22,7 +22,13 @@ export default defineConfig({
 		],
 	},
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith("quark-"),
+        },
+      },
+    }),
     react({
       jsxRuntime: "classic",
       babel: {
