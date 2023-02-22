@@ -205,7 +205,7 @@ export class QuarkElement extends HTMLElement {
   }
 
   private eventController: EventController = new EventController();
-  private lastRootVNode?: VNode;
+  // private lastRootVNode?: VNode;
 
   private rootPatch = (newRootVNode: any) => {
     if (this.shadowRoot) {

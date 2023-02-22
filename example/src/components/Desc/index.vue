@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Quarkc - 前端跨框架的库</h2>
+    <h2>Quark - 下一代前端组件框架</h2>
     <quark-count />
   </div>
 </template>
