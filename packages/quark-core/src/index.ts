@@ -1,4 +1,4 @@
-import { h, render, VNode, Fragment } from "preact";
+import { render, h, VNode, Fragment } from './core'
 import { PropertyDeclaration, converterFunction } from "./models";
 import DblKeyMap from "./dblKeyMap";
 import { EventController, EventHandler } from "./eventController";
@@ -214,7 +214,7 @@ export class QuarkElement extends HTMLElement {
   };
 
   /**
-   * 延迟patch，用于优化减少patch次数
+   * 延迟 patch，用于优化减少 patch 次数
    * 存在一些不可预知的问题，暂时不用
    */
   // private delayPatch = delay(this.rootPatch);
@@ -225,6 +225,7 @@ export class QuarkElement extends HTMLElement {
 
   private _render() {
     const newRootVNode: VNode = this.render();
+    
     if (newRootVNode) {
       this.rootPatch(newRootVNode);
     }
@@ -289,8 +290,8 @@ export class QuarkElement extends HTMLElement {
   componentDidUpdate(propName: string, oldValue: string, newValue: string) {}
 
   /**
-   * 组件的render方法，
-   * 自动执行this.shadowRoot.innerHTML = this.render()
+   * 组件的 render 方法，
+   * 自动执行 this.shadowRoot.innerHTML = this.render()
    * @returns VNode
    */
   render() {

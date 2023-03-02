@@ -17,7 +17,7 @@
     "release": "npm run build && standard-version"
   },
   "dependencies": {
-    "preact": "10.6.6"
+    "preact": "^10.6.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import react from "@vitejs/plugin-react";
+// import react from "@vitejs/plugin-react";
 import { resolve }from 'path'
 
 // https://vitejs.dev/config/
@@ -29,21 +29,21 @@ export default defineConfig({
         },
       },
     }),
-    react({
-      jsxRuntime: "classic",
-      babel: {
-        // presets: [['@babel/preset-env'], ['@babel/preset-typescript']],
-        plugins: [
-          [
-            "@babel/plugin-proposal-decorators",
-            {
-              legacy: true,
-            },
-          ],
-          "@babel/plugin-proposal-class-properties",
-        ],
-      },
-    }),
+    // react({
+    //   jsxRuntime: "classic",
+    //   babel: {
+    //     // presets: [['@babel/preset-env'], ['@babel/preset-typescript']],
+    //     plugins: [
+    //       [
+    //         "@babel/plugin-proposal-decorators",
+    //         {
+    //           legacy: true,
+    //         },
+    //       ],
+    //       "@babel/plugin-proposal-class-properties",
+    //     ],
+    //   },
+    // }),
   ]
   ,
 })

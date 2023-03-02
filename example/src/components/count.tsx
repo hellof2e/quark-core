@@ -2,11 +2,11 @@ import {
   QuarkElement,
   Fragment,
   property,
-  state,
-  createRef,
+  // state,
+  // createRef,
   customElement,
-// @ts-ignore
 } from "@quarkc";
+// import style from "./style.css";
 import style from "./style.css";
 
 @customElement({ tag: "quark-count", style })
@@ -21,7 +21,9 @@ class QuarkButton extends QuarkElement {
   render() {
     return (
       <Fragment>
-        <button onClick={this.add}>count is: { this.count}</button>
+        <button onClick={this.add}>
+          count is: { this.count}
+        </button>
       </Fragment>
     );
   }

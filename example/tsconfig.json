@@ -15,7 +15,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
-    "noImplicitAny": false,
+    	"noImplicitAny": false,
 		"lib": ["esnext", "dom"],
 		// "outDir": "./tsc/test",
 		"types": ["vite/client"],
