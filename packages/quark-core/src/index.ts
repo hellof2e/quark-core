@@ -4,9 +4,10 @@ import DblKeyMap from "./dblKeyMap";
 import { EventController, EventHandler } from "./eventController";
 // import delay from "./delay";
 
-export { createRef } from "preact";
+export { createRef } from "./core";
 
 export { Fragment };
+
 
 const isEmpty = (val: unknown) => !(val || val === false || val === 0);
 

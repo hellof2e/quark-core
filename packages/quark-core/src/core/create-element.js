@@ -89,9 +89,6 @@ export function Fragment(props) {
 	return props.children;
 }
 
-export function hh(props) {
-	return props.children;
-}
 
 /**
  * Check if a the argument is a valid Preact VNode.

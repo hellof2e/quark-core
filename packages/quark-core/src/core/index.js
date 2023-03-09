@@ -4,11 +4,10 @@ export {
 	createElement as h,
 	Fragment,
 	createRef,
-	hh,
 	isValidElement
 } from './create-element';
 // export { Component } from './component';
 // export { cloneElement } from './clone-element';
 // export { createContext } from './create-context';
 // export { toChildArray } from './diff/children';
-export { default as options } from './options';
+// export { default as options } from './options';
