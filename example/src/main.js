@@ -1,9 +1,9 @@
-// import { createApp } from 'vue'
-// import App from './App.vue'
+import './lib/count.tsx';
 
-// createApp(App).mount('#app')
-import './lib/count.tsx'
-import './style.css'
+function component() {
+    const element = document.createElement('quark-count');
 
-// document.body.appendChild(document.createElement("quark-count"))
-document.getElementById('app').appendChild(document.createElement("quark-count"))
+    return element;
+}
+
+document.querySelector('#app').appendChild(component());
