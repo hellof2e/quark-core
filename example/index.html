@@ -5,6 +5,38 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + Quark</title>
+    <style>
+      body {
+        margin: 0 auto;
+        display: flex;
+        place-items: center;
+        min-width: 320px;
+        min-height: 100vh;
+      }
+
+      #app {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          color: #213547;
+          background-color: #ffffff;
+        }
+        a:hover {
+          color: #747bff;
+        }
+        button {
+          background-color: #f9f9f9;
+        }
+      }
+      .logo{
+        border: 1px solid red;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
