@@ -36,8 +36,5 @@ export default defineConfig({
         ],
       },
     }),
-  ],
-  optimizeDeps: {
-    include: ['preact/devtools', 'preact/debug', 'preact/jsx-dev-runtime'],
-  },
+  ]
 })
