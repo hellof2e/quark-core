@@ -1,4 +1,4 @@
-import './component/count.tsx';
+import './count.tsx';
 
 function component() {
     const element = document.createElement('quark-count');
@@ -6,4 +6,4 @@ function component() {
     return element;
 }
 
-document.querySelector('#app').appendChild(component());
+(document.querySelector('#app') as HTMLElement).appendChild(component());

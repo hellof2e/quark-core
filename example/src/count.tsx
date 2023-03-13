@@ -5,16 +5,18 @@ import {
   // state,
   // createRef,
   customElement,
-} from "@quarkc";
-import style from "./style.css";
+} from "quarkc";
+import style from "./style.css?inline";
 
 @customElement({ tag: "quark-count", style })
 class MyElement extends QuarkElement {
-  @property()
-  count: number = 0;
+  @property({
+    type: Number
+  })
+  count = 0;
   
   add = () => {
-    console.log('button was clicked', this.count);
+    console.log('button was clicked', typeof this.count);
     this.count += 1;
   }
   
