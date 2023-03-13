@@ -23,7 +23,7 @@ class MyElement extends QuarkElement {
       <Fragment>
         <div>
           <a href="https://quark-design.hellobike.com" target="_blank">
-            <img src="https://quark-design.hellobike.com/assets/quark-logo.7fd50e67.png" class="logo" alt="Vite logo" />
+            <img src="https://quark-design.hellobike.com/assets/quark-logo.7fd50e67.png" class="logo" alt="quark logo" />
           </a>
         </div>
         
