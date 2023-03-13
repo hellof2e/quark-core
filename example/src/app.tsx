@@ -1,12 +1,6 @@
-import {
-  QuarkElement,
-  Fragment,
-  property,
-  // state,
-  // createRef,
-  customElement,
-} from "quarkc";
-import style from "./style.css?inline";
+import { QuarkElement, Fragment, property, customElement } from "quarkc";
+import viteLogo from '/vite.svg'
+import style from "./app.css?inline";
 
 @customElement({ tag: "quark-count", style })
 class MyElement extends QuarkElement {
@@ -24,6 +18,9 @@ class MyElement extends QuarkElement {
     return (
       <Fragment>
         <div>
+          <a href="https://vitejs.dev" target="_blank">
+            <img src={viteLogo} class="logo" alt="Vite logo" />
+          </a>
           <a href="https://quark-design.hellobike.com" target="_blank">
             <img src="https://quark-design.hellobike.com/assets/quark-logo.7fd50e67.png" class="logo" alt="quark logo" />
           </a>
