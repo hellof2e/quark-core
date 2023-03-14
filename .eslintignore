@@ -2,3 +2,4 @@
 /scripts
 /dist
 *.test.js
+/example

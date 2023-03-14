@@ -1,11 +1,13 @@
-import { h, render, VNode, Fragment } from "preact";
+import { render, h, VNode, Fragment } from './core'
 import { PropertyDeclaration, converterFunction } from "./models";
 import DblKeyMap from "./dblKeyMap";
 import { EventController, EventHandler } from "./eventController";
-import delay from "./delay";
-export { createRef } from "preact";
+// import delay from "./delay";
+
+export { createRef } from "./core";
 
 export { Fragment };
+
 
 const isEmpty = (val: unknown) => !(val || val === false || val === 0);
 
@@ -91,18 +93,13 @@ export function customElement(
       constructor() {
         super();
 
-        if (style) {
-          this.getStyles = () => style;
-        }
-
         const shadowRoot = this.attachShadow({ mode: "open" });
 
         if (shadowRoot) {
-          if (typeof this.getStyles === "function") {
-            const styleEl = document.createElement("style");
-            styleEl.innerHTML = this.getStyles();
-            shadowRoot.append(styleEl);
-          }
+          // Create Css
+          const styleEl = document.createElement("style");
+          styleEl.innerHTML = style;
+          shadowRoot.append(styleEl);
         }
 
         /**
@@ -127,7 +124,7 @@ export function customElement(
   };
 }
 
-export default class QuarkElement extends HTMLElement {
+export class QuarkElement extends HTMLElement {
   static h = h;
 
   protected static getPropertyDescriptor(
@@ -208,12 +205,8 @@ export default class QuarkElement extends HTMLElement {
     Descriptors.set(this, name, this.getStateDescriptor());
   }
 
-  getStyles(): string {
-    return "";
-  }
-
   private eventController: EventController = new EventController();
-  private lastRootVNode?: VNode;
+  // private lastRootVNode?: VNode;
 
   private rootPatch = (newRootVNode: any) => {
     if (this.shadowRoot) {
@@ -222,17 +215,18 @@ export default class QuarkElement extends HTMLElement {
   };
 
   /**
-   * 延迟patch，用于优化减少patch次数
+   * 延迟 patch，用于优化减少 patch 次数
    * 存在一些不可预知的问题，暂时不用
    */
-  private delayPatch = delay(this.rootPatch);
+  // private delayPatch = delay(this.rootPatch);
 
-  private getRootEl() {
-    return [].slice.call(this.shadowRoot?.children || []).slice(1);
-  }
+  // private getRootEl() {
+  //   return [].slice.call(this.shadowRoot?.children || []).slice(1);
+  // }
 
   private _render() {
     const newRootVNode: VNode = this.render();
+    
     if (newRootVNode) {
       this.rootPatch(newRootVNode);
     }
@@ -297,8 +291,8 @@ export default class QuarkElement extends HTMLElement {
   componentDidUpdate(propName: string, oldValue: string, newValue: string) {}
 
   /**
-   * 组件的render方法，
-   * 自动执行this.shadowRoot.innerHTML = this.render()
+   * 组件的 render 方法，
+   * 自动执行 this.shadowRoot.innerHTML = this.render()
    * @returns VNode
    */
   render() {

@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import react from "@vitejs/plugin-react";
 import { resolve }from 'path'
+import reloadOnChange from 'vite-plugin-full-reload'
 
 // https://vitejs.dev/config/
 const rootPtah = resolve(__dirname, "../");
@@ -10,19 +10,17 @@ export default defineConfig({
   base: "./",
 	server: {
 		port: 2023,
-		host: "0.0.0.0",
 	},
   resolve: {
 		alias: [
-			{ find: "@", replacement: resolve(__dirname, "./src") },
 			{
-				find: "@quarkc",
+				find: "quarkc",
 				replacement: resolve(__dirname, "../packages/quark-core/src/index.ts"),
 			},
 		],
 	},
   plugins: [
-    vue(),
+    reloadOnChange(['./src/**/*.css']),
     react({
       jsxRuntime: "classic",
       babel: {
@@ -39,5 +37,4 @@ export default defineConfig({
       },
     }),
   ]
-  ,
 })

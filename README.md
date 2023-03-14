@@ -4,7 +4,7 @@
     <img width="200" src="https://user-images.githubusercontent.com/14307551/197440754-08db4379-eb0f-4808-890d-690355e6e8d2.png">
   </a>
 </p>
-<h2 align="center"> Quark，构建下一代前端组件！ </h2>  
+<h2 align="center"> Quark，为跨技术栈而生！ </h2>  
 
 ### 介绍  
 
@@ -16,30 +16,32 @@ Quark 是一个拥有完美开发体验的 web components 框架。
 npm i quarkc --save
 ```  
 
-Define custom element.
+1. Define custom element.
 ```jsx
-import QuarkElement, { property, customElement } from "quarkc";
+import { QuarkElement, property, customElement } from "quarkc";
 
 @customElement({ tag: "quark-count" })
-export default class Count extends QuarkElement {
+export default class MyElement extends QuarkElement {
   @property({
     type: Number
   })
-  count: number = 0;
+  count = 0;
+
   add = () => {
     this.count += 1;
   }
+  
   render() {
     return (
-        <button onClick={this.add}>count is: { this.count}</button>
+        <button onClick={this.add}>count is: { this.count }</button>
     );
   }
 }
 ```
 
-Use it.
+2. Use it.
 ```html
- <quark-count></quark-count>
+ <quark-count count="0"></quark-count>
 ```
 
 ### 特性

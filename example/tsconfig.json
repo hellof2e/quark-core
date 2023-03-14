@@ -15,7 +15,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
-    "noImplicitAny": false,
+    	"noImplicitAny": false,
 		"lib": ["esnext", "dom"],
 		// "outDir": "./tsc/test",
 		"types": ["vite/client"],
@@ -23,6 +23,7 @@
 			"@/*": ["src/*"]
 		}
 	},
-	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "typings"],
-	"exclude": ["./node_modules"]
-}
+	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "typings"],
+	"exclude": ["./node_modules"],
+  }
+  
