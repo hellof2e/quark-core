@@ -1,5 +1,5 @@
 import { QuarkElement, Fragment, property, customElement } from "quarkc";
-import viteLogo from '/vite.svg'
+import logo from '/quark.png'
 import style from "./app.css?inline";
 
 @customElement({ tag: "quark-count", style })
@@ -10,27 +10,30 @@ class MyElement extends QuarkElement {
   count = 0;
   
   add = () => {
-    console.log('button was clicked', typeof this.count);
     this.count += 1;
+    console.log('button was clicked', typeof this.count);
   }
   
   render() {
     return (
       <Fragment>
         <div>
-          <a href="https://vitejs.dev" target="_blank">
-            <img src={viteLogo} class="logo" alt="Vite logo" />
-          </a>
           <a href="https://quark-design.hellobike.com" target="_blank">
-            <img src="https://quark-design.hellobike.com/assets/quark-logo.7fd50e67.png" class="logo" alt="quark logo" />
+            <img src={logo} class="logo" alt="quark logo" />
           </a>
         </div>
         
-        <h2>Quark - 下一代前端组件框架</h2>
+        <h1>Quark - 为跨技术栈而生</h1>
           
-        <button onClick={this.add}>
-          count is: { this.count }
-        </button>
+
+        <div className="card">
+          <button onClick={this.add}>
+            count is: { this.count }
+          </button>
+          <p>
+            Edit <code>src/app.tsx</code> and save to test HMR
+          </p>
+        </div>
       </Fragment>
     );
   }
