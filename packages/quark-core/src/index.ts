@@ -57,6 +57,7 @@ const Descriptors: DblKeyMap<
   (defaultValue?: any) => PropertyDescriptor
 > = new DblKeyMap();
 
+// 装饰器，es6 属性实现，babel。。constructor 
 export function customElement(
   params: string | { tag: string; style?: string }
 ) {
@@ -64,6 +65,8 @@ export function customElement(
     typeof params === "string" ? { tag: params } : params;
 
   return (target: typeof QuarkElement) => {
+    // MyElement 继承 NewQuarkElement
+    // target 指每个业务组件 MyElement
     class NewQuarkElement extends target {
       static get observedAttributes() {
         const attributes: string[] = [];
@@ -90,6 +93,7 @@ export function customElement(
         return isBoolean;
       }
 
+      // es6 属性实现
       constructor() {
         super();
 

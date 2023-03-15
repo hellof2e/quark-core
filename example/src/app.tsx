@@ -8,7 +8,7 @@ class MyElement extends QuarkElement {
     type: Number
   })
   count = 0;
-  
+
   add = () => {
     this.count += 1;
     console.log('button was clicked', typeof this.count);
@@ -25,7 +25,6 @@ class MyElement extends QuarkElement {
         
         <h1>Quark - 为跨技术栈而生</h1>
           
-
         <div className="card">
           <button onClick={this.add}>
             count is: { this.count }
