@@ -24,7 +24,6 @@ class MyElement extends QuarkElement {
         </div>
         
         <h1>Quark - 为跨技术栈而生</h1>
-          
 
         <div className="card">
           <button onClick={this.add}>
