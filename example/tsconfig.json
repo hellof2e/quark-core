@@ -8,6 +8,7 @@
 		"strict": true,
 		"jsx": "react",
 		"jsxFactory": "QuarkElement.h",
+		"jsxFragmentFactory": "QuarkElement.h",
 		"sourceMap": false,
 		"declaration": false,
 		"removeComments": true,
