@@ -1,4 +1,4 @@
-import { QuarkElement, Fragment, property, customElement } from "quarkc";
+import { QuarkElement, property, customElement } from "quarkc";
 import logo from '/quark.png'
 import style from "./app.css?inline";
 
@@ -16,7 +16,7 @@ class MyElement extends QuarkElement {
   
   render() {
     return (
-      <Fragment>
+      <>
         <div>
           <a href="https://quark-design.hellobike.com" target="_blank">
             <img src={logo} class="logo" alt="quark logo" />
@@ -33,7 +33,7 @@ class MyElement extends QuarkElement {
             Edit <code>src/app.tsx</code> and save to test HMR
           </p>
         </div>
-      </Fragment>
+      </>
     );
   }
 }
