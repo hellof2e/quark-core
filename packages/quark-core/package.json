@@ -39,9 +39,10 @@
     "rollup": "2.77.0",
     "rollup-plugin-filesize": " ^9.1.2"
   },
+  "homepage": "https://quark.hellobike.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hellof2e/quark-design.git"
+    "url": "git@github.com:hellof2e/quark.git"
   },
   "publishConfig": {
     "access": "public",
