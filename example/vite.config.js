@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from "@vitejs/plugin-react";
+// import react from "@vitejs/plugin-react";
 import { resolve }from 'path'
 import reloadOnChange from 'vite-plugin-full-reload'
 
@@ -21,20 +21,25 @@ export default defineConfig({
 	},
   plugins: [
     reloadOnChange(['./src/**/*.css']),
-    react({
-      jsxRuntime: "classic",
-      babel: {
-        // presets: [['@babel/preset-env'], ['@babel/preset-typescript']],
-        plugins: [
-          [
-            "@babel/plugin-proposal-decorators",
-            {
-              legacy: true,
-            },
-          ],
-          "@babel/plugin-proposal-class-properties",
-        ],
-      },
-    }),
-  ]
+    // react({
+    //   jsxRuntime: "classic",
+    //   babel: {
+    //     // presets: [['@babel/preset-env'], ['@babel/preset-typescript']],
+    //     plugins: [
+    //       [
+    //         "@babel/plugin-proposal-decorators",
+    //         {
+    //           legacy: true,
+    //         },
+    //       ],
+    //       "@babel/plugin-proposal-class-properties",
+    //     ],
+    //   },
+    // }),
+  ],
+
+  esbuild: {
+    // jsxFactory: 'h',
+    // jsxFragment: 'Fragment',
+  }
 })
