@@ -1,6 +1,6 @@
 {
   "name": "quarkc",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "description": "Web components quark-element",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "build": "rimraf lib && cross-env BABEL_ENV=umd rollup -c",
-    "release:major": "npm run release -- --release-as major",
-    "release:minor": "npm run release -- --release-as minor",
     "release:patch": "npm run release -- --release-as patch",
+    "release:minor": "npm run release -- --release-as minor",
+    "release:major": "npm run release -- --release-as major",
     "release": "npm run build && standard-version"
   },
   "devDependencies": {
