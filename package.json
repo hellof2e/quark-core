@@ -42,11 +42,6 @@
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.5"
   },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-customizable"
-    }
-  },
   "lint-staged": {
     "src/**/*.{ js,ts,json}": [
       "git add"
