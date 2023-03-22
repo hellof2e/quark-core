@@ -4,12 +4,7 @@
     <img width="200" src="https://user-images.githubusercontent.com/14307551/197440754-08db4379-eb0f-4808-890d-690355e6e8d2.png">
   </a>
 </p>
-<h2 align="center"> Quark，为跨技术栈而生！ </h2>  
-
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/quarkc"><img src="https://img.shields.io/npm/dt/quarkc.svg" alt="Total Downloads"></a>
-</p>
+<h2 align="center"> Quark，为跨技术栈而生！ </h2>
 
 ### 介绍  
 
