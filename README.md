@@ -6,6 +6,11 @@
 </p>
 <h2 align="center"> Quark，为跨技术栈而生！ </h2>  
 
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/quarkc"><img src="https://img.shields.io/npm/dt/quarkc.svg" alt="Total Downloads"></a>
+</p>
+
 ### 介绍  
 
 Quark 是一个拥有完美开发体验的 web components 框架。
