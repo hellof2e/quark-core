@@ -25,7 +25,7 @@ class MyElement extends QuarkElement {
         
         <h1>Quark - 为跨技术栈而生</h1>
 
-        <div className="card">
+        <div class="card">
           <button onClick={this.add}>
             count is: { this.count }
           </button>
