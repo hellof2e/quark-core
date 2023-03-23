@@ -46,7 +46,7 @@ export default class MyElement extends QuarkElement {
 
 ### 特性
 
-* 可以在任何框架或者无框架使用 QuarkC 自定义元素
+* 可以在任何框架或者无框架使用 Quark 自定义元素
 * 小巧的尺寸和高性能设计
 * Web Components + JSX/TSX 融合  
 * To Be Continue......
