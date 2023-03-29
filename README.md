@@ -4,7 +4,7 @@
     <img width="200" src="https://user-images.githubusercontent.com/14307551/197440754-08db4379-eb0f-4808-890d-690355e6e8d2.png">
   </a>
 </p>
-<h2 align="center"> Quark，为跨技术栈而生！ </h2>  
+<h2 align="center"> Quark，为跨技术栈而生！ </h2>
 
 ### 介绍  
 
@@ -46,7 +46,7 @@ export default class MyElement extends QuarkElement {
 
 ### 特性
 
-* 可以在任何框架或者无框架使用 QuarkC 自定义元素
+* 可以在任何框架或者无框架使用 Quark 自定义元素
 * 小巧的尺寸和高性能设计
 * Web Components + JSX/TSX 融合  
 * To Be Continue......
