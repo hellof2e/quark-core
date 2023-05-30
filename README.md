@@ -44,6 +44,7 @@ export default class MyElement extends QuarkElement {
 ```
 
 3. 使用
+
 各种技术栈都能运行。
 ```html
 <my-element count="count" />
@@ -62,6 +63,8 @@ export default class MyElement extends QuarkElement {
 ```
 
 4. 构建
+
+
 可以打包为 UMD / ESM 格式，然后发布到 npm
 ```
 npm run build
