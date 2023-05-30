@@ -20,7 +20,7 @@ npm i quarkc --save
 ```jsx
 import { QuarkElement, property, customElement } from "quarkc";
 
-@customElement({ tag: "quark-count" })
+@customElement({ tag: "my-element" })
 export default class MyElement extends QuarkElement {
   @property({
     type: Number
@@ -48,8 +48,7 @@ export default class MyElement extends QuarkElement {
 
 * 可以在任何框架或者无框架使用 Quark 自定义元素
 * 小巧的尺寸和高性能设计
-* Web Components + JSX/TSX 融合  
-* To Be Continue......
+* Web Components + JSX/TSX 融合
 
 
 
@@ -61,6 +60,6 @@ yarn run init
 yarn run dev
 ```
 
-## 文档（更新补充中）
+## 文档
 
-如需完整文档，请访问 [quark.hellobike.com](https://quark.hellobike.com)
+完整文档，请访问 [quark.hellobike.com](https://quark.hellobike.com)
