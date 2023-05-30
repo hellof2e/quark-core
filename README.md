@@ -1,12 +1,10 @@
 
 <p align="center">
   <a href="https://quark-design.hellobike.com/">
-    <img width="200" src="https://user-images.githubusercontent.com/14307551/197440754-08db4379-eb0f-4808-890d-690355e6e8d2.png">
+    <img width="200" src="https://github.com/hellof2e/quark/assets/14307551/78626ba3-b4f5-48be-a54a-0478fdaf3328" >
   </a>
 </p>
 <h2 align="center"> Quark，为跨技术栈而生! </h2>
-
-![1685449861952](https://github.com/hellof2e/quark/assets/14307551/78626ba3-b4f5-48be-a54a-0478fdaf3328)
 
 ### 介绍  
 
