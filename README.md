@@ -6,6 +6,8 @@
 </p>
 <h2 align="center"> Quark，为跨技术栈而生! </h2>
 
+![1685449861952](https://github.com/hellof2e/quark/assets/14307551/78626ba3-b4f5-48be-a54a-0478fdaf3328)
+
 ### 介绍  
 
 Quark 是一个拥有完美开发体验的 web components 框架。
