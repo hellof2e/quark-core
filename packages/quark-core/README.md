@@ -1,6 +1,6 @@
 
 <p align="center">
-  <a href="https://quark-design.hellobike.com/">
+  <a href="https://quark.hellobike.com/">
     <img width="200" src="https://user-images.githubusercontent.com/14307551/197440754-08db4379-eb0f-4808-890d-690355e6e8d2.png">
   </a>
 </p>
@@ -9,6 +9,8 @@
 ### 介绍  
 
 Quark 是一个拥有完美开发体验的 web components 框架。
+
+技术文档：https://quark.hellobike.com/#/zh-CN/docs/introduce
 
 ### 使用  
 
