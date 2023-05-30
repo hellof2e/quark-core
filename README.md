@@ -10,21 +10,25 @@
 
 Quark 是一个拥有完美开发体验的 web components 框架。
 
-### 使用  
+### 起手架模版(推荐)
 
-```shell
-npm i quarkc --save
-```  
+1、工程安装
+```bash
+npx create-quark-app create project-name
+cd project-name
 
-1. Define custom element.
+npm install
+npm start
+```
+
+2. 自定义组件
 ```jsx
-import { QuarkElement, property, customElement } from "quarkc";
+import { QuarkElement, property, customElement } from "quarkc"
+import style from "./main.css"
 
-@customElement({ tag: "my-element" })
+@customElement({ tag: "my-element", style }) // 自定义标签/组件、CSS
 export default class MyElement extends QuarkElement {
-  @property({
-    type: Number
-  })
+  @property({ type: Number }) // 外部属性
   count = 0;
 
   add = () => {
@@ -39,9 +43,28 @@ export default class MyElement extends QuarkElement {
 }
 ```
 
-2. Use it.
+3. 使用
+各种技术栈都能运行。
 ```html
- <quark-count count="0"></quark-count>
+<my-element count="count" />
+
+<!-- vue -->
+<my-element :count="count" />
+
+<!-- react -->
+<my-element count={count} />
+
+<!-- svelte -->
+<my-element {count} />
+
+<!-- angular -->
+<my-element [count]="count" />
+```
+
+4. 构建
+可以打包为 UMD / ESM 格式，然后发布到 npm
+```
+npm run build
 ```
 
 ### 特性
@@ -50,15 +73,6 @@ export default class MyElement extends QuarkElement {
 * 小巧的尺寸和高性能设计
 * Web Components + JSX/TSX 融合
 
-
-
-### 获取示例
-
-```shell
-git clone https://github.com/hellof2e/quark.git
-yarn run init 
-yarn run dev
-```
 
 ## 文档
 
