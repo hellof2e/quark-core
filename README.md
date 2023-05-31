@@ -1,6 +1,6 @@
 
 <p align="center">
-  <a href="https://quark-design.hellobike.com/">
+  <a href="https://quark.hellobike.com/">
     <img src="https://github.com/hellof2e/quark/assets/14307551/78626ba3-b4f5-48be-a54a-0478fdaf3328" >
   </a>
 </p>
