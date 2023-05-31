@@ -1,7 +1,7 @@
 
 <p align="center">
   <a href="https://quark.hellobike.com/">
-    <img src="https://github.com/hellof2e/quark/assets/14307551/4fa59176-09f7-422c-8eef-4947b71322c8" >
+    <img src="https://github.com/hellof2e/quark/assets/14307551/5968d0ed-6d60-4b13-b05b-1e9ba30a5708" >
   </a>
 </p>
 <h2 align="center"> Quark Everything! </h2>
