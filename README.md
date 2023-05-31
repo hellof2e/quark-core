@@ -4,7 +4,7 @@
     <img src="https://github.com/hellof2e/quark/assets/14307551/78626ba3-b4f5-48be-a54a-0478fdaf3328" >
   </a>
 </p>
-<h2 align="center"> Quark everything! </h2>
+<h2 align="center"> Quark Everything! </h2>
 
 ### 优秀案例
 |  作者   | github 地址  |
