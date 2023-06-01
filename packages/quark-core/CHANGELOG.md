@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.5](https://github.com/hellof2e/quark/compare/v1.0.4...v1.0.5) (2023-06-01)
+
+
+### Features
+
+* add sync to gitee action ([0950516](https://github.com/hellof2e/quark/commit/0950516e55a049523a463f068f05130c0ccb4d9c))
+* add sync to gitee action ([ee180e9](https://github.com/hellof2e/quark/commit/ee180e99d0d85f44a1c4d3c51b431922ce21bd36))
+* example update ([d8209a2](https://github.com/hellof2e/quark/commit/d8209a215da495fb7208270ce7537ec9de522594))
+* example update ([97e87f3](https://github.com/hellof2e/quark/commit/97e87f336070d18e861f128d6b9e1f270f24b7dc))
+* test action ([186924e](https://github.com/hellof2e/quark/commit/186924e569898faef5c0df2f74fc7e1fa31527eb))
+* test action ([ea79213](https://github.com/hellof2e/quark/commit/ea792132ceee3f0223020d05d8219d1d3e15e686))
+* test action ([1d44c79](https://github.com/hellof2e/quark/commit/1d44c79698c684330da850e6c47079d0bd615643))
+* update ([232232f](https://github.com/hellof2e/quark/commit/232232f732b0630f8ab8006ed22acdba00335a76))
+
+
+### Bug Fixes
+
+* dependencies ([88cf70f](https://github.com/hellof2e/quark/commit/88cf70f28e0598210256f9f27ad7a18e2898e15f))
+
 ### [1.0.4](https://github.com/hellof2e/quark/compare/v1.0.3...v1.0.4) (2023-03-22)
 
 
