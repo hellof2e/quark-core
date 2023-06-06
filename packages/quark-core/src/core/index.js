@@ -1,4 +1,4 @@
-export { render, hydrate } from './render';
+export { render } from './render';
 
 export {
 	// createElement,

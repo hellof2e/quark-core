@@ -1,18 +1,5 @@
-// import QuarkElement from "./index";
-
 type TypeHint = typeof Boolean | typeof Number | typeof String;
 export type converterFunction = (val: any, type?: TypeHint) => any;
-
-// export interface Converter<Type = unknown, TypeHint = unknown> {
-//   /**
-//    * getAttribute
-//    */
-//   from: converterFunction<Type, TypeHint>;
-//   /**
-//    * setAttribute
-//    */
-//   to: converterFunction<Type, TypeHint>;
-// }
 
 export interface PropertyDeclaration {
   /**

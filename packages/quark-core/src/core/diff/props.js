@@ -3,7 +3,7 @@ import options from '../options';
 
 /**
  * Diff the old and new properties of a VNode and apply changes to the DOM node
- * @param {import('../internal').PreactElement} dom The DOM node to apply
+ * @param {import('../internal').QuarkElement} dom The DOM node to apply
  * changes to
  * @param {object} newProps The new props
  * @param {object} oldProps The old props
@@ -47,7 +47,7 @@ function setStyle(style, key, value) {
 
 /**
  * Set a property value on a DOM node
- * @param {import('../internal').PreactElement} dom The DOM node to modify
+ * @param {import('../internal').QuarkElement} dom The DOM node to modify
  * @param {string} name The name of the property to set
  * @param {*} value The value to set the property to
  * @param {*} oldValue The old value the property had

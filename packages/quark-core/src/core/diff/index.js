@@ -8,15 +8,15 @@ import options from '../options';
 
 /**
  * Diff two virtual nodes and apply proper changes to the DOM
- * @param {import('../internal').PreactElement} parentDom The parent of the DOM element
+ * @param {import('../internal').QuarkElement} parentDom The parent of the DOM element
  * @param {import('../internal').VNode} newVNode The new virtual node
  * @param {import('../internal').VNode} oldVNode The old virtual node
  * @param {object} globalContext The current context object. Modified by getChildContext
  * @param {boolean} isSvg Whether or not this element is an SVG node
- * @param {Array<import('../internal').PreactElement>} excessDomChildren
+ * @param {Array<import('../internal').QuarkElement>} excessDomChildren
  * @param {Array<import('../internal').Component>} commitQueue List of components
  * which have callbacks to invoke in commitRoot
- * @param {import('../internal').PreactElement} oldDom The current attached DOM
+ * @param {import('../internal').QuarkElement} oldDom The current attached DOM
  * element any new dom elements should be placed around. Likely `null` on first
  * render (except when hydrating). Can be a sibling DOM element when diffing
  * Fragments that have siblings. In most cases, it starts out as `oldChildren[0]._dom`.
@@ -316,7 +316,7 @@ export function commitRoot(commitQueue, root) {
 
 /**
  * Diff two virtual nodes representing DOM element
- * @param {import('../internal').PreactElement} dom The DOM element representing
+ * @param {import('../internal').QuarkElement} dom The DOM element representing
  * the virtual nodes being diffed
  * @param {import('../internal').VNode} newVNode The new virtual node
  * @param {import('../internal').VNode} oldVNode The old virtual node
@@ -326,7 +326,7 @@ export function commitRoot(commitQueue, root) {
  * @param {Array<import('../internal').Component>} commitQueue List of components
  * which have callbacks to invoke in commitRoot
  * @param {boolean} isHydrating Whether or not we are in hydration
- * @returns {import('../internal').PreactElement}
+ * @returns {import('../internal').QuarkElement}
  */
 function diffElementNodes(
 	dom,
@@ -367,7 +367,7 @@ function diffElementNodes(
 
 	if (dom == null) {
 		if (nodeType === null) {
-			// @ts-ignore createTextNode returns Text, we expect PreactElement
+			// @ts-ignore createTextNode returns Text, we expect QuarkElement
 			return document.createTextNode(newProps);
 		}
 

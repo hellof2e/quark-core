@@ -5,11 +5,11 @@ import options from './options';
 import { slice } from './util';
 
 /**
- * Render a Preact virtual node into a DOM element
+ * Render a quark virtual node into a DOM element
  * @param {import('./internal').ComponentChild} vnode The virtual node to render
- * @param {import('./internal').PreactElement} parentDom The DOM element to
+ * @param {import('./internal').QuarkElement} parentDom The DOM element to
  * render into
- * @param {import('./internal').PreactElement | object} [replaceNode] Optional: Attempt to re-use an
+ * @param {import('./internal').QuarkElement | object} [replaceNode] Optional: Attempt to re-use an
  * existing DOM tree rooted at `replaceNode`
  */
 export function render(vnode, parentDom, replaceNode) {
@@ -62,14 +62,4 @@ export function render(vnode, parentDom, replaceNode) {
 
 	// Flush all queued effects
 	commitRoot(commitQueue, vnode);
-}
-
-/**
- * Update an existing DOM element with data from a Preact virtual node
- * @param {import('./internal').ComponentChild} vnode The virtual node to render
- * @param {import('./internal').PreactElement} parentDom The DOM element to
- * update
- */
-export function hydrate(vnode, parentDom) {
-	render(vnode, parentDom, hydrate);
 }

@@ -2,12 +2,14 @@ import { render, h, VNode, Fragment } from './core'
 import { PropertyDeclaration, converterFunction } from "./models";
 import DblKeyMap from "./dblKeyMap";
 import { EventController, EventHandler } from "./eventController";
-// import delay from "./delay";
 
 export { createRef } from "./core";
 
 export { Fragment };
 
+if(location.href.indexOf('localhost')) {
+  console.info('%cquarkc', 'color: white;background:#9f57f8;font-weight: bold; font-size:10px; padding:2px 6px; border-radius: 5px', 'Running in dev mode.')
+}
 
 const isEmpty = (val: unknown) => !(val || val === false || val === 0);
 
@@ -206,7 +208,6 @@ export class QuarkElement extends HTMLElement {
   }
 
   private eventController: EventController = new EventController();
-  // private lastRootVNode?: VNode;
 
   private rootPatch = (newRootVNode: any) => {
     if (this.shadowRoot) {
@@ -214,19 +215,9 @@ export class QuarkElement extends HTMLElement {
     }
   };
 
-  /**
-   * 延迟 patch，用于优化减少 patch 次数
-   * 存在一些不可预知的问题，暂时不用
-   */
-  // private delayPatch = delay(this.rootPatch);
-
-  // private getRootEl() {
-  //   return [].slice.call(this.shadowRoot?.children || []).slice(1);
-  // }
-
   private _render() {
     const newRootVNode: VNode = this.render();
-    
+
     if (newRootVNode) {
       this.rootPatch(newRootVNode);
     }

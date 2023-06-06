@@ -10,10 +10,10 @@ declare global {
 @customElement({ tag: "my-component", style })
 class MyComponent extends QuarkElement {
   @property({ type: Number }) // 外部属性
-  count = 0;
+  count = 0 // 可以设置默认值
 
   @property({ type: String })
-  text = '';
+  text
 
   add = () => {
     // 内部事件
