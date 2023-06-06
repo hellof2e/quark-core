@@ -8,12 +8,13 @@
 
 ### 优秀案例
 
-|  作者   | github 地址  | 截图 / 链接
+|  作者   | github 地址  | 截图 / 链接 
 |  ----  | ----  | ----- |
 | hellof2e  | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573) |
 | xsf0105  | https://github.com/xsf0105/dark-light-element |  https://unpkg.com/dark-light-element@latest/demo.html |
 
-### 介绍
+
+## 介绍
 
 Quark 是一个拥有完美开发体验的 web components 框架。
 
@@ -36,16 +37,16 @@ import style from "./index.css"
 @customElement({ tag: "my-element", style }) // 自定义标签/组件、CSS
 export default class MyElement extends QuarkElement {
   @property({ type: Number }) // 外部属性
-  count
+  count = 0
 
   add = () => {
-    this.count += 1;
+    this.count += 1
   }
-
+  
   render() {
     return (
-        <button onClick={this.add}>count is: { this.count }</button>
-    );
+      <button onClick={this.add}>count is: { this.count }</button>
+    )
   }
 }
 ```
@@ -71,16 +72,26 @@ export default class MyElement extends QuarkElement {
 
 4. 构建
 
-可以打包为 UMD / ESM 格式，然后发布到 npm
-```
+可以打包为 UMD / ESM 格式
+```bash
 npm run build
+```
+
+需要时您可以选择发布到 npm
+```
+npm install my-component
+```
+
+或在项目中直接引用产物
+```js
+import "./lib/index.js"
 ```
 
 ### 特性
 
-* Web Components
-* 体积小 + 高性能
-* JSX / TSX
+* 可以在任何框架或者无框架使用 Quark 自定义元素
+* 小巧的尺寸和高性能设计
+* Web Components + JSX/TSX 融合
 
 
 ## 文档
