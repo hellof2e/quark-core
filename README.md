@@ -32,21 +32,21 @@ npm start
 2. 自定义组件
 ```jsx
 import { QuarkElement, property, customElement } from "quarkc"
-import style from "./main.css"
+import style from "./index.css"
 
 @customElement({ tag: "my-element", style }) // 自定义标签/组件、CSS
 export default class MyElement extends QuarkElement {
   @property({ type: Number }) // 外部属性
-  count = 0;
+  count = 0
 
   add = () => {
-    this.count += 1;
+    this.count += 1
   }
   
   render() {
     return (
-        <button onClick={this.add}>count is: { this.count }</button>
-    );
+      <button onClick={this.add}>count is: { this.count }</button>
+    )
   }
 }
 ```
