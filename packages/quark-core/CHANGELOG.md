@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.6](https://github.com/hellof2e/quark/compare/v1.0.5...v1.0.6) (2023-06-06)
+
+
+### Features
+
+* add tester ([537d1c5](https://github.com/hellof2e/quark/commit/537d1c51c23da118b7d7e2635e37aaee592ef4b8))
+* optimize code ([c51fbed](https://github.com/hellof2e/quark/commit/c51fbedfa3e4cdf5acc4938ffb7714c766438c0c))
+
 ### [1.0.5](https://github.com/hellof2e/quark/compare/v1.0.4...v1.0.5) (2023-06-01)
 
 
