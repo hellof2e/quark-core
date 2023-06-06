@@ -72,10 +72,19 @@ export default class MyElement extends QuarkElement {
 
 4. 构建
 
-
-可以打包为 UMD / ESM 格式，然后发布到 npm
-```
+可以打包为 UMD / ESM 格式
+```bash
 npm run build
+```
+
+需要时您可以选择发布到 npm
+```
+npm install my-component
+```
+
+或在项目中直接引用产物
+```js
+import "./lib/index.js"
 ```
 
 ### 特性
