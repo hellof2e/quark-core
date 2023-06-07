@@ -2,15 +2,24 @@
   "name": "quarkc",
   "version": "1.0.5",
   "description": "Web components quark-element",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
+  "type": "module",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.umd.cjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
   "files": [
     "lib/*",
     "README.md",
     "package.json"
   ],
   "scripts": {
-    "build": "rimraf lib && cross-env BABEL_ENV=umd rollup -c",
+    "build": "rimraf lib && rollup -c",
     "release:patch": "npm run release -- --release-as patch",
     "release:minor": "npm run release -- --release-as minor",
     "release:major": "npm run release -- --release-as major",
@@ -27,16 +36,16 @@
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^21.0.0",
     "@rollup/plugin-node-resolve": "^13.0.5",
+    "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/node": "^14.14.31",
     "babel-loader": "^8.0.6",
-    "rollup-plugin-terser": "^7.0.2",
+    "cross-env": "^7.0.3",
+    "rimraf": "3.0.2",
+    "rollup": "2.77.0",
     "sinon": "^12.0.1",
     "standard-version": "^9.3.0",
-    "typescript": "^4.1.5",
-    "rimraf": "3.0.2",
-    "cross-env": "^7.0.3",
-    "rollup": "2.77.0"
+    "typescript": "^4.1.5"
   },
   "homepage": "https://quark.hellobike.com",
   "repository": {

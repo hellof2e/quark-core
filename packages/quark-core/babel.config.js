@@ -9,4 +9,4 @@ const plugins = [
   ],
 ];
 
-module.exports = { presets, plugins };
+export default { presets, plugins };
