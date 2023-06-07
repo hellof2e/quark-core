@@ -3,7 +3,7 @@
   "version": "1.0.8",
   "description": "Web components quark-element",
   "type": "module",
-  "main": "./lib/index.js",
+  "main": "./lib/index.umd.cjs",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
