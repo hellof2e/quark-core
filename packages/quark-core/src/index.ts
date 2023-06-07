@@ -7,7 +7,7 @@ export { createRef } from "./core";
 
 export { Fragment };
 
-if(location.href.indexOf('localhost')) {
+if(~location.href.indexOf('localhost')) {
   console.info('%cquarkc', 'color: white;background:#9f57f8;font-weight: bold; font-size:10px; padding:2px 6px; border-radius: 5px', 'Running in dev mode.')
 }
 
