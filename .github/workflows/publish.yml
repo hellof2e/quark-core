@@ -4,15 +4,6 @@ on:
     - 'v*'  # 这段的意思是仅在出现名为 v 字符开头的tag时，触发此任务，如v1.2.1
 name: Publish
 jobs:
-  # test: # test任务可选，视情况决定是否添加
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: actions/setup-node@v1
-  #     with:
-  #       node-version: 10
-  #   - run: npm i
-  #   - run: npm test
 
   publish:
     # needs: test
@@ -21,9 +12,9 @@ jobs:
     - uses: actions/checkout@v2
     # - uses: actions/setup-node@v1
     #   with:
-    #     node-version: 10
+    #     node-version: 16
     #     registry-url: https://registry.npmjs.org/
     - run: npm i
     - run: npm publish # 如果发布之前需要构建，可添加prepublishOnly的生命周期脚本
       env:
-        NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}} # 上面在Github Secrets中设置的密钥
+        NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}} # 上面在 Github Secrets 中设置的密钥
