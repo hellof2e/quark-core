@@ -128,6 +128,7 @@ export function customElement(
 
 export class QuarkElement extends HTMLElement {
   static h = h;
+  static Fragment = Fragment;
 
   protected static getPropertyDescriptor(
     name: string,
