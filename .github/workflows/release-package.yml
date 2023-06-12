@@ -24,7 +24,7 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm run build
