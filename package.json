@@ -7,8 +7,8 @@
   "pricate": true,
   "scripts": {
     "dev": "pnpm run -C example dev",
+    "build": "pnpm run -C packages/core build",
     "codeformat": "prettier --write *",
-    "build": "vite build",
     "prepare": "husky install"
   },
   "devDependencies": {
