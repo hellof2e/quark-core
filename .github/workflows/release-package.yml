@@ -5,11 +5,12 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2 # 先检出代码
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup node
         uses: actions/setup-node@v2
@@ -23,17 +24,16 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        run: pnpm i --frozen-lockfile
+        run: pnpm i
 
-      - name: 编译部署
-        run:  pnpm run build
+      - name: Build
+        run: pnpm run build
 
-      - name: publish # 向npm publish 代码 请遵循npm规范.
+      - name: publish
         working-directory: 'packages/core'
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}} # 该token是 npm的token 获取npm token请查看 步骤2 的创建 npm token 和 将npm token 放入github的 secrets下
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         run: npm publish
-      # 到这如果全部成功，那么我们就成功的将代码发布到了npm
 
       # 下面主要是创建 github 的release
       # 需要手动修改 package.json 版本
