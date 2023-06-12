@@ -12,25 +12,22 @@ jobs:
       - uses: actions/checkout@v2 # 先检出代码
 
       - name: 初始化node环境
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: https://registry.npmjs.org/ # 如果不配置将影响publish
+          node-version: 16.x
+          registry-url: https://registry.npmjs.org/
+          cache: "pnpm"
 
-      - name: 安装yarn # 因为我的代码采用了monorepo的 workspace形式 所以必须使用yarn
-        run: npm i -g yarn
+      - name: Install deps
+        run: pnpm install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
-      - name: 安装依赖 # 使用yarn 安装依赖
-        run: yarn
-
-      # - run: npm install
-      # - run: npm run build
       - name: 编译部署
-        # run:  yarn build
-        run:  yarn run release:patch
+        run:  pnpm run build
 
       - name: publish # 向npm publish 代码 请遵循npm规范.
-        working-directory: 'packages/quark-core'
+        working-directory: 'packages/core'
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}} # 该token是 npm的token 获取npm token请查看 步骤2 的创建 npm token 和 将npm token 放入github的 secrets下
         run: npm publish
@@ -42,7 +39,7 @@ jobs:
       - name: Read package.json
         uses: tyankatsu0105/read-package-version-actions@v1
         with:
-          path: './packages/quark-core'
+          path: './packages/core'
         id: package-version
 
         # 关于创建 release 的更多参数，可以查看 actions/create-release@v1
@@ -56,4 +53,4 @@ jobs:
           release_name: Release v${{ steps.package-version.outputs.version }}
           prerelease: false # 是否为预发布版本
           body: |
-            请点击查看 [更新日志](https://github.com/hellof2e/quark/blob/main/packages/quark-core/CHANGELOG.md).
+            请点击查看 [更新日志](https://github.com/hellof2e/quark/blob/main/packages/core/CHANGELOG.md).
