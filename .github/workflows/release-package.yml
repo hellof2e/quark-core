@@ -11,17 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2 # 先检出代码
 
-      - name: 初始化node环境
-        uses: actions/setup-node@v3
+      - name: Setup node
+        uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: '16'
           registry-url: https://registry.npmjs.org/
-          cache: "pnpm"
 
-      - name: Install deps
-        run: pnpm install
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm i
 
       - name: 编译部署
         run:  pnpm run build
