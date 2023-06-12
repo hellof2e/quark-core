@@ -26,7 +26,8 @@ jobs:
       # - run: npm install
       # - run: npm run build
       - name: 编译部署
-        run:  yarn build
+        # run:  yarn build
+        run:  yarn run release:patch
 
       - name: publish # 向npm publish 代码 请遵循npm规范.
         working-directory: 'packages/quark-core'
@@ -54,5 +55,5 @@ jobs:
           tag_name: v${{ steps.package-version.outputs.version }}
           release_name: Release v${{ steps.package-version.outputs.version }}
           prerelease: false # 是否为预发布版本
-          # body: |
-          #   请点击查看 [更新日志]().
+          body: |
+            请点击查看 [更新日志](https://github.com/hellof2e/quark/blob/main/packages/quark-core/CHANGELOG.md).
