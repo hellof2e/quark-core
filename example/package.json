@@ -7,10 +7,5 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
-  },
-  "devDependencies": {
-    "less": "^4.1.3",
-    "postcss": "^8.4.24",
-    "vite": "^4.1.0"
   }
 }
