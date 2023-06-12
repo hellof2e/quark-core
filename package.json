@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "author": "hellof2e",
   "license": "MIT",
-  "pricate": true,
   "scripts": {
     "dev": "pnpm run -C example dev",
     "build": "pnpm run -C packages/core build",
