@@ -21,7 +21,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.5.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
