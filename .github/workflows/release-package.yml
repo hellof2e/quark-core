@@ -23,7 +23,7 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
       - name: 编译部署
         run:  pnpm run build
