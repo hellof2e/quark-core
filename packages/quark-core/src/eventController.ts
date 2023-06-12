@@ -29,7 +29,7 @@ export class EventController {
   removeAllListener = () => {
     this.eventMap.forEach((list, el, eventName) => {
       list.forEach((handler) => {
-        el.removeEventListener(eventName, handler);
+        el.removeEventListener(eventName, handler, true);
       });
     });
     this.eventMap.deleteAll();
