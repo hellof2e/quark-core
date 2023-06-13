@@ -81,7 +81,7 @@ npm run build
 
 需要时您可以选择发布到 npm
 ```
-npm install my-component
+npm install my-element
 ```
 
 或在项目中直接引用产物
