@@ -18,7 +18,7 @@
 
 ## 介绍
 
-Quark 是一个拥有完美开发体验的 web components 框架。
+Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框架。
 
 ### 起手架模版(推荐)
 
@@ -34,12 +34,12 @@ npm start
 2. 自定义组件
 ```jsx
 import { QuarkElement, property, customElement } from "quarkc"
-import style from "./index.css"
+import style from "./index.less"
 
 @customElement({ tag: "my-element", style }) // 自定义标签/组件、CSS
 export default class MyElement extends QuarkElement {
-  @property({ type: Number }) // 外部属性
-  count = 0
+  @property() // 外部属性
+  count
 
   add = () => {
     this.count += 1
