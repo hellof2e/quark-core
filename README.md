@@ -18,7 +18,7 @@
 
 ## 介绍
 
-Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框架。
+Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框架。通过它，您可以开发标准的 **跨框架组件** 或者 **构建整个应用**。
 
 ### 起手架模版(推荐)
 
