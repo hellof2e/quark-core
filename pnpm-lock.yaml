@@ -43,6 +43,7 @@ importers:
       '@babel/runtime': ^7.5.5
       '@rollup/plugin-babel': ^5.3.0
       '@rollup/plugin-commonjs': ^21.0.0
+      '@rollup/plugin-json': ^6.0.0
       '@rollup/plugin-node-resolve': ^13.0.5
       '@rollup/plugin-terser': ^0.4.3
       '@rollup/plugin-typescript': ^8.3.0
@@ -62,6 +63,7 @@ importers:
       '@babel/runtime': 7.22.5
       '@rollup/plugin-babel': 5.3.1_jnqmneol4xxee3tekczyfkwbhm
       '@rollup/plugin-commonjs': 21.1.0_rollup@2.77.0
+      '@rollup/plugin-json': 6.0.0_rollup@2.77.0
       '@rollup/plugin-node-resolve': 13.3.0_rollup@2.77.0
       '@rollup/plugin-terser': 0.4.3_rollup@2.77.0
       '@rollup/plugin-typescript': 8.5.0_sgdkrfzp45lu6nlqvjcchokyqa
@@ -1934,6 +1936,19 @@ packages:
       rollup: 2.77.0
     dev: true
 
+  /@rollup/plugin-json/6.0.0_rollup@2.77.0:
+    resolution: {integrity: sha512-i/4C5Jrdr1XUarRhVu27EEwjt4GObltD7c+MkCIpO2QIbojw8MUs+CCTqOphQi3Qtg1FLmYt+l+6YeoIf51J7w==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.2_rollup@2.77.0
+      rollup: 2.77.0
+    dev: true
+
   /@rollup/plugin-node-resolve/13.3.0_rollup@2.77.0:
     resolution: {integrity: sha512-Lus8rbUo1eEcnS4yTFKLZrVumLPY+YayBdWXgFSHYhTT2iJbMhoaaBL3xl5NCdeRytErGr8tZ0L71BMRmnlwSw==}
     engines: {node: '>= 10.0.0'}
@@ -1989,6 +2004,21 @@ packages:
     dependencies:
       '@types/estree': 0.0.39
       estree-walker: 1.0.1
+      picomatch: 2.3.1
+      rollup: 2.77.0
+    dev: true
+
+  /@rollup/pluginutils/5.0.2_rollup@2.77.0:
+    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.1
+      estree-walker: 2.0.2
       picomatch: 2.3.1
       rollup: 2.77.0
     dev: true

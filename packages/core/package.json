@@ -1,6 +1,6 @@
 {
   "name": "quarkc",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Web components quark-element",
   "type": "module",
   "main": "./lib/index.umd.js",
@@ -32,6 +32,7 @@
     "@babel/runtime": "^7.5.5",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^21.0.0",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^13.0.5",
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^8.3.0",
