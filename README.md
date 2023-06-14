@@ -34,7 +34,7 @@ npm start
 2. 自定义组件
 ```jsx
 import { QuarkElement, property, customElement } from "quarkc"
-import style from "./index.less"
+import style from "./index.less?inline" // 引入CSS内容字符串（这里?inline是vite的特性）
 
 @customElement({ tag: "my-element", style }) // 自定义标签/组件、CSS
 export default class MyElement extends QuarkElement {
