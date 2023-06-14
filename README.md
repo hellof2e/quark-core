@@ -8,7 +8,7 @@
 
 ### 优秀案例
 
-|  作者   | github 地址  | 截图 / 链接 
+|  作者   | github 地址  | 截图 / 链接
 |  ----  | ----  | ----- |
 | @hellof2e  | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573) https://quark.hellobike.com/#/ |
 | @xsf0105  | https://github.com/xsf0105/dark-light-element |  https://unpkg.com/dark-light-element@latest/demo.html |
@@ -34,7 +34,7 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框
 
 ### 起手架模版(推荐)
 
-1、工程安装
+1. 工程安装
 ```bash
 npx create-quark-app create project-name
 cd project-name
@@ -56,7 +56,7 @@ export default class MyElement extends QuarkElement {
   add = () => {
     this.count += 1
   }
-  
+
   render() {
     return (
       <button onClick={this.add}>count is: { this.count }</button>
@@ -84,30 +84,52 @@ export default class MyElement extends QuarkElement {
 <my-element [count]="count" />
 ```
 
-4. 构建
+### 进阶使用
 
-可以打包为 UMD / ESM 格式
+1. 打包构建
+
+打包默认输出为 UMD / ESM 格式
+
 ```bash
 npm run build
 ```
 
-需要时您可以选择发布到 npm
-```
-npm install my-element
+此时，构建产物 `lib/` 下的资源可以直接在项目中被使用。（任何前端项目都可使用～）
+
+```html
+import "your-element/lib"
+
+<my-element></my-element>
 ```
 
-或在项目中直接引用产物
-```js
-import "./lib/index.js"
+2. Npm 产物
+
+如果您将组件发布到npm，可以去安装：
+
+```bash
+npm install your-element // 发布 npm 后，对应 package.json 的 name 名称
 ```
+
+可以作为 CDN 使用
+```html
+<script src="https://fastly.jsdelivr.net/npm/your-element"></script>
+```
+
+也可以作为 ES Module 使用（推荐）
+```js
+import "your-element/lib"
+```
+
+发布相关，详情点击 [发布 Publishing](https://quark.hellobike.com/#/zh-CN/docs/publishing)
 
 ### 特性
 
-* 可以在任何框架或者无框架使用 Quark 自定义元素
-* 小巧的尺寸和高性能设计
-* Web Components + JSX/TSX 融合
+* 跨技术栈（可在任何框架或者无框架下使用）
+* 组件体积极小，浏览器渲染性能非常高
+* Web Components + JSX/TSX 融合，开发体验好
 
 
-## 文档
+### 文档
 
 完整文档，请访问 [quark.hellobike.com](https://quark.hellobike.com)
+
