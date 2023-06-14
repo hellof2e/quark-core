@@ -32,7 +32,7 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框
 
 ## 使用
 
-### 起手架模版(推荐)
+### 组件起手架模版
 
 1. 工程安装
 ```bash
@@ -84,9 +84,7 @@ export default class MyElement extends QuarkElement {
 <my-element [count]="count" />
 ```
 
-### 进阶使用
-
-1. 打包构建
+### 组件打包
 
 打包默认输出为 UMD / ESM 格式
 
@@ -102,16 +100,18 @@ import "your-element/lib"
 <my-element></my-element>
 ```
 
-2. Npm 产物
+### 组件发布
 
-如果您将组件发布到npm，可以去安装：
+可以将组件发布到 npm，安装：
 
 ```bash
-npm install your-element // 发布 npm 后，对应 package.json 的 name 名称
+npm install your-element
 ```
 
 可以作为 CDN 使用
+
 ```html
+<script src="https://fastly.jsdelivr.net/npm/quarkc"></script>
 <script src="https://fastly.jsdelivr.net/npm/your-element"></script>
 ```
 
@@ -120,7 +120,7 @@ npm install your-element // 发布 npm 后，对应 package.json 的 name 名称
 import "your-element/lib"
 ```
 
-发布相关，详情点击 [发布 Publishing](https://quark.hellobike.com/#/zh-CN/docs/publishing)
+更多发布相关，详情点击 [发布 Publishing](https://quark.hellobike.com/#/zh-CN/docs/publishing)
 
 ### 特性
 
