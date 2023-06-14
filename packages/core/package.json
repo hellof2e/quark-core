@@ -3,13 +3,13 @@
   "version": "1.0.11",
   "description": "Web components quark-element",
   "type": "module",
-  "main": "./lib/index.umd.cjs",
+  "main": "./lib/index.umd.js",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
     ".": {
       "import": "./lib/index.js",
-      "require": "./lib/index.umd.cjs",
+      "require": "./lib/index.umd.js",
       "types": "./lib/index.d.ts"
     }
   },

@@ -16,7 +16,7 @@ export default defineConfig({
     },
     {
       dir: "lib",
-      entryFileNames: "index.umd.cjs",
+      entryFileNames: "index.umd.js",
       format: "umd",
       name: 'Quarkc',
     },
