@@ -2,14 +2,20 @@ import { render, h, VNode, Fragment } from './core'
 import { PropertyDeclaration, converterFunction } from "./models";
 import DblKeyMap from "./dblKeyMap";
 import { EventController, EventHandler } from "./eventController";
+import {version} from '../package.json';
+
+
 
 export { createRef } from "./core";
-
 export { Fragment };
 
+
+
 if(~location.href.indexOf('localhost')) {
-  console.info('%cquarkc', 'color: white;background:#9f57f8;font-weight: bold; font-size:10px; padding:2px 6px; border-radius: 5px', 'Running in dev mode.')
+  console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight: bold; font-size:10px; padding:2px 6px; border-radius: 5px', 'Running in dev mode.')
 }
+
+
 
 const isEmpty = (val: unknown) => !(val || val === false || val === 0);
 
