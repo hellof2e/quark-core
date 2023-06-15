@@ -10,6 +10,7 @@
 
 |  作者   | github 地址  | 截图 / 链接
 |  ----  | ----  | ----- |
+| @yuhaiyang1  | https://github.com/yuhaiyang1/quarkc-time |  https://unpkg.com/quark-timer@0.0.2/demo.html |
 | @khno  | https://github.com/khno/quark-element-demo-celebrate |  https://unpkg.com/quarkc-demo-celebrate@latest/demo.html |
 | @hellof2e  | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573) https://quark.hellobike.com/#/ |
 | @xsf0105  | https://github.com/xsf0105/dark-light-element |  https://unpkg.com/dark-light-element@latest/demo.html |
