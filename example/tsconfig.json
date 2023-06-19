@@ -8,6 +8,7 @@
 		"strict": true,
 		"jsx": "react",
 		"jsxFactory": "QuarkElement.h",
+		"jsxFragmentFactory": "QuarkElement.Fragment",
 		"sourceMap": false,
 		"declaration": false,
 		"removeComments": true,
@@ -26,4 +27,3 @@
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "typings"],
 	"exclude": ["./node_modules"],
   }
-  

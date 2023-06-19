@@ -1,4 +1,4 @@
-import { QuarkElement, Fragment, property, customElement } from "quarkc"
+import { QuarkElement, property, customElement } from "quarkc"
 import style from "./index.less?inline"
 
 declare global {
@@ -21,13 +21,13 @@ class MyComponent extends QuarkElement {
   };
 
   componentDidMount() {
-    // console.log("dom loaded!")
+    console.log("dom loaded!")
     // ...
   }
 
   render() {
     return (
-      <Fragment>
+      <>
         <div>
           <a href="https://quark.hellobike.com" target="_blank">
             <img
@@ -43,7 +43,7 @@ class MyComponent extends QuarkElement {
         <div className="card">
           <button onClick={this.add}>count is: {this.count}</button>
         </div>
-      </Fragment>
+      </>
     );
   }
 }

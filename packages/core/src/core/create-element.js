@@ -88,12 +88,3 @@ export function createRef() {
 export function Fragment(props) {
 	return props.children;
 }
-
-
-/**
- * Check if a the argument is a valid quark VNode.
- * @param {*} vnode
- * @returns {vnode is import('./internal').VNode}
- */
-export const isValidElement = vnode =>
-	vnode != null && vnode.constructor === undefined;
