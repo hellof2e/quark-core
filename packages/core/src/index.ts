@@ -1,22 +1,17 @@
 import { createElement as h, Fragment, createRef, VNode } from './core/create-element'
 import { render } from './core/render'
-
 import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
-
 import {version} from '../package.json'
 
 export function createRef() {
 	return { current: null };
 }
 
-
 if(~location.href.indexOf('localhost')) {
   console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
 }
-
-
 
 const isEmpty = (val: unknown) => !(val || val === false || val === 0);
 
@@ -137,6 +132,7 @@ export class QuarkElement extends HTMLElement {
   static h = h;
   static Fragment = Fragment;
 
+  // 外部属性装饰器，抹平不同框架使用差异
   protected static getPropertyDescriptor(
     name: string,
     options: PropertyDeclaration
@@ -188,6 +184,7 @@ export class QuarkElement extends HTMLElement {
     };
   }
 
+  // 内部属性装饰器
   protected static getStateDescriptor(): () => PropertyDescriptor {
     return (defaultValue?: any) => {
       let _value = defaultValue;

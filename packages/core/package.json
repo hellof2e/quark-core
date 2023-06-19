@@ -1,6 +1,6 @@
 {
   "name": "quarkc",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Web components quark-element",
   "type": "module",
   "main": "./lib/index.umd.js",
@@ -48,6 +48,12 @@
     "type": "git",
     "url": "git@github.com:hellof2e/quark.git"
   },
+  "keywords": [
+    "quarkc",
+    "web components",
+    "shadow dom",
+    "custom element"
+  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
