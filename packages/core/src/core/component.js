@@ -24,35 +24,35 @@ export function Component(props, context) {
  * @param {() => void} [callback] A function to be called once component state is
  * updated
  */
-Component.prototype.setState = function(update, callback) {
-	// only clone state when copying to nextState the first time.
-	let s;
-	if (this._nextState != null && this._nextState !== this.state) {
-		s = this._nextState;
-	} else {
-		s = this._nextState = assign({}, this.state);
-	}
+// Component.prototype.setState = function(update, callback) {
+// 	// only clone state when copying to nextState the first time.
+// 	let s;
+// 	if (this._nextState != null && this._nextState !== this.state) {
+// 		s = this._nextState;
+// 	} else {
+// 		s = this._nextState = assign({}, this.state);
+// 	}
 
-	if (typeof update == 'function') {
-		// Some libraries like `immer` mark the current state as readonly,
-		// preventing us from mutating it, so we need to clone it. See #2716
-		update = update(assign({}, s), this.props);
-	}
+// 	if (typeof update == 'function') {
+// 		// Some libraries like `immer` mark the current state as readonly,
+// 		// preventing us from mutating it, so we need to clone it. See #2716
+// 		update = update(assign({}, s), this.props);
+// 	}
 
-	if (update) {
-		assign(s, update);
-	}
+// 	if (update) {
+// 		assign(s, update);
+// 	}
 
-	// Skip update if updater function returned null
-	if (update == null) return;
+// 	// Skip update if updater function returned null
+// 	if (update == null) return;
 
-	if (this._vnode) {
-		if (callback) {
-			this._stateCallbacks.push(callback);
-		}
-		enqueueRender(this);
-	}
-};
+// 	if (this._vnode) {
+// 		if (callback) {
+// 			this._stateCallbacks.push(callback);
+// 		}
+// 		enqueueRender(this);
+// 	}
+// };
 
 /**
  * Immediately perform a synchronous re-render of the component

@@ -1,4 +1,4 @@
-import { createElement as h, Fragment, createRef, VNode } from './core/create-element'
+import { createElement as h, Fragment as OriginFragment, VNode } from './core/create-element'
 import { render } from './core/render'
 import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
@@ -8,6 +8,8 @@ import {version} from '../package.json'
 export function createRef() {
 	return { current: null };
 }
+
+export const Fragment: any = OriginFragment;
 
 if(~location.href.indexOf('localhost')) {
   console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
