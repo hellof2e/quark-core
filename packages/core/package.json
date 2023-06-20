@@ -23,7 +23,7 @@
     "release:major": "pnpm run release -- --release-as major",
     "release:minor": "pnpm run release -- --release-as minor",
     "release:patch": "pnpm run release -- --release-as patch",
-    "release": "pnpm run build && standard-version && git push --follow-tags origin main && npm publish"
+    "release": "pnpm run build && standard-version && pnpm publish"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
