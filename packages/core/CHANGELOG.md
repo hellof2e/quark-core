@@ -1,7 +1,4 @@
 # Changelog
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
-
 ### [1.0.18](https://github.com/hellof2e/quark/compare/v1.0.17...v1.0.18) (2023-06-20)
 
 ### [1.0.9](https://github.com/hellof2e/quark/compare/v1.0.8...v1.0.9) (2023-06-07)
