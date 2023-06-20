@@ -71,7 +71,7 @@ module.exports = {
     ],
     skip: {
       // "bump": true,
-      commit: true,
+      // commit: true,
       // "tag": true
     },
     scripts: {
