@@ -1,6 +1,6 @@
 {
   "name": "quarkc",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Web components quark-element",
   "type": "module",
   "main": "./lib/index.umd.js",
@@ -20,7 +20,10 @@
   ],
   "scripts": {
     "build": "rimraf lib && rollup -c",
-    "release": "npm run build"
+    "release:major": "pnpm run release -- --release-as major",
+    "release:minor": "pnpm run release -- --release-as minor",
+    "release:patch": "pnpm run release -- --release-as patch",
+    "release": "pnpm run build && standard-version"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -41,7 +44,8 @@
     "rimraf": "3.0.2",
     "rollup": "2.77.0",
     "sinon": "^12.0.1",
-    "typescript": "^4.1.5"
+    "typescript": "^4.1.5",
+    "standard-version": "^9.3.0"
   },
   "homepage": "https://quark.hellobike.com",
   "repository": {
