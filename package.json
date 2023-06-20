@@ -8,7 +8,7 @@
     "dev": "pnpm run -C example dev",
     "codeformat": "prettier --write *",
     "prepare": "husky install",
-    "tag": "git push origin --tags",
+    "tag": "git push origin --tags && git push",
     "publish": "pnpm run -C packages/core publish",
     "release:major": "pnpm run -C packages/core release:major && pnpm run publish && pnpm run tag",
     "release:minor": "pnpm run -C packages/core release:minor && pnpm run publish && pnpm run tag",
