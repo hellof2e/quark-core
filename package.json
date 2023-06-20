@@ -6,13 +6,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "pnpm run -C example dev",
-    "build": "pnpm run -C packages/core build",
     "codeformat": "prettier --write *",
     "prepare": "husky install",
     "tag": "git push origin --tags",
-    "release:major": "pnpm run -C packages/core release:major && pnpm run tag",
-    "release:minor": "pnpm run -C packages/core release:minor && pnpm run tag",
-    "release:patch": "pnpm run -C packages/core release:patch && pnpm run tag"
+    "publish": "pnpm run -C packages/core publish",
+    "release:major": "pnpm run -C packages/core release:major && pnpm run publish && pnpm run tag",
+    "release:minor": "pnpm run -C packages/core release:minor && pnpm run publish && pnpm run tag",
+    "release:patch": "pnpm run -C packages/core release:patch && pnpm run publish && pnpm run tag"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
