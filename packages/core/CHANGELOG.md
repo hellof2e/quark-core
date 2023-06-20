@@ -1,4 +1,11 @@
 # Changelog
+### [1.0.20](https://github.com/hellof2e/quark/compare/v1.0.18...v1.0.20) (2023-06-20)
+
+
+### Reverts
+
+* Revert "chore(release): 1.0.19" ([b9b756b](https://github.com/hellof2e/quark/commit/b9b756bf19078c06e2dcc855ed58c72e6e40f554))
+
 ### [1.0.19](https://github.com/hellof2e/quark/compare/v1.0.18...v1.0.19) (2023-06-20)
 
 
