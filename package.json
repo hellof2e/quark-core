@@ -9,10 +9,10 @@
     "codeformat": "prettier --write *",
     "prepare": "husky install",
     "tag": "git push origin --tags && git push",
-    "publish": "pnpm run -C packages/core publish",
-    "release:major": "pnpm run -C packages/core release:major && pnpm run publish && pnpm run tag",
-    "release:minor": "pnpm run -C packages/core release:minor && pnpm run publish && pnpm run tag",
-    "release:patch": "pnpm run -C packages/core release:patch && pnpm run publish && pnpm run tag"
+    "pub": "pnpm run -C packages/core pub",
+    "release:major": "pnpm run -C packages/core release:major && pnpm run pub && pnpm run tag",
+    "release:minor": "pnpm run -C packages/core release:minor && pnpm run pub && pnpm run tag",
+    "release:patch": "pnpm run -C packages/core release:patch && pnpm run pub && pnpm run tag"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",

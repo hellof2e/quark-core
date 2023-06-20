@@ -24,7 +24,7 @@
     "release:minor": "pnpm run release -- --release-as minor",
     "release:patch": "pnpm run release -- --release-as patch",
     "release": "pnpm run build && standard-version",
-    "publish": "pnpm publish"
+    "pub": "pnpm publish"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
