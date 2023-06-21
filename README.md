@@ -130,6 +130,11 @@ import "your-element/lib"
 * 组件体积极小，浏览器渲染性能非常高
 * Web Components + JSX/TSX 融合，开发体验好
 
+### 性能参考
+
+一个略复杂的组件页面跑分截图：
+
+<img width="1170" alt="image" src="https://github.com/hellof2e/quark/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
 
 ### 文档
 
