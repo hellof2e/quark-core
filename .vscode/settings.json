@@ -10,8 +10,8 @@
     },
     "eslint.validate": ["javascript", "vue", "html", "typescript"],
     "workbench.startupEditor": "none",
-    "stylelint.validate": ["css", "scss"],
-    "scss.validate": false,
+    "stylelint.validate": ["css", "less"],
+    "less.validate": false,
     "css.validate": false,
     "cSpell.words": [
       "quarkc"

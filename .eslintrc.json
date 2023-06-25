@@ -1,27 +1,27 @@
 {
-    "root": true,
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": "eslint:recommended",
-    "parser": "@babel/eslint-parser",
-    "rules": {
-        "no-debugger": 0,
-        "@typescript-eslint/no-inferrable-types": 1,
-        "@typescript-eslint/explicit-module-boundary-types": 0
-    },
-    "overrides": [
-        {
-            "files":[
-                "packages/quark-core/**/*.ts"
-            ],
-            "rules": {
-                "@typescript-eslint/explicit-module-boundary-types": 0,
-                "@typescript-eslint/no-explicit-any": 0,
-                "@typescript-eslint/no-empty-function": 0,
-                "@typescript-eslint/no-inferrable-types": 2
-            }
-        }
-    ]
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": "eslint:recommended",
+  "parser": "@babel/eslint-parser",
+  "rules": {
+    "no-debugger": 0,
+    "@typescript-eslint/no-inferrable-types": 1,
+    "@typescript-eslint/explicit-module-boundary-types": 0
+  },
+  "overrides": [
+    {
+      "files":[
+        "packages/quark-core/**/*.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": 0,
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-empty-function": 0,
+        "@typescript-eslint/no-inferrable-types": 2
+      }
+    }
+  ]
 }
