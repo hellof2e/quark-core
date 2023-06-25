@@ -97,7 +97,7 @@ npm run build
 此时，构建产物 `lib/` 下的资源可以直接在项目中被使用。（任何前端项目都可使用～）
 
 ```html
-import "your-element/lib"
+import "your-element"
 
 <my-element></my-element>
 ```
