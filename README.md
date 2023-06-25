@@ -8,7 +8,7 @@
 
 <p align="center">
   <span> 简体中文 | </span>
-  <a href="https://github.com/hellof2e/quark-design/blob/main/README.en-US.md">
+  <a href="https://github.com/hellof2e/quark-core/blob/main/README.en-US.md">
     English
   </a>
 </p>
