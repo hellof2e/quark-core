@@ -5,6 +5,20 @@
   </a>
 </p>
 <h2 align="center"> Quarkc </h2>
+<div align="center">
+
+Quarkc，跨技术栈/原生组件构建工具。
+
+</div>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/quarkc"><img src="https://img.shields.io/npm/dt/quarkc.svg" alt="Total Downloads"></a>
+  <a href="https://www.npmjs.com/package/quarkc">
+    <img src="https://img.shields.io/npm/v/quarkc.svg" alt="Published on NPM">
+  </a>
+  <a href="https://github.com/hellof2e/quark-core/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/quark-core.svg" alt="License"></a>
+</p>
+
 
 <p align="center">
   <span> 简体中文 | </span>
