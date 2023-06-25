@@ -3,8 +3,8 @@ name: Release
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'packages/core/package.json'
+    # paths:
+    #   - 'packages/core/package.json'
 
 jobs:
   release:
@@ -73,4 +73,4 @@ jobs:
           release_name: Release v${{ steps.package-version.outputs.version }}
           prerelease: false # 是否为预发布版本
           body: |
-            请点击查看 [更新日志](https://github.com/hellof2e/quark/blob/main/packages/core/CHANGELOG.md).
+            请点击查看 [更新日志](https://github.com/hellof2e/quark-core/blob/main/packages/core/CHANGELOG.md).
