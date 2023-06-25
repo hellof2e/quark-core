@@ -96,7 +96,7 @@ npm run build
 
 此时，构建产物 `lib/` 下的资源可以直接在项目中被使用。（任何前端项目都可使用～）
 
-```html
+```jsx
 import "your-element"
 
 <my-element></my-element>
@@ -119,7 +119,7 @@ npm install your-element
 
 也可以作为 ES Module 使用（推荐）
 ```js
-import "your-element/lib"
+import "your-element"
 ```
 
 更多发布相关，详情点击 [发布 Publishing](https://quark.hellobike.com/#/zh-CN/docs/publishing)
