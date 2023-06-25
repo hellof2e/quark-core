@@ -4,7 +4,14 @@
     <img src="https://github.com/hellof2e/quark/assets/14307551/5968d0ed-6d60-4b13-b05b-1e9ba30a5708" >
   </a>
 </p>
-<h2 align="center"> Quark Everything! </h2>
+<h2 align="center"> Quarkc </h2>
+
+<p align="center">
+  <span> 简体中文 | </span>
+  <a href="https://github.com/hellof2e/quark-design/blob/main/README.en-US.md">
+    English
+  </a>
+</p>
 
 ### 优秀案例
 
