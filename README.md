@@ -6,9 +6,7 @@
 </p>
 <h2 align="center"> Quarkc </h2>
 <div align="center">
-
-Quarkc，跨技术栈/原生组件构建工具。
-
+Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端框架！
 </div>
 
 <p align="center">
@@ -27,6 +25,16 @@ Quarkc，跨技术栈/原生组件构建工具。
   </a>
 </p>
 
+
+### 联系我们
+
+微信扫码，可进技术交流群
+
+<p>
+  <img width="200" src="https://github.com/hellof2e/quark-core/assets/14307551/cf207f43-8220-4355-87e5-9a45d5d09a50" />
+</p>
+
+
 ### 优秀案例
 
 |  作者   | github 地址  | 截图 / 链接
@@ -41,7 +49,7 @@ Quarkc，跨技术栈/原生组件构建工具。
 
 ## 介绍
 
-Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框架。通过它，您可以开发标准的 **跨框架组件**。
+Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工具。通过它，您可以开发标准的 **跨框架组件**。
 
 ## Why Quarkc ?
 

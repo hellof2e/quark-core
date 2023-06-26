@@ -8,11 +8,8 @@
     "dev": "pnpm run -C example dev",
     "codeformat": "prettier --write *",
     "prepare": "husky install",
-    "tag": "git push origin --tags && git push",
-    "pub": "pnpm run -C packages/core pub",
-    "release:major": "pnpm run -C packages/core release:major && pnpm run pub && pnpm run tag",
-    "release:minor": "pnpm run -C packages/core release:minor && pnpm run pub && pnpm run tag",
-    "release:patch": "pnpm run -C packages/core release:patch && pnpm run pub && pnpm run tag"
+    "build": "pnpm run -C packages/core build",
+    "changlog": "pnpm run -C packages/core changelog"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
