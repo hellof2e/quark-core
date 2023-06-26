@@ -6,9 +6,7 @@
 </p>
 <h2 align="center"> Quarkc </h2>
 <div align="center">
-
 Quarkc，跨技术栈/原生组件构建工具。
-
 </div>
 
 <p align="center">
@@ -166,6 +164,15 @@ import "your-element"
 一个略复杂的组件页面跑分截图：
 
 <img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
+
+
+### 联系我们
+
+微信扫码，可进技术交流群
+
+<p>
+  <img width="200" src="https://github.com/hellof2e/quark-core/assets/14307551/cf207f43-8220-4355-87e5-9a45d5d09a50" />
+</p>
 
 ### 文档
 
