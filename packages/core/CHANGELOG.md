@@ -1,4 +1,6 @@
 # Changelog
+### [1.0.29](https://github.com/hellof2e/quark/compare/v1.0.28...v1.0.29) (2023-06-26)
+
 ### [1.0.28](https://github.com/hellof2e/quark/compare/v1.0.27...v1.0.28) (2023-06-26)
 
 ### [1.0.27](https://github.com/hellof2e/quark/compare/v1.0.25...v1.0.27) (2023-06-26)
