@@ -9,6 +9,8 @@
 Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端框架！
 </div>
 
+哈啰集团面向 C 端 UI 组件库，支撑哈啰几乎所有 C 端 H5 项目，包括交易，支付，两轮，商城等。这是一个设计轻盈优雅的企业级 UI 组件库，可以满足日常所需所有基础组件，且支持跨技术栈运行。
+
 <p align="center">
   <a href="https://www.npmjs.com/package/quarkc"><img src="https://img.shields.io/npm/dt/quarkc.svg" alt="Total Downloads"></a>
   <a href="https://www.npmjs.com/package/quarkc">
