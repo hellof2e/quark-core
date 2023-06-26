@@ -9,8 +9,6 @@ module.exports = {
         commit.type = '⚡ Performance Improvements | 性能优化'
       } else if (commit.type === 'revert' || commit.revert) {
         commit.type = '⏪ Reverts | 回退'
-      } else if (discard) {
-        return
       } else if (commit.type === 'docs') {
         commit.type = '📝 Documentation | 文档'
       } else if (commit.type === 'style') {

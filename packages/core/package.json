@@ -1,6 +1,6 @@
 {
   "name": "quarkc",
-  "version": "1.0.32",
+  "version": "1.0.31",
   "description": "Web components quark-element",
   "type": "module",
   "main": "./lib/index.umd.js",
@@ -20,8 +20,7 @@
   ],
   "scripts": {
     "build": "rimraf lib && rollup -c",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "release": "pnpm run build && pnpm run changelog"
+    "changelog": "conventional-changelog -p angular -n './changelog-config.cjs' -i CHANGELOG.md -s"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
