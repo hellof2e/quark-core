@@ -8,8 +8,9 @@
 <div align="center">
 Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端框架！
 </div>
-
+<div align="center">
 哈啰集团前端公共组件构建工具，已支撑哈啰几乎所有 C 端 / B 端项目，包括交易，支付，两轮，商城等。
+</div>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/quarkc"><img src="https://img.shields.io/npm/dt/quarkc.svg" alt="Total Downloads"></a>
