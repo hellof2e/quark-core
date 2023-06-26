@@ -6,7 +6,7 @@
 </p>
 <h2 align="center"> Quarkc </h2>
 <div align="center">
-Quarkc，跨技术栈/原生组件构建工具。
+Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端框架！
 </div>
 
 <p align="center">
