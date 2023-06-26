@@ -61,7 +61,7 @@ jobs:
         id: package-version
 
       # 生成 Changelog
-      - name: Build
+      - name: Changelog
         run: pnpm run changlog
       
       # 提交 Changelog
