@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'packages/core/package.json'
 
@@ -64,13 +64,18 @@ jobs:
       - name: Changelog
         run: pnpm run changlog
       
-      # 提交 Changelog
+      # 提交 Changelog & Tag
       - name: Commit Changelog
-        run: git add . && git commit -m"docs:update CHANGELOG.md && git push"
-
-      # 打 tag
-      - name: Tag
-        run: git tag v${{ steps.package-version.outputs.version }} && git push origin v${{ steps.package-version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTION }}
+        run: |
+          git config --local user.email "hbf2e@hellobike.com"
+          git config --local user.name "hbf2e"
+          git add .
+          git commit -m"docs:update CHANGELOG.md"
+          git push
+          git tag v${{ steps.package-version.outputs.version }}
+          git push origin v${{ steps.package-version.outputs.version }}
 
       # 下面主要是创建 github 的release
       # 关于创建 release 的更多参数，可以查看 actions/create-release@v1
