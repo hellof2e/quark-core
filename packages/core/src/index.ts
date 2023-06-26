@@ -5,8 +5,12 @@ import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
 
-export function createRef() {
-	return { current: null };
+export interface Ref<T = any> {
+  current: T;
+}
+
+export function createRef<T = any>(): Ref<T | null> {
+  return { current: null };
 }
 
 export const Fragment: any = OriginFragment;
