@@ -1,6 +1,6 @@
 {
   "name": "quarkc",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "Web components quark-element",
   "type": "module",
   "main": "./lib/index.umd.js",
