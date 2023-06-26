@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "build": "rimraf lib && rollup -c",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "release": "pnpm run build && pnpm run changelog"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",

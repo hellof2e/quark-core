@@ -8,7 +8,7 @@
     "dev": "pnpm run -C example dev",
     "codeformat": "prettier --write *",
     "prepare": "husky install",
-    "build": "pnpm run -C packages/core build"
+    "release": "pnpm run -C packages/core release"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
