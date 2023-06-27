@@ -153,7 +153,7 @@ For more details about publishing, click [Publishing](https://quark.hellobike.co
 
 * **Cross-Technology Stack**: Components can be used in any frame or frameless environment, making your code more reusable
 * **The component size is very small and the performance is extremely high**: Because Quarkc uses the browser's native API, your component can achieve optimal performance and small size
-* Web Components, Simble, Fast!
+* Web Components, Simple, Fast!
 * Browser native API, components can be used across technology stacks
 * There is no front-end framework Runtime, and the size of Web components is extremely small
 * **High performance** design, integration of Shadow DOM and Virtual DOM
