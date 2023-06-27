@@ -1,4 +1,4 @@
-const presets = [["@babel/preset-env"], ["@babel/preset-typescript"]];
+const presets = [["@babel/preset-env"]];
 const plugins = [
   ["@babel/plugin-transform-runtime"],
   [
