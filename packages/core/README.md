@@ -155,7 +155,7 @@ import "your-element"
 
 *   **跨技术栈**：组件可以在任何框架或无框架的环境下使用，让你的代码更具复用性
 *   **组件体积极小，性能极高**：因为 Quarkc 使用的是浏览器原生 API，所以你的组件可以达到最优性能，且体积小巧
-*   Web Components, Simble, Fast！
+*   Web Components, Simple, Fast！
 *   浏览器原生API，组件可以跨技术栈使用
 *   没有前端框架 Runtime，Web 组件体积小到极致
 *   **高性能**设计，Shadow DOM 与 Virtual DOM 融合
