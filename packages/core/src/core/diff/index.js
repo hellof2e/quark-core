@@ -3,7 +3,7 @@ import { Component, getDomSibling } from '../component';
 import { Fragment } from '../create-element';
 import { diffChildren } from './children';
 import { diffProps, setProperty } from './props';
-import { assign, removeNode, slice } from '../util';
+import { removeNode, slice } from '../util';
 import options from '../options';
 
 /**
