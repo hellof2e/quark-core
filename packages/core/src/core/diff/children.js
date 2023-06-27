@@ -5,35 +5,28 @@ import { getDomSibling } from '../component';
 
 /**
  * Diff the children of a virtual node
- * @param {import('../internal').QuarkElement} parentDom The DOM element whose
+ * @param parentDom The DOM element whose
  * children are being diffed
- * @param {import('../internal').ComponentChildren[]} renderResult
- * @param {import('../internal').VNode} newParentVNode The new virtual
+ * @param renderResult
+ * @param newParentVNode The new virtual
  * node whose children should be diff'ed against oldParentVNode
- * @param {import('../internal').VNode} oldParentVNode The old virtual
+ * @param oldParentVNode The old virtual
  * node whose children should be diff'ed against newParentVNode
- * @param {object} globalContext The current context object - modified by getChildContext
  * @param {boolean} isSvg Whether or not this DOM node is an SVG node
- * @param {Array<import('../internal').QuarkElement>} excessDomChildren
- * @param {Array<import('../internal').Component>} commitQueue List of components
- * which have callbacks to invoke in commitRoot
- * @param {import('../internal').QuarkElement} oldDom The current attached DOM
+ * @param excessDomChildren
+ * @param oldDom The current attached DOM
  * element any new dom elements should be placed around. Likely `null` on first
  * render (except when hydrating). Can be a sibling DOM element when diffing
  * Fragments that have siblings. In most cases, it starts out as `oldChildren[0]._dom`.
- * @param {boolean} isHydrating Whether or not we are in hydration
  */
 export function diffChildren(
 	parentDom,
 	renderResult,
 	newParentVNode,
 	oldParentVNode,
-	globalContext,
 	isSvg,
 	excessDomChildren,
-	commitQueue,
 	oldDom,
-	isHydrating
 ) {
 	let i, j, oldVNode, childVNode, newDom, firstChildDom, refs;
 
@@ -56,7 +49,7 @@ export function diffChildren(
 		}
 
 		// If this newVNode is being reused (e.g. <div>{reuse}{reuse}</div>) in the same diff,
-		// or we are rendering a component (e.g. setState) copy the oldVNodes so it can have
+		// or we are rendering a component copy the oldVNodes so it can have
 		// it's own DOM & etc. pointers
 		else if (
 			typeof childVNode == 'string' ||
@@ -143,12 +136,9 @@ export function diffChildren(
 			parentDom,
 			childVNode,
 			oldVNode,
-			globalContext,
 			isSvg,
 			excessDomChildren,
-			commitQueue,
 			oldDom,
-			isHydrating
 		);
 
 		newDom = childVNode._dom;
@@ -208,7 +198,7 @@ export function diffChildren(
 	newParentVNode._dom = firstChildDom;
 
 	// Remove remaining oldChildren if there are any.
-	for (i = oldChildrenLength; i--; ) {
+	for (i = oldChildrenLength; i--;) {
 		if (oldChildren[i] != null) {
 			if (
 				typeof newParentVNode.type == 'function' &&
@@ -255,25 +245,6 @@ function reorderChildren(childVNode, oldDom, parentDom) {
 	}
 
 	return oldDom;
-}
-
-/**
- * Flatten and loop through the children of a virtual node
- * @param {import('../index').ComponentChildren} children The unflattened
- * children of a virtual node
- * @returns {import('../internal').VNode[]}
- */
-export function toChildArray(children, out) {
-	out = out || [];
-	if (children == null || typeof children == 'boolean') {
-	} else if (Array.isArray(children)) {
-		children.some(child => {
-			toChildArray(child, out);
-		});
-	} else {
-		out.push(children);
-	}
-	return out;
 }
 
 function placeChild(
@@ -333,7 +304,7 @@ function placeChild(
 }
 
 /**
- * @param {import('../internal').VNode} vnode
+ * @param vnode
  */
 function getLastDom(vnode) {
 	if (vnode.type == null || typeof vnode.type === 'string') {
