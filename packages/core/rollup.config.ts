@@ -5,37 +5,50 @@ import { babel } from "@rollup/plugin-babel";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import json from "@rollup/plugin-json"
+import filesize from 'rollup-plugin-filesize';
 
 const extensions = [".js", ".ts", ".tsx"];
-export default defineConfig({
-  input: "./src/index.ts",
-  output: [
-    {
-      dir: "lib",
-      entryFileNames: 'index.js',
-      format: "es",
-    },
-    {
-      dir: "lib",
-      entryFileNames: "index.umd.js",
-      format: "umd",
-      name: 'Quarkc',
-    },
-  ],
-  treeshake: true,
-  plugins: [
-    typescript(),
-    json(),
-    commonjs(),
-    nodeResolve({
-      extensions,
-      // modulesOnly: true,
-    }),
-    babel({
-      babelHelpers: "runtime",
-      exclude: "node_modules/**",
-      extensions,
-    }),
-    terser(),
-  ],
-});
+const plugins = [
+  typescript(),
+  json(),
+  commonjs(),
+  nodeResolve({
+    extensions,
+    // modulesOnly: true,
+  }),
+  babel({
+    babelHelpers: "runtime",
+    exclude: "node_modules/**",
+    extensions,
+  }),
+  terser(),
+  filesize(),
+];
+const input = "./src/index.ts";
+const dir = "lib";
+export default defineConfig([
+  {
+    input,
+    output: [
+      {
+        dir,
+        entryFileNames: 'index.js',
+        format: "es",
+      },
+    ],
+    plugins,
+    external: /@babel\/runtime/,
+  },
+  {
+    input,
+    output: [
+      {
+        dir,
+        entryFileNames: "index.umd.js",
+        format: "umd",
+        name: 'Quarkc',
+      },
+    ],
+    plugins,
+  },
+]);
