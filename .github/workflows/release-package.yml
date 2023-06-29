@@ -67,7 +67,7 @@ jobs:
       # 提交 Changelog & Tag
       - name: Commit Changelog
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTION }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKRN }}
         run: |
           git config --local user.email "sanqi_med@163.com"
           git config --local user.name "Sanqi"
