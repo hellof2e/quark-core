@@ -1,23 +1,22 @@
 /**
  * Find the closest error boundary to a thrown error and call it
  * @param {object} error The thrown value
- * @param {import('../internal').VNode} vnode The vnode that threw
+ * @param vnode The vnode that threw
  * the error that was caught (except for unmounting when this parameter
  * is the highest parent that was being unmounted)
- * @param {import('../internal').VNode} [oldVNode]
- * @param {import('../internal').ErrorInfo} [errorInfo]
+ * @param oldVNode
+ * @param errorInfo
  */
 export function _catchError(error, vnode, oldVNode, errorInfo) {
-	/** @type {import('../internal').Component} */
 	let component, ctor, handled;
 
-	for (; (vnode = vnode._parent); ) {
+	for (; (vnode = vnode._parent);) {
 		if ((component = vnode._component) && !component._processingException) {
 			try {
 				ctor = component.constructor;
 
 				if (ctor && ctor.getDerivedStateFromError != null) {
-					component.setState(ctor.getDerivedStateFromError(error));
+					Object.assign(component, ctor.getDerivedStateFromError(error))
 					handled = component._dirty;
 				}
 

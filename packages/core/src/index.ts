@@ -1,4 +1,4 @@
-import { createElement as h, Fragment as OriginFragment, VNode } from './core/create-element'
+import { createElement as h, Fragment as OriginFragment } from './core/create-element'
 import { render } from './core/render'
 import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
@@ -227,7 +227,7 @@ export class QuarkElement extends HTMLElement {
   };
 
   private _render() {
-    const newRootVNode: VNode = this.render();
+    const newRootVNode = this.render();
 
     if (newRootVNode) {
       this.rootPatch(newRootVNode);
