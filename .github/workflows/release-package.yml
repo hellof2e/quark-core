@@ -3,8 +3,8 @@ name: Release
 on:
   push:
     branches: [main]
-    paths:
-      - 'packages/core/package.json'
+    # paths:
+    #   - 'packages/core/package.json'
 
 jobs:
   release:
@@ -47,11 +47,11 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: publish
-        working-directory: 'packages/core'
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: npm publish
+      # - name: publish
+      #   working-directory: 'packages/core'
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      #   run: npm publish
 
       # 使用 tyankatsu0105/read-package-version-actions@v1 工具来读取对应的package.json 数据
       - name: Read package.json
@@ -69,8 +69,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_ACTION }}
         run: |
-          git config --local user.email "hbf2e@hellobike.com"
-          git config --local user.name "hbf2e"
+          git config --local user.email "sanqi_med@163.com"
+          git config --local user.name "Sanqi"
           git add .
           git commit -m"docs:update CHANGELOG.md"
           git push
