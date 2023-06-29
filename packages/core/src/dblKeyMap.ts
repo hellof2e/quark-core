@@ -1,9 +1,13 @@
 export default class DblKeyMap<Key1, Key2, Value> {
   private map: Map<Key1, Map<Key2, Value>> = new Map();
-
-  get(key1: Key1, key2: Key2) {
+  
+  get(key1: Key1): Map<Key2, Value>
+  get(key1: Key1, key2?: Key2): Value
+  
+  get(key1: Key1, key2?: Key2) {
     const subMap = this.map.get(key1);
     if (subMap) {
+      if (!key2) return subMap
       return subMap.get(key2);
     }
   }

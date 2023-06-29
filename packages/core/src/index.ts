@@ -77,8 +77,9 @@ export function customElement(
     class NewQuarkElement extends target {
       static get observedAttributes() {
         const attributes: string[] = [];
-        ElementProperties.forEach((elOption, constructor, elName) => {
-          if (constructor === target && elOption.observed) {
+        const targetProperties = ElementProperties.get(target);
+        targetProperties.forEach((elOption, elName) => {
+          if (elOption.observed) {
             attributes.push(elName);
           }
         });
@@ -87,9 +88,9 @@ export function customElement(
 
       static isBooleanProperty(propertyName: string) {
         let isBoolean = false;
-        ElementProperties.forEach((elOption, constructor, elName) => {
+        const targetProperties = ElementProperties.get(target);
+        targetProperties.forEach((elOption, elName) => {
           if (
-            constructor === target &&
             elOption.type === Boolean &&
             propertyName === elName
           ) {
@@ -116,14 +117,13 @@ export function customElement(
          * 重写类的属性描述符，并重写属性初始值。
          * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
          */
-        Descriptors.forEach((descriptorCreator, constructor, propertyName) => {
-          if (constructor === target) {
-            Object.defineProperty(
-              this,
-              propertyName,
-              descriptorCreator((this as any)[propertyName])
-            );
-          }
+        const targetDescriptors = Descriptors.get(Object.getPrototypeOf(this.constructor))
+        targetDescriptors.forEach((descriptorCreator, propertyName) => {
+          Object.defineProperty(
+            this,
+            propertyName,
+            descriptorCreator((this as any)[propertyName])
+          );
         });
       }
     }
@@ -210,8 +210,9 @@ export class QuarkElement extends HTMLElement {
 
   static createProperty(name: string, options: PropertyDeclaration) {
     const newOpt = Object.assign({}, defaultPropertyDeclaration, options);
-    ElementProperties.set(this, name, newOpt);
-    Descriptors.set(this, name, this.getPropertyDescriptor(name, newOpt));
+    const attributeName = options.attribute || name;
+    ElementProperties.set(this, attributeName, newOpt);
+    Descriptors.set(this, name, this.getPropertyDescriptor(attributeName, newOpt));
   }
 
   static createState(name: string) {
