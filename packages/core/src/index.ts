@@ -78,26 +78,31 @@ export function customElement(
       static get observedAttributes() {
         const attributes: string[] = [];
         const targetProperties = ElementProperties.get(target);
-        targetProperties.forEach((elOption, elName) => {
-          if (elOption.observed) {
-            attributes.push(elName);
-          }
-        });
+        if (targetProperties) {
+          targetProperties.forEach((elOption, elName) => {
+            if (elOption.observed) {
+              attributes.push(elName);
+            }
+          });
+        }
         return attributes;
       }
 
       static isBooleanProperty(propertyName: string) {
         let isBoolean = false;
         const targetProperties = ElementProperties.get(target);
-        targetProperties.forEach((elOption, elName) => {
-          if (
-            elOption.type === Boolean &&
-            propertyName === elName
-          ) {
-            isBoolean = true;
-            return isBoolean;
-          }
-        });
+        if (targetProperties) {
+          targetProperties.forEach((elOption, elName) => {
+            if (
+              elOption.type === Boolean &&
+              propertyName === elName
+            ) {
+              isBoolean = true;
+              return isBoolean;
+            }
+          });
+        }
+        
         return isBoolean;
       }
 
@@ -118,13 +123,16 @@ export function customElement(
          * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
          */
         const targetDescriptors = Descriptors.get(Object.getPrototypeOf(this.constructor))
-        targetDescriptors.forEach((descriptorCreator, propertyName) => {
-          Object.defineProperty(
-            this,
-            propertyName,
-            descriptorCreator((this as any)[propertyName])
-          );
-        });
+        if (targetDescriptors) {
+          targetDescriptors.forEach((descriptorCreator, propertyName) => {
+            Object.defineProperty(
+              this,
+              propertyName,
+              descriptorCreator((this as any)[propertyName])
+            );
+          });
+        }
+        
       }
     }
 
