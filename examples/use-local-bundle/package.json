@@ -1,0 +1,26 @@
+{
+  "name": "use-local-bundle",
+  "version": "0.0.1",
+  "scripts": {
+    "prepare-component": "cd ../component && npm run build",
+    "postprepare-component": "copyfiles -f ../component/lib/*.js ./src/lib",
+    "start": "npm run prepare-component && vite --open"
+  },
+  "type": "module",
+  "keywords": [
+    "frontend",
+    "quark",
+    "web components"
+  ],
+  "dependencies": {
+    "quarkc": "^1.0.17"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "copyfiles": "^2.4.1",
+    "vite": "^4.3.0"
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  }
+}
