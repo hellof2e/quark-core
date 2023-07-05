@@ -10,4 +10,4 @@ npm start
 ```
 
 ## tip
-By default you should introduce the umd bundle. Because the component's quarkc dependency is by default externalizede, you should introduce quarkc first before introducing component's CDN.
+By default you should introduce the umd bundle. Because the component's quarkc dependency is by default externalized, you should introduce quarkc first before introducing component's CDN.
