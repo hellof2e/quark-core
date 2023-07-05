@@ -2,9 +2,8 @@
   "name": "use-local-bundle",
   "version": "0.0.0",
   "scripts": {
-    "prepare-component": "cd ../component && npm run build",
-    "postprepare-component": "copyfiles -f ../component/lib/*.js ./src/lib",
-    "start": "npm run prepare-component && vite --open"
+    "preinstall": "cd ../component && npm run build && npm pack",
+    "start": "vite --open"
   },
   "type": "module",
   "keywords": [
@@ -19,5 +18,9 @@
   },
   "engines": {
     "node": ">=14.18.0"
+  },
+  "dependencies": {
+    "my-component": "file:../component/my-component-0.0.0.tgz",
+    "quarkc": "^1.0.33"
   }
 }

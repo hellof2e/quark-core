@@ -1,6 +1,6 @@
 简体中文 | [English](./README.en-US.md)
 
-# 使用本地Quarkc组件打包产物示例
+# 使用本地Quarkc包示例
 
 ## 运行
 
@@ -11,5 +11,7 @@ npm i
 # 这么做是为了避免分发的单个组件中包含不同版本的quarkc代码，从而影响打包工具的tree-shaking
 # 以减小应用最终的打包体积
 npm i quarkc --save
+# 或者在package.json中手动列出本地依赖
+npm i ../component/my-component-0.0.0.tgz --save
 npm start
 ```

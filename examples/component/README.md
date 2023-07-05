@@ -1,6 +1,6 @@
 简体中文 | [English](./README.en-US.md)
 
-# Quark组件示例
+# Quarkc组件示例
 
 ## 运行
 

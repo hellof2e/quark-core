@@ -1,6 +1,6 @@
 {
   "name": "my-component",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "scripts": {
     "dev": "npm run start",
     "start": "vite --open",
