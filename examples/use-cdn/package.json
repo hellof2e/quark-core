@@ -1,5 +1,5 @@
 {
-  "name": "use-local-bundle",
+  "name": "use-cdn",
   "version": "0.0.0",
   "scripts": {
     "start": "vite --open"
