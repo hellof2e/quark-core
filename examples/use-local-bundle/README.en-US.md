@@ -13,3 +13,6 @@ npm i
 npm i quarkc --save
 npm start
 ```
+
+## extra description
+The `src/lib` directory is directly copied from the component example (the `lib` directory generated under component example with command `npm run build`)。

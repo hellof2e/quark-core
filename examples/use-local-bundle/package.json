@@ -2,9 +2,7 @@
   "name": "use-local-bundle",
   "version": "0.0.0",
   "scripts": {
-    "prepare-component": "cd ../component && npm run build",
-    "postprepare-component": "copyfiles -f ../component/lib/*.js ./src/lib",
-    "start": "npm run prepare-component && vite --open"
+    "start": "vite --open"
   },
   "type": "module",
   "keywords": [
@@ -14,7 +12,6 @@
   ],
   "devDependencies": {
     "@types/node": "^20.2.5",
-    "copyfiles": "^2.4.1",
     "vite": "^4.3.0"
   },
   "engines": {

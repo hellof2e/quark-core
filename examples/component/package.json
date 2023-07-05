@@ -10,12 +10,12 @@
   "type": "module",
   "main": "./lib/index.umd.js",
   "module": "./lib/index.js",
-  "types": "./lib/types/index.d.ts",
+  "types": "./lib/index.d.ts",
   "exports": {
     ".": {
       "import": "./lib/index.js",
       "require": "./lib/index.umd.js",
-      "types": "./lib/types/index.d.ts"
+      "types": "./lib/index.d.ts"
     }
   },
   "keywords": [

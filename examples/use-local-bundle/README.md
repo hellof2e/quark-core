@@ -13,3 +13,6 @@ npm i
 npm i quarkc --save
 npm start
 ```
+
+## 额外说明
+`src/lib`目录是直接从component示例中拷贝过来的（在component示例中执行`npm run build`命令生成的`lib`目录）。

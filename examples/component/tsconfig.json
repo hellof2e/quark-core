@@ -9,7 +9,7 @@
     "jsxFragmentFactory": "QuarkElement.Fragment",
     "sourceMap": false,
     "declaration": true,
-    "declarationDir": "lib/types",
+    "declarationDir": "lib",
     "emitDeclarationOnly": true,
     "removeComments": true,
     "resolveJsonModule": true,
