@@ -1,5 +1,6 @@
 import { createElement as h, Fragment as OriginFragment } from './core/create-element'
 import { render } from './core/render'
+import { isFunction } from './core/util'
 import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
@@ -171,14 +172,14 @@ export class QuarkElement extends HTMLElement {
               return defaultValue;
             }
           }
-          if (typeof options.converter === "function") {
+          if (isFunction(options.converter)) {
             val = options.converter(val, options.type) as string;
           }
           return val;
         },
         set(this: QuarkElement, value: string | boolean | null) {
           let val = value as string;
-          if (typeof options.converter === "function") {
+          if (isFunction(options.converter)) {
             val = options.converter(value, options.type) as string;
           }
 
@@ -318,7 +319,7 @@ export class QuarkElement extends HTMLElement {
      */
     this._render();
 
-    if (typeof this.componentDidMount === "function") {
+    if (isFunction(this.componentDidMount)) {
       this.componentDidMount();
     }
   }
@@ -326,14 +327,14 @@ export class QuarkElement extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: string, value: string) {
     // 因为 React 的属性变更并不会触发 set，此时如果 boolean 值变更，这里的 value 会是字符串，组件内部通过 get 操作可以获取到正确的类型
     const newValue = this[name] || value;
-    if (typeof this.shouldComponentUpdate === "function") {
+    if (isFunction(this.shouldComponentUpdate)) {
       if (!this.shouldComponentUpdate(name, oldValue, newValue)) {
         return;
       }
     }
     this._render();
 
-    if (typeof this.componentDidUpdate === "function") {
+    if (isFunction(this.componentDidUpdate)) {
       this.componentDidUpdate(name, oldValue, newValue);
     }
 
@@ -345,7 +346,7 @@ export class QuarkElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    if (typeof this.componentWillUnmount === "function") {
+    if (isFunction(this.componentWillUnmount)) {
       this.componentWillUnmount();
     }
 
