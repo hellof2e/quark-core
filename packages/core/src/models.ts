@@ -15,4 +15,8 @@ export interface PropertyDeclaration {
    * 从外部获取属性时的值转换方法
    */
   readonly converter?: converterFunction;
+  /**
+   * 创建内部属性名和外部属性名不同时，可以通过改属性指定外部属性名称
+   */
+  readonly attribute?: string;
 }
