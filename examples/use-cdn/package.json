@@ -1,8 +1,7 @@
 {
-  "name": "use-local-package",
+  "name": "use-local-bundle",
   "version": "0.0.0",
   "scripts": {
-    "preinstall": "cd ../component && npm run build && npm pack",
     "start": "vite --open"
   },
   "type": "module",
