@@ -1,0 +1,20 @@
+{
+  "name": "use-local-bundle",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "vite --open"
+  },
+  "type": "module",
+  "keywords": [
+    "frontend",
+    "quark",
+    "web components"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "vite": "^4.3.0"
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  }
+}
