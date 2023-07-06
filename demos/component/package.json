@@ -2,7 +2,7 @@
   "name": "my-component",
   "version": "0.0.0",
   "scripts": {
-    "dev": "npm run start",
+    "dev": "npm start",
     "start": "vite --open",
     "build": "rimraf lib && vite build --config vite.config.build.ts",
     "prepublishOnly": "npm run build"
