@@ -24,4 +24,13 @@ export function removeNode(node) {
 	if (parentNode) parentNode.removeChild(node);
 }
 
+/**
+ * Checks if `value` is a `function`.
+ * @param {X} value The value to check
+ * @returns {X is ((...args: any[]) => any)} Returns `true` if `value` is a function, else `false`.
+ */
+export function isFunction(value) {
+	return typeof value === "function";
+}
+
 export const slice = EMPTY_ARR.slice;
