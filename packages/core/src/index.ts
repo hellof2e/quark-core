@@ -114,7 +114,7 @@ export function customElement(
 
         if (shadowRoot) {
           // Create Css
-          if (typeof CSSStyleSheet !== 'undefined' && shadowRoot.adoptedStyleSheets) {
+          if (typeof CSSStyleSheet === "function" && shadowRoot.adoptedStyleSheets) {
             // Use constructed style first
             const sheet = new CSSStyleSheet();
             sheet.replaceSync(style);
