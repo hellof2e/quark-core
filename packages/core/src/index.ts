@@ -4,7 +4,7 @@ import { isFunction } from './core/util'
 import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
-import {version} from '../package.json'
+import { version } from '../package.json'
 
 export interface Ref<T = any> {
   current: T;
@@ -16,8 +16,8 @@ export function createRef<T = any>(): Ref<T | null> {
 
 export const Fragment: any = OriginFragment;
 
-if(~location.href.indexOf('localhost')) {
-  console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
+if (~location.href.indexOf('localhost')) {
+  console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px', 'Running in dev mode.')
 }
 
 const isEmpty = (val: unknown) => val == null || val === "";
@@ -30,7 +30,7 @@ const defaultConverter: converterFunction = (value, type?) => {
       newValue = isEmpty(value) ? value : Number(value);
       break;
     case Boolean:
-      newValue = !([null, "false", false, undefined].indexOf(value) > -1);
+      newValue = ![null, "false", false, undefined, 0, '0'].includes(value);
       break;
   }
   return newValue;
