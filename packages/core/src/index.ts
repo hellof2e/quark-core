@@ -114,9 +114,17 @@ export function customElement(
 
         if (shadowRoot) {
           // Create Css
-          const styleEl = document.createElement("style");
-          styleEl.innerHTML = style;
-          shadowRoot.append(styleEl);
+          if (typeof CSSStyleSheet === "function" && shadowRoot.adoptedStyleSheets) {
+            // Use constructed style first
+            const sheet = new CSSStyleSheet();
+            sheet.replaceSync(style);
+            shadowRoot.adoptedStyleSheets = [sheet];
+          } else {
+            // Fallback
+            const styleEl = document.createElement("style");
+            styleEl.innerHTML = style;
+            shadowRoot.append(styleEl);
+          }
         }
 
         /**
