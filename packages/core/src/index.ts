@@ -4,7 +4,7 @@ import { isFunction } from './core/util'
 import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
-import {version} from '../package.json'
+import { version } from '../package.json'
 
 export interface Ref<T = any> {
   current: T;
@@ -16,11 +16,12 @@ export function createRef<T = any>(): Ref<T | null> {
 
 export const Fragment: any = OriginFragment;
 
-if(~location.href.indexOf('localhost')) {
-  console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
+if (~location.href.indexOf('localhost')) {
+  console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px', 'Running in dev mode.')
 }
 
-const isEmpty = (val: unknown) => !(val || val === false || val === 0);
+const isEmpty = (val: unknown) => val == null || val === "";
+const isBooleanEmpty = (val: unknown) => val == null;
 
 const defaultConverter: converterFunction = (value, type?) => {
   let newValue = value;
@@ -29,7 +30,7 @@ const defaultConverter: converterFunction = (value, type?) => {
       newValue = isEmpty(value) ? value : Number(value);
       break;
     case Boolean:
-      newValue = !([null, "false", false, undefined].indexOf(value) > -1);
+      newValue = ![null, "false", false, undefined].includes(value);
       break;
   }
   return newValue;
@@ -166,17 +167,9 @@ export class QuarkElement extends HTMLElement {
           let val = this.getAttribute(name);
 
           if (!isEmpty(defaultValue)) {
-            // 判断val是否为空值
-            // const isEmpty = () => !(val || val === false || val === 0)
             // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
-            // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
-            //
-            // 条件表达式推导过程
-            // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
-            // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
-            // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
-            // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
-            if (isEmpty(val) && (options.type !== Boolean || val !== "")) {
+            // 当类型为Boolean时，通过isBooleanEmpty方法判断val是否为空值（认定空字符串不为空值）
+            if ((options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isBooleanEmpty(val))) {
               return defaultValue;
             }
           }
