@@ -7,7 +7,7 @@
 <h2 align="center"> Quarkc </h2>
 <div align="center">
 
-Quarkc，跨技术栈/原生组件构建工具。
+Quarkc, a cross technology stack / native component building tool.
 
 </div>
 
@@ -99,7 +99,7 @@ All kinds of tech stacks work.
 <my-element count="count" />
 
 <!-- vue -->
-<my-element:count="count" />
+<my-element :count="count" />
 
 <!-- react -->
 <my-element count={count} />
