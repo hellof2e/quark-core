@@ -63,7 +63,7 @@ Let web components implement technology stack independent!
 
 1. Engineering installation
 ```bash
-npx create-quark-app create project-name
+npm create quarkc@latest
 cd project-name
 
 npm install

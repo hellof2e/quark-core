@@ -65,7 +65,7 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框
 
 1. 工程安装
 ```bash
-npx create-quark-app create project-name
+npm create quarkc@latest
 cd project-name
 
 npm install

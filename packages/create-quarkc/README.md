@@ -1,18 +1,42 @@
-# Create-quarkc
+# create-quarkc
 
-通过该 CLI，您可以使用 quarkc 来开发：跨技术栈/原生Web组件或开发不依赖任何前端框架（Vue/React等）的 **独立 Web 应用(Bate)**。
+If you want to create cross-framework/technology stack components, or develop standalone web apps that don't depend on any front-end framework (Vue/React, etc.).
 
-- [开发独立组件](./COMPONENT.dev.md)
-- [开发独立应用](./APP.dev.md)
+English | [简体中文](./README.md)
 
-简体中文 | [English](./README.en-US.md)
+## Scaffolding Your First Vite Project
 
-## 安装并创建
+> **Compatibility Note:**
+> Quarkc requires [Node.js](https://nodejs.org/en/) version 14.18+, 16+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
-```js
-npm create quarkc
+
+With NPM:
+
+```bash
+$ npm create quarkc@latest
 ```
 
-## 文档
+With Yarn:
 
-完整文档，请访问 [quark.hellobike.com](https://quark.hellobike.com)
+```bash
+$ yarn create quarkc
+```
+
+With PNPM:
+
+```bash
+$ pnpm create quarkc
+```
+
+Then follow the prompts!
+
+Currently supported template presets include:
+
+- `quarkc-app`
+- `quarkc-app-ts`
+- `quarkc-component`
+- `quarkc-component-ts`
+
+### Documentation
+
+For full documentation, visit [quark.hellobike.com](https://quark.hellobike.com)

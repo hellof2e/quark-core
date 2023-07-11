@@ -1,28 +1,41 @@
-# Quark CLI
+# create-quarkc
 
-Using this CLI, you can use it to create cross-framework/technology stack components, or develop standalone web apps that don't depend on any front-end framework (Vue/React, etc.).
+If you want to create cross-framework/technology stack components, or develop standalone web apps that don't depend on any front-end framework (Vue/React, etc.).
 
 English | [简体中文](./README.md)
 
-### Installation
+## Scaffolding Your First Vite Project
 
-> NOTE: Vite requires Node.js version 14.18+, 16+.
+> **Compatibility Note:**
+> Quarkc requires [Node.js](https://nodejs.org/en/) version 14.18+, 16+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
+
+With NPM:
+
+```bash
+$ npm create quarkc@latest
 ```
-npm create quarkc
+
+With Yarn:
+
+```bash
+$ yarn create quarkc
 ```
 
-### Usage 1. Develop cross-technology stack components
+With PNPM:
 
-And you can publish as npm package to share component code with others.
+```bash
+$ pnpm create quarkc
+```
 
-[Develop cross-technology stack components](https://github.com/hellof2e/quark-cli/blob/main/template/application/component/README.md)
+Then follow the prompts!
 
-### Usage 2. Develop independent web applications
+Currently supported template presets include:
 
-Work in progress.
-
-[You-Dont-Need-React-Or-Vue](https://github.com/hellof2e/You-Dont-Need-React-Or-Vue)
+- `quarkc-app`
+- `quarkc-app-ts`
+- `quarkc-component`
+- `quarkc-component-ts`
 
 ### Documentation
 
