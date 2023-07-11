@@ -30,7 +30,7 @@ const defaultConverter: converterFunction = (value, type?) => {
       newValue = isEmpty(value) ? value : Number(value);
       break;
     case Boolean:
-      newValue = ![null, "false", false, undefined, 0, '0'].includes(value);
+      newValue = ![null, "false", false, undefined].includes(value);
       break;
   }
   return newValue;
