@@ -5,7 +5,7 @@
   "author": "hellof2e",
   "license": "MIT",
   "scripts": {
-    "dev": "pnpm run -C example dev",
+    "dev": "pnpm run -C demo dev",
     "codeformat": "prettier --write *",
     "prepare": "husky install",
     "build": "pnpm run -C packages/core build",
