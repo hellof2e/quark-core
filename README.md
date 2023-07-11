@@ -176,7 +176,57 @@ import "your-element"
 
 一个略复杂的组件页面跑分截图：
 
-<img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
+<img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">  
+
+### 单元测试
+我们使用了 [@open-wc/testing](https://www.npmjs.com/package/@open-wc/testing) 来进行单元测试
+以下是我们示例组件的 <my-component /> 的单元测试
+
+```js
+import { expect, fixture } from "@open-wc/testing";
+import "./lib/index";
+
+const data = {
+  count: 0,
+  text: '测试'
+};
+let el;
+
+describe("<my-component />", async () => {
+  it("property text exist", async () => {
+    el = await fixture(
+      `<my-component
+        text=${data.text}
+        >
+        </my-component>`
+    );
+    expect(el.text).to.equal(data.text);
+  });
+  
+  it("property count exist", async () => {
+    el = await fixture(
+      `<my-component
+          count=${data.count}
+        >
+        </my-component>`
+    );
+    expect(el.count).to.equal(data.count);
+  });
+  
+  it("property count changed", async () => {
+    el = await fixture(
+      `<my-component
+        count=${data.count}
+        >
+        </my-component>`
+    );
+    el.add()
+    expect(el.count).to.equal(data.count + 1);
+  });
+})
+```
+
+更多复杂示例参考我们 [quarkd](https://github.com/hellof2e/quark-design) 组件库仓库
 
 ### 文档
 
