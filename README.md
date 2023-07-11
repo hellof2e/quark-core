@@ -76,7 +76,7 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工
 
 1. 工程安装
 ```bash
-npx create-quark-app create project-name
+npm create quarkc@latest
 cd project-name
 
 npm install
@@ -176,7 +176,7 @@ import "your-element"
 
 一个略复杂的组件页面跑分截图：
 
-<img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">  
+<img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
 
 ### 单元测试
 我们使用了 [@open-wc/testing](https://www.npmjs.com/package/@open-wc/testing) 来进行单元测试
@@ -202,7 +202,7 @@ describe("<my-component />", async () => {
     );
     expect(el.text).to.equal(data.text);
   });
-  
+
   it("property count exist", async () => {
     el = await fixture(
       `<my-component
@@ -212,7 +212,7 @@ describe("<my-component />", async () => {
     );
     expect(el.count).to.equal(data.count);
   });
-  
+
   it("property count changed", async () => {
     el = await fixture(
       `<my-component
