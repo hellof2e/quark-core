@@ -4,7 +4,7 @@ If you want to create cross-framework/technology stack components, or develop st
 
 English | [简体中文](./README.md)
 
-## Scaffolding Your First Vite Project
+## Scaffolding Your First Quarkc Project
 
 > **Compatibility Note:**
 > Quarkc requires [Node.js](https://nodejs.org/en/) version 14.18+, 16+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
