@@ -1,0 +1,10 @@
+declare module '*.css';
+declare module '*.css?inline';
+declare module '*.less';
+declare module '*.less?inline';
+declare module "*.png";
+declare module "*.svg";
+declare module "*.jpeg";
+declare module "*.jpg";
+declare module "*.md";
+declare module "*.tsx";

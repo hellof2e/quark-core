@@ -1,0 +1,95 @@
+.header {
+  height: 72px;
+  z-index: 30;
+  top: 0px;
+  position: relative;
+  min-width: 860px;
+}
+.sticky {
+    position: sticky;
+}
+.header>div {
+    margin-left: auto;
+    margin-right: auto;
+}
+.container {
+    margin: 0 auto;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+		border-bottom: 1px solid var(--line-light);
+    background-color: var(--main-bg);
+}
+.toper-bar,
+.left-bar {
+    display: flex;
+    align-items: center;
+}
+.left-bar a {
+    color: rgb(107 114 128);
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;   
+}
+.header .left-bar a img {
+  height: 2rem;
+}
+.left-bar span {
+    display: flex;
+    margin-right: 2rem;
+    align-items: center;
+    color: rgb(156 163 175);
+}
+.menu-group {
+    display: flex;
+    gap: 2rem;
+}
+.nav-item a {
+  font-size: 14px;
+	color: var(--text-font-color-light);
+	font-family: var(--font-family-base);
+  text-decoration: none;
+}
+.nav-item a:hover {
+  color: var(--brand-color);
+}
+.translations,
+.appearance,
+.social-links {
+  display: flex;
+}
+.translations:before,
+.appearance:before,
+.social-links:before{
+    margin: 0 16px;
+    width: 1px;
+    height: 24px;
+    background-color: rgba(60, 60, 67, 0.12);
+    content: "";
+}
+.social-links,
+.translate-lang {
+  display: flex;
+  align-items: center;
+}
+
+svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.social-links a, .translate-lang a {
+  width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3c3c43b3;
+}
+
+.social-links a:hover svg, .translate-lang a:hover svg {
+  color: #3c3c43eb;
+  transition: color .25s;
+}

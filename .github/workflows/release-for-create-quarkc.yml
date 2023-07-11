@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/create-quarkc/package.json'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: false
+
+      # Use cache to reduce installation time
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
+
+      - name: publish
+        working-directory: 'packages/create-quarkc'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npm publish
+
+      # 使用 tyankatsu0105/read-package-version-actions@v1 工具来读取对应的package.json 数据
+      - name: Read package.json
+        uses: tyankatsu0105/read-package-version-actions@v1
+        with:
+          path: './packages/create-quarkc'
+        id: package-version
+
+      # # 生成 Changelog
+      # - name: Changelog
+      #   run: pnpm run changlog
+
+      # 提交 Tag
+      - name: create git tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTION }}
+        run: |
+          git config --local user.email "sanqi_med@163.com"
+          git config --local user.name "Sanqi"
+          git tag v${{ steps.package-version.outputs.version }}
+          git push origin v${{ steps.package-version.outputs.version }}
+
+      # 下面主要是创建 github 的release
+      # 关于创建 release 的更多参数，可以查看 actions/create-release@v1
+      - name: Create Release for Tag
+        id: release_tag
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTION }} # 这块需要用到 github的token，因为需要对分之进行代码推送
+        with:
+          tag_name: v${{ steps.package-version.outputs.version }}
+          release_name: Release v${{ steps.package-version.outputs.version }}
+          prerelease: false # 是否为预发布版本
+          body: |
+            请点击查看 [更新日志](https://github.com/hellof2e/quark-core/blob/main/packages/core/CHANGELOG.md).
