@@ -9,7 +9,7 @@
     "codeformat": "prettier --write *",
     "build": "pnpm -r --filter='./packages/create-quarkc' run build",
     "changlog": "pnpm run -C packages/core changelog",
-    "quarkcore:build": "pnpm run -C packages/core build"
+    "build4Core": "pnpm run -C packages/core build"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
