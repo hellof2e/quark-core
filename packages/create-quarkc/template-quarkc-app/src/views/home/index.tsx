@@ -3,11 +3,11 @@ import style from "./index.less?inline"
 
 @customElement({ tag: "app-home", style })
 class Home extends QuarkElement {
-  // https://quark.hellobike.com/#/zh-CN/docs/properties
+  // https://quarkc.hellobike.com/#/zh-CN/docs/properties
   @state()
   msg = 'Welcome to Your Quark App'
 
-  // https://quark.hellobike.com/#/zh-CN/docs/lifecycle
+  // https://quarkc.hellobike.com/#/zh-CN/docs/lifecycle
   // componentDidMount() {}
   // shouldComponentUpdate() {}
   // componentDidUpdate() {}
@@ -22,7 +22,7 @@ class Home extends QuarkElement {
           <p>
             For a guide and recipes on how to configure / customize this project, <br />
             check out the
-            <a href="https://quark.hellobike.com" target="_blank" rel="noopener"> Quarkc documentation</a>.
+            <a href="https://quarkc.hellobike.com" target="_blank" rel="noopener"> Quarkc documentation</a>.
           </p>
           <h3>Route</h3>
           <ul>

@@ -34,7 +34,7 @@ let l = class extends r {
         null,
         r.h(
           "a",
-          { href: "https://quark.hellobike.com", target: "_blank" },
+          { href: "https://quarkc.hellobike.com", target: "_blank" },
           r.h("img", { src: "https://quark-design.hellobike.com/assets/quark-logo.f9a6a307.png", class: "logo", alt: "quark logo" })
         )
       ),

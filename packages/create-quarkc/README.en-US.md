@@ -39,4 +39,4 @@ Currently supported template presets include:
 
 ### Documentation
 
-For full documentation, visit [quark.hellobike.com](https://quark.hellobike.com)
+For full documentation, visit [quarkc.hellobike.com](https://quarkc.hellobike.com)

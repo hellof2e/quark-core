@@ -32,7 +32,7 @@ npm run build
 
 ## 文档
 
-完整文档，请访问 [quark.hellobike.com](https://quark.hellobike.com)
+完整文档，请访问 [quarkc.hellobike.com](https://quarkc.hellobike.com)
 
 
 

@@ -1,6 +1,6 @@
 
 <p align="center">
-  <a href="https://quark.hellobike.com/">
+  <a href="https://quarkc.hellobike.com/">
     <img src="https://github.com/hellof2e/quark-core/assets/14307551/5968d0ed-6d60-4b13-b05b-1e9ba30a5708" >
   </a>
 </p>
@@ -33,7 +33,7 @@ Quarkc，跨技术栈/原生组件构建工具。
 | ---- | ---- | ----- |
 | @yuhaiyang1 | https://github.com/yuhaiyang1/quarkc-time | https://unpkg.com/quark-timer@0.0.2/demo.html |
 | @khno | https://github.com/khno/quark-element-demo-celebrate | https://unpkg.com/quarkc-demo-celebrate@latest/demo.html |
-| @hellof2e | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark-core/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573 ) https://quark.hellobike.com/#/ |
+| @hellof2e | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark-core/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573 ) https://quarkc.hellobike.com/#/ |
 | @xsf0105 | https://github.com/xsf0105/dark-light-element | https://unpkg.com/dark-light-element@latest/demo.html |
 | @dyf19118 | https://github.com/dyf19118/quark-ui-rate | ![image](https://github.com/hellof2e/quark-cli/assets/14307551/e11e6c49-4c18-4bca-adc3 -01a7198ab2e2) |
 | @hellof2e | https://github.com/hellof2e/quark-doc-home | ![1686575964690](https://github.com/hellof2e/quark-core/assets/14307551/9618427c-916b-4dfd-b28b-0e8e0f6ce744 ) |
@@ -147,7 +147,7 @@ Also available as ES Module (recommended)
 import "your-element"
 ```
 
-For more details about publishing, click [Publishing](https://quark.hellobike.com/#/zh-CN/docs/publishing)
+For more details about publishing, click [Publishing](https://quarkc.hellobike.com/#/zh-CN/docs/publishing)
 
 ### Features
 
@@ -167,4 +167,4 @@ Screenshot of a slightly complex component page running score:
 
 ### Documentation
 
-For full documentation, please visit [quark.hellobike.com](https://quark.hellobike.com)
+For full documentation, please visit [quarkc.hellobike.com](https://quarkc.hellobike.com)

@@ -37,4 +37,4 @@ import "my-component/lib";
 <my-component count="0" />;
 ```
 
-详细文档，请访问：https://quark.hellobike.com/#/zh-CN/docs/publishing
+详细文档，请访问：https://quarkc.hellobike.com/#/zh-CN/docs/publishing
