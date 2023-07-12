@@ -75,10 +75,14 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工
 ### 组件起手架模版
 
 1. 工程安装
+
+创建模版
 ```bash
 npm create quarkc@latest
-cd project-name
+```
 
+启动工程
+```bash
 npm install
 npm start
 ```
