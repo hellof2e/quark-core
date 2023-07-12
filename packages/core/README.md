@@ -41,7 +41,7 @@ Quarkc，跨技术栈/原生组件构建工具。
 
 ## 介绍
 
-Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 框架。通过它，您可以开发标准的 **跨框架组件**。
+Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工具（jsx + web components）。通过它，您可以开发标准的**跨框架组件** 或 **独立前端应用**（脱离框架的原生web应用，性能可达百分百💯）。
 
 ## Why Quarkc ?
 
