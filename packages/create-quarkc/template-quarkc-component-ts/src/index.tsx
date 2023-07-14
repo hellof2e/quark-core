@@ -1,12 +1,6 @@
 import { QuarkElement, property, customElement } from "quarkc"
 import style from "./index.less?inline"
 
-declare global {
-  interface HTMLElementTagNameMap {
-    "my-component": MyComponent;
-  }
-}
-
 @customElement({ tag: "my-component", style })
 class MyComponent extends QuarkElement {
   @property({ type: Number }) // 外部属性
@@ -46,5 +40,11 @@ class MyComponent extends QuarkElement {
         </div>
       </>
     );
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "my-component": MyComponent
   }
 }
