@@ -210,16 +210,18 @@ export class QuarkElement extends HTMLElement {
   // 内部属性装饰器
   protected static getStateDescriptor(name: string): () => PropertyDescriptor {
     return (defaultValue?: any) => {
+      console.log(defaultValue, 'defaultValue')
       let _value = defaultValue;
       return {
         get(this: QuarkElement): any {
           return _value;
         },
         set(this: QuarkElement, value: string | boolean | null) {
+          const oldValue = _value
           _value = value;
           this._render();
           if (isFunction(this.componentDidUpdate)) {
-            this.componentDidUpdate(name, _value,value);
+            this.componentDidUpdate(name, defaultValue,value);
           }
         },
         configurable: true,
