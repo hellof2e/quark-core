@@ -279,7 +279,7 @@ export class QuarkElement extends HTMLElement {
   }
 
   // 内部属性装饰器
-  protected static getStateDescriptor(): () => PropertyDescriptor {
+  protected static getStateDescriptor(name: string): () => PropertyDescriptor {
     return (defaultValue?: any) => {
       let _value = defaultValue;
       let dep: Dep | undefined;
@@ -290,9 +290,13 @@ export class QuarkElement extends HTMLElement {
           return _value;
         },
         set(this: QuarkElement, value: string | boolean | null) {
+          const oldValue = _value
           _value = value;
           getDep().notify();
           this._render();
+          if (isFunction(this.componentDidUpdate)) {
+            this.componentDidUpdate(name, oldValue,value);
+          }
         },
         configurable: true,
         enumerable: true,
@@ -310,7 +314,7 @@ export class QuarkElement extends HTMLElement {
   }
 
   static createState(name: string) {
-    Descriptors.set(this, name, this.getStateDescriptor());
+    Descriptors.set(this, name, this.getStateDescriptor(name));
   }
 
   static computed(propertyKey: string, descriptor: PropertyDescriptor) {
@@ -416,7 +420,7 @@ export class QuarkElement extends HTMLElement {
     return oldValue !== newValue;
   }
 
-  componentDidUpdate(propName: string, oldValue: string, newValue: string) {}
+  componentDidUpdate(propName: string, oldValue: any, newValue: any) {}
 
   /**
    * 组件的 render 方法，
