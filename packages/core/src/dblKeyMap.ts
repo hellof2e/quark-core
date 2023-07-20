@@ -1,41 +1,41 @@
-export default class DblKeyMap<Key1, Key2, Value> {
-  private map: Map<Key1, Map<Key2, Value>> = new Map();
+export default class DblKeyMap<Key, SubKey, Value> {
+  private map: Map<Key, Map<SubKey, Value>> = new Map();
   
-  get(key1: Key1): Map<Key2, Value>
-  get(key1: Key1, key2: Key2): Value
+  get(key: Key): Map<SubKey, Value> | undefined
+  get(key: Key, subKey: SubKey): Value
   
-  get(key1: Key1, key2?: Key2) {
-    const subMap = this.map.get(key1);
+  get(key: Key, subKey?: SubKey) {
+    const subMap = this.map.get(key);
     if (subMap) {
-      if (!key2) return subMap
-      return subMap.get(key2);
+      if (!subKey) return subMap
+      return subMap.get(subKey);
     }
   }
 
-  set(key1: Key1, key2: Key2, value: Value) {
-    let subMap = this.map.get(key1);
+  set(key: Key, subKey: SubKey, value: Value) {
+    let subMap = this.map.get(key);
     if (!subMap) {
       subMap = new Map();
-      this.map.set(key1, subMap);
+      this.map.set(key, subMap);
     }
-    subMap?.set(key2, value);
+    subMap?.set(subKey, value);
   }
 
-  forEach(cb: (value: Value, key1: Key1, key2: Key2) => void) {
-    this.map.forEach((subMap, key1) => {
-      subMap.forEach((value, key2) => {
-        cb(value, key1, key2);
+  forEach(cb: (value: Value, key: Key, subKey: SubKey) => void) {
+    this.map.forEach((subMap, key) => {
+      subMap.forEach((value, subKey) => {
+        cb(value, key, subKey);
       });
     });
   }
 
-  delete(key1: Key1) {
-    this.map.delete(key1);
+  delete(key: Key) {
+    this.map.delete(key);
   }
 
   deleteAll() {
-    this.map.forEach((_, key1) => {
-      this.map.delete(key1);
+    this.map.forEach((_, key) => {
+      this.map.delete(key);
     });
   }
 }

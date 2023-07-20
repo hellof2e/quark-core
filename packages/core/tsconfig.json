@@ -7,7 +7,7 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": false,
+    "strict": true,
     "jsx": "react",
     "jsxFactory": "QuarkElement.h",
     "sourceMap": false,

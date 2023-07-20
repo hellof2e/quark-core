@@ -5,6 +5,7 @@ import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
+import { Dep, Watcher } from './computed';
 
 export interface Ref<T = any> {
   current: T;
@@ -16,7 +17,7 @@ export function createRef<T = any>(): Ref<T | null> {
 
 export const Fragment: any = OriginFragment;
 
-if(~location.href.indexOf('localhost')) {
+if(process.env.NODE_ENV === 'development') {
   console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
 }
 
@@ -43,7 +44,7 @@ const defaultPropertyDeclaration: PropertyDeclaration = {
 
 export const property = (options: PropertyDeclaration = {}) => {
   return (target: unknown, name: string) => {
-    return (target.constructor as typeof QuarkElement).createProperty(
+    return (target as { constructor: typeof QuarkElement }).constructor.createProperty(
       name,
       options
     );
@@ -52,9 +53,28 @@ export const property = (options: PropertyDeclaration = {}) => {
 
 export const state = () => {
   return (target: unknown, name: string) => {
-    return (target.constructor as typeof QuarkElement).createState(name);
+    return (target as { constructor: typeof QuarkElement }).constructor.createState(name);
   };
 };
+
+export const computed = () => {
+  return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
+    return (target as { constructor: typeof QuarkElement }).constructor.computed(
+      propertyKey,
+      descriptor,
+    );
+  };
+};
+
+export const watch = (path: string) => {
+  return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
+    return (target as { constructor: typeof QuarkElement }).constructor.watch(
+      propertyKey,
+      descriptor,
+      path,
+    );
+  };
+}
 
 const ElementProperties: DblKeyMap<
   typeof QuarkElement,
@@ -62,10 +82,33 @@ const ElementProperties: DblKeyMap<
   PropertyDeclaration
 > = new DblKeyMap();
 
+const PropertyDepMap: DblKeyMap<
+  typeof QuarkElement,
+  string,
+  Dep
+> = new DblKeyMap();
+
+type PropertyDescriptorCreator = (defaultValue?: any) => PropertyDescriptor
+
 const Descriptors: DblKeyMap<
   typeof QuarkElement,
   string,
-  (defaultValue?: any) => PropertyDescriptor
+  PropertyDescriptorCreator
+> = new DblKeyMap();
+
+const ComputedDescriptors: DblKeyMap<
+  typeof QuarkElement,
+  string,
+  PropertyDescriptorCreator
+> = new DblKeyMap();
+
+const UserWatchers: DblKeyMap<
+  typeof QuarkElement,
+  string,
+  {
+    path: string;
+    cb: (newVal: any, oldVal: any) => void
+  }
 > = new DblKeyMap();
 
 export function customElement(
@@ -89,14 +132,14 @@ export function customElement(
         return attributes;
       }
 
-      static isBooleanProperty(propertyName: string) {
+      static isBooleanProperty(propKey: string) {
         let isBoolean = false;
         const targetProperties = ElementProperties.get(target);
         if (targetProperties) {
           targetProperties.forEach((elOption, elName) => {
             if (
               elOption.type === Boolean &&
-              propertyName === elName
+              propKey === elName
             ) {
               isBoolean = true;
               return isBoolean;
@@ -127,21 +170,46 @@ export function customElement(
           }
         }
 
+        const comp = Object.getPrototypeOf(this.constructor);
+
         /**
          * 重写类的属性描述符，并重写属性初始值。
          * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
          */
-        const targetDescriptors = Descriptors.get(Object.getPrototypeOf(this.constructor))
-        if (targetDescriptors) {
-          targetDescriptors.forEach((descriptorCreator, propertyName) => {
+        const descriptors = Descriptors.get(comp);
+        
+        if (descriptors?.size) {
+          descriptors.forEach((descriptorCreator, propKey) => {
             Object.defineProperty(
               this,
-              propertyName,
-              descriptorCreator((this as any)[propertyName])
+              propKey,
+              descriptorCreator(this[propKey])
             );
           });
         }
-        
+
+        const computedDescriptors = ComputedDescriptors.get(comp)
+
+        if (computedDescriptors?.size) {
+          computedDescriptors.forEach((descriptorCreator, propKey) => {
+            Object.defineProperty(
+              this,
+              propKey,
+              descriptorCreator()
+            );
+          });
+        }
+
+        const watchers = UserWatchers.get(comp)
+
+        if (watchers?.size) {
+          watchers.forEach(({
+            path,
+            cb,
+          }) => {
+            new Watcher(this, path, false, cb);
+          });
+        }
       }
     }
 
@@ -158,11 +226,13 @@ export class QuarkElement extends HTMLElement {
   // 外部属性装饰器，抹平不同框架使用差异
   protected static getPropertyDescriptor(
     name: string,
-    options: PropertyDeclaration
+    options: PropertyDeclaration,
+    dep: Dep,
   ): (defaultValue?: any) => PropertyDescriptor {
     return (defaultValue?: any) => {
       return {
         get(this: QuarkElement): any {
+          dep.depend()
           let val = this.getAttribute(name);
 
           if (!isEmpty(defaultValue)) {
@@ -187,6 +257,7 @@ export class QuarkElement extends HTMLElement {
         },
         set(this: QuarkElement, value: string | boolean | null) {
           let val = value as string;
+
           if (isFunction(options.converter)) {
             val = options.converter(value, options.type) as string;
           }
@@ -211,12 +282,16 @@ export class QuarkElement extends HTMLElement {
   protected static getStateDescriptor(): () => PropertyDescriptor {
     return (defaultValue?: any) => {
       let _value = defaultValue;
+      let dep: Dep | undefined;
+      const getDep = () => dep || (dep = new Dep());
       return {
         get(this: QuarkElement): any {
+          getDep().depend()
           return _value;
         },
         set(this: QuarkElement, value: string | boolean | null) {
           _value = value;
+          getDep().notify();
           this._render();
         },
         configurable: true,
@@ -229,11 +304,43 @@ export class QuarkElement extends HTMLElement {
     const newOpt = Object.assign({}, defaultPropertyDeclaration, options);
     const attributeName = options.attribute || name;
     ElementProperties.set(this, attributeName, newOpt);
-    Descriptors.set(this, name, this.getPropertyDescriptor(attributeName, newOpt));
+    const dep = new Dep();
+    PropertyDepMap.set(this, attributeName, dep);
+    Descriptors.set(this, name, this.getPropertyDescriptor(attributeName, newOpt, dep));
   }
 
   static createState(name: string) {
     Descriptors.set(this, name, this.getStateDescriptor());
+  }
+
+  static computed(propertyKey: string, descriptor: PropertyDescriptor) {
+    if (descriptor.get) {
+      ComputedDescriptors.set(this, propertyKey, () => {
+        let watcher: Watcher;
+        return {
+          configurable: true,
+          enumerable: true,
+          get(this: QuarkElement) {
+            if (!watcher) {
+              watcher = new Watcher(this, descriptor.get!, true);
+            }
+
+            return watcher.get();
+          },
+        };
+      });
+    }
+  }
+
+  static watch(propertyKey: string, descriptor: PropertyDescriptor, path: string) {
+    const { value } = descriptor;
+
+    if (typeof value === 'function') {
+      UserWatchers.set(this, propertyKey, {
+        path,
+        cb: value,
+      });
+    }
   }
 
   private eventController: EventController = new EventController();
@@ -252,20 +359,21 @@ export class QuarkElement extends HTMLElement {
     }
   }
 
+  /** 对传入的值根据类型进行转换处理 */
   private _updateProperty() {
     (this.constructor as any).observedAttributes.forEach(
-      (propertyName: string) => {
-        (this as any)[propertyName] = (this as any)[propertyName];
+      (propKey: string) => {
+        this[propKey] = this[propKey];
       }
     );
   }
 
-  private _updateBooleanProperty(propertyName: string) {
+  private _updateBooleanProperty(propKey: string) {
     // 判断是否是 boolean
-    if ((this.constructor as any).isBooleanProperty(propertyName)) {
+    if ((this.constructor as any).isBooleanProperty(propKey)) {
       // 针对 false 场景走一次 set， true 不需要重新走 set
-      if (!(this as any)[propertyName]) {
-        (this as any)[propertyName] = (this as any)[propertyName];
+      if (!(this as any)[propKey]) {
+        (this as any)[propKey] = (this as any)[propKey];
       }
     }
   }
@@ -319,6 +427,8 @@ export class QuarkElement extends HTMLElement {
     return "" as any;
   }
 
+  private _initialRender = true
+
   connectedCallback() {
     this._updateProperty();
 
@@ -326,6 +436,7 @@ export class QuarkElement extends HTMLElement {
      * 初始值重写后首次渲染
      */
     this._render();
+    this._initialRender = false;
 
     if (isFunction(this.componentDidMount)) {
       this.componentDidMount();
@@ -333,13 +444,33 @@ export class QuarkElement extends HTMLElement {
   }
 
   attributeChangedCallback(name: string, oldValue: string, value: string) {
-    // 因为 React 的属性变更并不会触发 set，此时如果 boolean 值变更，这里的 value 会是字符串，组件内部通过 get 操作可以获取到正确的类型
-    const newValue = this[name] || value;
+    if (this._initialRender) {
+      return;
+    }
+    
+    const instValue = this[name]; 
+    let newValue = instValue;
+
+    if (!newValue) {
+      newValue = value
+
+      if (instValue !== newValue) {
+        // * make sure this[name] equals to newValue
+        this[name] = newValue
+      }
+    }
+
+    PropertyDepMap
+      .get(Object.getPrototypeOf(this.constructor))
+      ?.get(name)
+      ?.notify();
+
     if (isFunction(this.shouldComponentUpdate)) {
       if (!this.shouldComponentUpdate(name, oldValue, newValue)) {
         return;
       }
     }
+
     this._render();
 
     if (isFunction(this.componentDidUpdate)) {
@@ -360,5 +491,6 @@ export class QuarkElement extends HTMLElement {
 
     this.eventController.removeAllListener();
     this.rootPatch(null);
+    this._initialRender = true;
   }
 }
