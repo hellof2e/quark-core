@@ -4,11 +4,58 @@ import { QuarkElement } from "."
 let uid = 0
 
 /** current watcher that is collecting it's dependencies */
-export let currDepTarget: Watcher| undefined
+export let currDepTarget: Watcher | undefined
 
 export type WatcherGetter = () => any
 
+/** all watchers waiting to run callback */
+const watchers: Watcher[] = []
+/** all waiting watchers' id */
+const watcherIds = new Set<number>()
+/** is there any flush task pending —— before entering next event loop */
+let flushPending = false
+
+/** prepare micro task */
+const queueMicroTask = (callback: (...args: any[]) => any) => {
+  if (typeof window.queueMicrotask === 'function') {
+    window.queueMicrotask(callback)
+  } else {
+    Promise.resolve().then(callback)
+  }
+};
+
+/** flush watcher queue */
+const flushWatcherQueue = () => {
+  for (let i = 0; i < watchers.length; i++) {
+    const watcher = watchers[i]
+    watcherIds.delete(watcher.id)
+    watcher.run()
+  }
+
+  // reset
+  watchers.length = 0
+  watcherIds.clear()
+  flushPending = false
+}
+
+/** add watcher to queue */
+const queueWatcher = (watcher: Watcher) => {
+  const { id } = watcher
+  
+  if (!watcherIds.has(id)) {
+    watcherIds.add(id)
+    watchers.push(watcher)
+      
+    if (!flushPending) {
+      flushPending = true
+      queueMicroTask(flushWatcherQueue)
+    }
+  }
+}
+
 export class Watcher {
+  /** watcher's id */
+  id: number
   /**
    * watcher itself can be dependency of others'
    * 
@@ -37,6 +84,7 @@ export class Watcher {
     computed: boolean = false,
     cb: (newVal: any, oldVal: any) => void = () => {}
   ) {
+    this.id = ++uid
     this.inst = inst
     this.computed = computed
 
@@ -59,32 +107,25 @@ export class Watcher {
 
   /** get latest computed value of watcher */
   get() {
-    this.dep.depend()
-    
     if (this.dirty) {
-      return this.updateAndGet()
+      this.value = this.compute()
+      this.dirty = false
     }
 
     return this.value
   }
 
   /** invoke getter, recompute value, manage dependencies */
-  updateAndGet() {
-    const oldValue = this.value
+  compute() {
     setCurrDepTarget(this)
+    // reset deps collection
     this.oldDeps = this.deps
     this.deps = new Map()
-    // * invoke getter and collect new dependencies
-    this.value = this.getter.call(this.inst)
-    this.dirty = false
+    // invoke getter and collect new dependencies
+    const value = this.getter.call(this.inst)
     popCurrDepTarget()
     this.cleanDeps()
-
-    if (this.value !== oldValue) {
-      this.cb.call(this.inst, this.value, oldValue)
-    }
-    
-    return this.value
+    return value
   }
 
   /** clean invalidated dependencies */
@@ -113,13 +154,39 @@ export class Watcher {
     }
   }
 
+  /** invoke callback after successfully updated */
+  ensureUpdated(cb: (newValue: any, oldValue: any) => void) {
+    const value = this.compute()
+    const oldValue = this.value
+
+    if (value !== oldValue) {
+      this.value = value
+      this.dirty = false
+      cb.call(this.inst, value, oldValue)
+    }
+  }
+
   /** receive update notification from it's dependency */
   update() {
-    this.dirty = true
-    // dependency changed, prepare update for it's watchers
-    this.updateAndGet()
-    // * notify watchers of this watcher
-    this.dep.notify()
+    if (this.computed) {
+      if (!this.dep.watchers.size) {
+        // if no watcher is watching this computed value, simply mark it dirty
+        // its watchers' count may change during app's execution
+        this.dirty = true
+      } else {
+        // * notify watchers of this watcher（for computed）
+        this.ensureUpdated(() => {
+          this.dep.notify()
+        })
+      }
+    } else {
+      queueWatcher(this)
+    }
+  }
+
+  /** run callback of watcher */
+  run() {
+    this.ensureUpdated(this.cb)
   }
 }
 

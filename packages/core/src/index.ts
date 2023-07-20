@@ -255,11 +255,11 @@ export class QuarkElement extends HTMLElement {
           }
           return val;
         },
-        set(this: QuarkElement, value: string | boolean | null) {
-          let val = value as string;
+        set(this: QuarkElement, newValue: string | boolean | null) {
+          let val = newValue;
 
           if (isFunction(options.converter)) {
-            val = options.converter(value, options.type) as string;
+            val = options.converter(newValue, options.type);
           }
 
           if (val) {
@@ -281,21 +281,27 @@ export class QuarkElement extends HTMLElement {
   // 内部属性装饰器
   protected static getStateDescriptor(name: string): () => PropertyDescriptor {
     return (defaultValue?: any) => {
-      let _value = defaultValue;
+      let value = defaultValue;
       let dep: Dep | undefined;
       const getDep = () => dep || (dep = new Dep());
       return {
         get(this: QuarkElement): any {
           getDep().depend()
-          return _value;
+          return value;
         },
-        set(this: QuarkElement, value: string | boolean | null) {
-          const oldValue = _value
-          _value = value;
+        set(this: QuarkElement, newValue: string | boolean | null) {
+          const oldValue = value;
+
+          if (oldValue === newValue) {
+            return;
+          }
+
+          value = newValue;
           getDep().notify();
           this._render();
+
           if (isFunction(this.componentDidUpdate)) {
-            this.componentDidUpdate(name, oldValue,value);
+            this.componentDidUpdate(name, oldValue, newValue);
           }
         },
         configurable: true,
@@ -329,6 +335,7 @@ export class QuarkElement extends HTMLElement {
               watcher = new Watcher(this, descriptor.get!, true);
             }
 
+            watcher.dep.depend();
             return watcher.get();
           },
         };
