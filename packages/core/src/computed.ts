@@ -159,11 +159,13 @@ export class Watcher {
     const value = this.compute()
     const oldValue = this.value
 
-    if (value !== oldValue) {
-      this.value = value
-      this.dirty = false
-      cb.call(this.inst, value, oldValue)
+    if (Object.is(value, oldValue)) {
+      return;
     }
+
+    this.value = value
+    this.dirty = false
+    cb.call(this.inst, value, oldValue)
   }
 
   /** receive update notification from it's dependency */

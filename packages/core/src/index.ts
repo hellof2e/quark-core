@@ -292,7 +292,7 @@ export class QuarkElement extends HTMLElement {
         set(this: QuarkElement, newValue: string | boolean | null) {
           const oldValue = value;
 
-          if (oldValue === newValue) {
+          if (Object.is(oldValue, newValue)) {
             return;
           }
 
