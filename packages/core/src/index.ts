@@ -459,18 +459,7 @@ export class QuarkElement extends HTMLElement {
       return;
     }
     
-    const instValue = this[name]; 
-    let newValue = instValue;
-
-    if (!newValue) {
-      newValue = value
-
-      if (instValue !== newValue) {
-        // * make sure this[name] equals to newValue
-        this[name] = newValue
-      }
-    }
-
+    const newValue = this[name] || value;
     PropertyDepMap
       .get(Object.getPrototypeOf(this.constructor))
       ?.get(name)
