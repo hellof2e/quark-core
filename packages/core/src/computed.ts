@@ -277,7 +277,7 @@ export class Dep {
   }
 
   /**
-   * mark itself as a dependency of current watchexr.
+   * mark itself as a dependency of current watcher.
    * in other words, current watcher depends on it.
   */
   depend() {

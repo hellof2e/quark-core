@@ -43,33 +43,33 @@ const defaultPropertyDeclaration: PropertyDeclaration = {
 };
 
 export const property = (options: PropertyDeclaration = {}) => {
-  return (target: unknown, name: string) => {
+  return (target: unknown, propName: string) => {
     return (target as { constructor: typeof QuarkElement }).constructor.createProperty(
-      name,
+      propName,
       options
     );
   };
 };
 
 export const state = () => {
-  return (target: unknown, name: string) => {
-    return (target as { constructor: typeof QuarkElement }).constructor.createState(name);
+  return (target: unknown, propName: string) => {
+    return (target as { constructor: typeof QuarkElement }).constructor.createState(propName);
   };
 };
 
 export const computed = () => {
-  return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (target: unknown, propName: string, descriptor: PropertyDescriptor) => {
     return (target as { constructor: typeof QuarkElement }).constructor.computed(
-      propertyKey,
+      propName,
       descriptor,
     );
   };
 };
 
 export const watch = (path: string, options?: Omit<UserWatcherOptions, 'cb'>) => {
-  return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (target: unknown, propName: string, descriptor: PropertyDescriptor) => {
     return (target as { constructor: typeof QuarkElement }).constructor.watch(
-      propertyKey,
+      propName,
       descriptor,
       path,
       options,
@@ -88,7 +88,7 @@ const StateDescriptors: DblKeyMap<
 /** convert attribute value to prop value */
 type Attr2PropConverter = (value: string | null) => any
 
-/** all declared props' definitions */
+/** all declared props' definitions, with attribute name as sub key */
 const PropDefs: DblKeyMap<
   typeof QuarkElement,
   string,
@@ -100,7 +100,7 @@ const PropDefs: DblKeyMap<
   }
 > = new DblKeyMap();
 
-/** quark element instance's props' map */
+/** quark element instance's props' map, with attribute name as sub key */
 const Props: DblKeyMap<
   QuarkElement,
   string,
@@ -108,6 +108,7 @@ const Props: DblKeyMap<
     /** created dependency for the prop */
     dep: Dep;
     converter: Attr2PropConverter;
+    propName: string;
   }
 > = new DblKeyMap();
 
@@ -236,6 +237,7 @@ export function customElement(
             };
             const dep = new Dep();
             Props.set(this, attrName, {
+              propName,
               dep,
               converter: convertAttrValue,
             });
@@ -319,7 +321,7 @@ export class QuarkElement extends HTMLElement {
   }
 
   // 内部属性装饰器
-  protected static getStateDescriptor(name: string): () => PropertyDescriptor {
+  protected static getStateDescriptor(propName: string): () => PropertyDescriptor {
     return (defaultValue?: any) => {
       let value = defaultValue;
       let dep: Dep | undefined;
@@ -341,7 +343,7 @@ export class QuarkElement extends HTMLElement {
 
           if (isFunction(this.componentDidUpdate)) {
             this.queueUpdated(() => {
-              this.componentDidUpdate(name, resolvedOldVal, newValue);
+              this.componentDidUpdate(propName, resolvedOldVal, newValue);
             });
           }
         },
@@ -353,7 +355,6 @@ export class QuarkElement extends HTMLElement {
 
   static createProperty(propName: string, options: PropertyDeclaration) {
     const attrName = options.attribute || propName;
-
     PropDefs.set(this, attrName, {
       options: {
         ...defaultPropertyDeclaration,
@@ -363,13 +364,13 @@ export class QuarkElement extends HTMLElement {
     });
   }
 
-  static createState(name: string) {
-    StateDescriptors.set(this, name, this.getStateDescriptor(name));
+  static createState(propName: string) {
+    StateDescriptors.set(this, propName, this.getStateDescriptor(propName));
   }
 
-  static computed(propertyKey: string, descriptor: PropertyDescriptor) {
+  static computed(propName: string, descriptor: PropertyDescriptor) {
     if (descriptor.get) {
-      ComputedDescriptors.set(this, propertyKey, () => {
+      ComputedDescriptors.set(this, propName, () => {
         let watcher: Watcher;
         return {
           configurable: true,
@@ -388,7 +389,7 @@ export class QuarkElement extends HTMLElement {
   }
 
   static watch(
-    propertyKey: string,
+    propName: string,
     descriptor: PropertyDescriptor,
     path: string,
     options?: UserWatcherOptions,
@@ -396,7 +397,7 @@ export class QuarkElement extends HTMLElement {
     const { value } = descriptor;
 
     if (typeof value === 'function') {
-      UserWatchers.set(this, propertyKey, {
+      UserWatchers.set(this, propName, {
         ...options,
         path,
         cb: value,
@@ -498,47 +499,49 @@ export class QuarkElement extends HTMLElement {
   /** log old 'false' attribute value before resetting and removing it */
   private _oldVals: Map<string, string | undefined> = new Map()
 
-  attributeChangedCallback(name: string, oldVal: string, newVal: string) {
+  attributeChangedCallback(attrName: string, oldVal: string, newVal: string) {
+    const prop = Props.get(this)?.get(attrName);
+
+    if (!prop) {
+      return;
+    }
+
+    const { propName } = prop;
+    
     // react specific patch, for more detailed explanation: https://github.com/facebook/react/issues/9230
     // 对于自定义元素，React会直接将布尔值属性传递下去
     // 这时候这里的value会是字符串'true'或'false'，对于'false'我们需要手动将该属性从自定义元素上移除
     // 以避免CSS选择器将[attr="false"]视为等同于[attr]
     if (newVal !== oldVal) {
-      if ((this.constructor as any).isBooleanProperty(name)) {
+      if ((this.constructor as any).isBooleanProperty(attrName)) {
         if (newVal === 'false') {
           if (isFunction(this.componentDidUpdate)) {
-            this._oldVals.set(name, oldVal)
+            this._oldVals.set(propName, oldVal)
           }
           
-          this[name] = newVal;
+          this[propName] = newVal;
           return;
         }
       }
-    }
-    
-    const prop = Props.get(this)?.get(name);
-
-    if (!prop) {
-      return;
     }
 
     // notify changes to this prop's watchers
     prop.dep.notify()
       
     if (isFunction(this.componentDidUpdate)) {
-      const newValue = this[name];
+      const newValue = this[propName];
       let resolvedOldVal = oldVal
-      let oldValReset = this._oldVals.get(name)
+      let oldValReset = this._oldVals.get(propName)
 
       if (oldValReset) {
-        this._oldVals.delete(name)
+        this._oldVals.delete(propName)
         resolvedOldVal = oldValReset
       }
       
       resolvedOldVal = prop.converter(resolvedOldVal);
       this.queueUpdated(() => {
         this.componentDidUpdate(
-          name,
+          propName,
           resolvedOldVal,
           newValue,
         );
