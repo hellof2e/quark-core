@@ -3,16 +3,7 @@
   "version": "1.0.39",
   "description": "Web components quark-element",
   "type": "module",
-  "main": "./lib/index.umd.js",
-  "module": "./lib/index.js",
-  "types": "./lib/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./lib/index.js",
-      "require": "./lib/index.umd.js",
-      "types": "./lib/index.d.ts"
-    }
-  },
+  "main": "./src/index.ts",
   "browserslist": "chrome >= 53, edge >= 79, firefox >= 63, opera >= 40, safari >= 10.1, ChromeAndroid >= 53,  FirefoxAndroid >= 63, ios_saf >= 10.3, Samsung >= 6.0",
   "files": [
     "lib/*",

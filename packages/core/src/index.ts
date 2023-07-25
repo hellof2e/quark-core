@@ -5,7 +5,7 @@ import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
-import { Dep, Watcher } from './computed';
+import { Dep, UserWatcherOptions, Watcher } from './computed';
 
 export interface Ref<T = any> {
   current: T;
@@ -66,35 +66,53 @@ export const computed = () => {
   };
 };
 
-export const watch = (path: string) => {
+export const watch = (path: string, options?: Omit<UserWatcherOptions, 'cb'>) => {
   return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
     return (target as { constructor: typeof QuarkElement }).constructor.watch(
       propertyKey,
       descriptor,
       path,
+      options,
     );
   };
 }
 
-const ElementProperties: DblKeyMap<
-  typeof QuarkElement,
-  string,
-  PropertyDeclaration
-> = new DblKeyMap();
-
-const PropertyDepMap: DblKeyMap<
-  typeof QuarkElement,
-  string,
-  Dep
-> = new DblKeyMap();
-
 type PropertyDescriptorCreator = (defaultValue?: any) => PropertyDescriptor
 
-const Descriptors: DblKeyMap<
+const StateDescriptors: DblKeyMap<
   typeof QuarkElement,
   string,
   PropertyDescriptorCreator
 > = new DblKeyMap();
+
+/** convert attribute value to prop value */
+type Attr2PropConverter = (value: string | null) => any
+
+/** all declared props' definitions */
+const PropDefs: DblKeyMap<
+  typeof QuarkElement,
+  string,
+  {
+    /** prop decorator options passed */
+    options: PropertyDeclaration;
+    /** created dependency for the prop, it's initialization will be delayed until Object.defineProperty */
+    propName: string;
+  }
+> = new DblKeyMap();
+
+/** quark element instance's props' map */
+const Props: DblKeyMap<
+  QuarkElement,
+  string,
+  {
+    /** created dependency for the prop */
+    dep: Dep;
+    converter: Attr2PropConverter;
+  }
+> = new DblKeyMap();
+
+/** quark element instance's prop values stored */
+
 
 const ComputedDescriptors: DblKeyMap<
   typeof QuarkElement,
@@ -107,8 +125,7 @@ const UserWatchers: DblKeyMap<
   string,
   {
     path: string;
-    cb: (newVal: any, oldVal: any) => void
-  }
+  } & UserWatcherOptions
 > = new DblKeyMap();
 
 export function customElement(
@@ -119,35 +136,28 @@ export function customElement(
 
   return (target: typeof QuarkElement) => {
     class NewQuarkElement extends target {
-      static get observedAttributes() {
-        const attributes: string[] = [];
-        const targetProperties = ElementProperties.get(target);
-        if (targetProperties) {
-          targetProperties.forEach((elOption, elName) => {
-            if (elOption.observed) {
-              attributes.push(elName);
-            }
-          });
-        }
-        return attributes;
-      }
+      static get observedProps() {
+        const defs = PropDefs.get(target);
 
-      static isBooleanProperty(propKey: string) {
-        let isBoolean = false;
-        const targetProperties = ElementProperties.get(target);
-        if (targetProperties) {
-          targetProperties.forEach((elOption, elName) => {
-            if (
-              elOption.type === Boolean &&
-              propKey === elName
-            ) {
-              isBoolean = true;
-              return isBoolean;
-            }
-          });
+        if (!defs) {
+          return []
         }
         
-        return isBoolean;
+        return [...defs.entries()].filter(([_, { options }]) => !!options.observed);
+      }
+
+      static get observedAttributes() {
+        return this.observedProps.map(([attrName]) => attrName);
+      }
+
+      static isBooleanProperty(attrName: string) {
+        const def = PropDefs.get(target)?.get(attrName);
+
+        if (!def) {
+          return false;
+        }
+
+        return def.options.type === Boolean;
       }
 
       constructor() {
@@ -171,19 +181,93 @@ export function customElement(
         }
 
         const comp = Object.getPrototypeOf(this.constructor);
+        const stateDescriptors = StateDescriptors.get(comp);
+        
+        if (stateDescriptors?.size) {
+          stateDescriptors.forEach((descriptorCreator, propName) => {
+            Object.defineProperty(
+              this,
+              propName,
+              descriptorCreator(this[propName])
+            );
+          });
+        }
 
         /**
          * 重写类的属性描述符，并重写属性初始值。
          * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
          */
-        const descriptors = Descriptors.get(comp);
+        const propDefs = PropDefs.get(comp);
         
-        if (descriptors?.size) {
-          descriptors.forEach((descriptorCreator, propKey) => {
+        if (propDefs?.size) {
+          propDefs.forEach((def, attrName) => {
+            const {
+              options: {
+                type,
+                converter,
+              },
+              propName,
+            } = def;
+            const defaultValue = this[propName];
+            const convertAttrValue = (value: string | null) => {
+              // 判断val是否为空值
+              // const isEmpty = () => !(val || val === false || val === 0)
+              // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
+              // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
+              //
+              // 条件表达式推导过程
+              // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
+              // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
+              // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
+              // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
+              if (
+                isEmpty(value)
+                && (type !== Boolean || value !== '')
+                && !isEmpty(defaultValue)
+              ) {
+                return defaultValue;
+              }
+
+              if (isFunction(converter)) {
+                return converter(value, type) as string;
+              }
+
+              return value;
+            };
+            const dep = new Dep();
+            Props.set(this, attrName, {
+              dep,
+              converter: convertAttrValue,
+            });
+            // make attribute reactive
             Object.defineProperty(
               this,
-              propKey,
-              descriptorCreator(this[propKey])
+              propName,
+              {
+                get(this: QuarkElement): any {
+                  dep.depend()
+                  return convertAttrValue(this.getAttribute(attrName));
+                },
+                set(this: QuarkElement, newValue: string | boolean | null) {
+                  let val = newValue;
+        
+                  if (isFunction(converter)) {
+                    val = converter(newValue, type);
+                  }
+        
+                  if (val) {
+                    if (typeof val === "boolean") {
+                      this.setAttribute(attrName, "");
+                    } else {
+                      this.setAttribute(attrName, val);
+                    }
+                  } else {
+                    this.removeAttribute(attrName);
+                  }
+                },
+                configurable: true,
+                enumerable: true,
+              }
             );
           });
         }
@@ -205,9 +289,9 @@ export function customElement(
         if (watchers?.size) {
           watchers.forEach(({
             path,
-            cb,
+            ...options
           }) => {
-            new Watcher(this, path, false, cb);
+            new Watcher(this, path, options);
           });
         }
       }
@@ -222,60 +306,16 @@ export function customElement(
 export class QuarkElement extends HTMLElement {
   static h = h;
   static Fragment = Fragment;
+  
+  private _updatedQueue: (() => void)[] = [];
 
-  // 外部属性装饰器，抹平不同框架使用差异
-  protected static getPropertyDescriptor(
-    name: string,
-    options: PropertyDeclaration,
-    dep: Dep,
-  ): (defaultValue?: any) => PropertyDescriptor {
-    return (defaultValue?: any) => {
-      return {
-        get(this: QuarkElement): any {
-          dep.depend()
-          let val = this.getAttribute(name);
+  private queueUpdated(cb: () => void) {
+    this._updatedQueue.push(cb)
+  }
 
-          if (!isEmpty(defaultValue)) {
-            // 判断val是否为空值
-            // const isEmpty = () => !(val || val === false || val === 0)
-            // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
-            // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
-            //
-            // 条件表达式推导过程
-            // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
-            // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
-            // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
-            // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
-            if (isEmpty(val) && (options.type !== Boolean || val !== "")) {
-              return defaultValue;
-            }
-          }
-          if (isFunction(options.converter)) {
-            val = options.converter(val, options.type) as string;
-          }
-          return val;
-        },
-        set(this: QuarkElement, newValue: string | boolean | null) {
-          let val = newValue;
-
-          if (isFunction(options.converter)) {
-            val = options.converter(newValue, options.type);
-          }
-
-          if (val) {
-            if (typeof val === "boolean") {
-              this.setAttribute(name, "");
-            } else {
-              this.setAttribute(name, val);
-            }
-          } else {
-            this.removeAttribute(name);
-          }
-        },
-        configurable: true,
-        enumerable: true,
-      };
-    };
+  public flushUpdatedQueue() {
+    this._updatedQueue.forEach(cb => cb())
+    this._updatedQueue = []
   }
 
   // 内部属性装饰器
@@ -290,18 +330,19 @@ export class QuarkElement extends HTMLElement {
           return value;
         },
         set(this: QuarkElement, newValue: string | boolean | null) {
-          const oldValue = value;
+          const resolvedOldVal = value;
 
-          if (Object.is(oldValue, newValue)) {
+          if (Object.is(resolvedOldVal, newValue)) {
             return;
           }
 
           value = newValue;
           getDep().notify();
-          this._render();
 
           if (isFunction(this.componentDidUpdate)) {
-            this.componentDidUpdate(name, oldValue, newValue);
+            this.queueUpdated(() => {
+              this.componentDidUpdate(name, resolvedOldVal, newValue);
+            });
           }
         },
         configurable: true,
@@ -310,17 +351,20 @@ export class QuarkElement extends HTMLElement {
     };
   }
 
-  static createProperty(name: string, options: PropertyDeclaration) {
-    const newOpt = Object.assign({}, defaultPropertyDeclaration, options);
-    const attributeName = options.attribute || name;
-    ElementProperties.set(this, attributeName, newOpt);
-    const dep = new Dep();
-    PropertyDepMap.set(this, attributeName, dep);
-    Descriptors.set(this, name, this.getPropertyDescriptor(attributeName, newOpt, dep));
+  static createProperty(propName: string, options: PropertyDeclaration) {
+    const attrName = options.attribute || propName;
+
+    PropDefs.set(this, attrName, {
+      options: {
+        ...defaultPropertyDeclaration,
+        ...options,
+      },
+      propName,
+    });
   }
 
   static createState(name: string) {
-    Descriptors.set(this, name, this.getStateDescriptor(name));
+    StateDescriptors.set(this, name, this.getStateDescriptor(name));
   }
 
   static computed(propertyKey: string, descriptor: PropertyDescriptor) {
@@ -332,7 +376,7 @@ export class QuarkElement extends HTMLElement {
           enumerable: true,
           get(this: QuarkElement) {
             if (!watcher) {
-              watcher = new Watcher(this, descriptor.get!, true);
+              watcher = new Watcher(this, descriptor.get!, { computed: true });
             }
 
             watcher.dep.depend();
@@ -343,11 +387,17 @@ export class QuarkElement extends HTMLElement {
     }
   }
 
-  static watch(propertyKey: string, descriptor: PropertyDescriptor, path: string) {
+  static watch(
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+    path: string,
+    options?: UserWatcherOptions,
+  ) {
     const { value } = descriptor;
 
     if (typeof value === 'function') {
       UserWatchers.set(this, propertyKey, {
+        ...options,
         path,
         cb: value,
       });
@@ -371,22 +421,12 @@ export class QuarkElement extends HTMLElement {
   }
 
   /** 对传入的值根据类型进行转换处理 */
-  private _updateProperty() {
-    (this.constructor as any).observedAttributes.forEach(
-      (propKey: string) => {
-        this[propKey] = this[propKey];
+  private _updateProps() {
+    (this.constructor as any).observedProps.forEach(
+      ([attrName, { propName }]) => {
+        this[propName] = this.getAttribute(attrName);
       }
     );
-  }
-
-  private _updateBooleanProperty(propKey: string) {
-    // 判断是否是 boolean
-    if ((this.constructor as any).isBooleanProperty(propKey)) {
-      // 针对 false 场景走一次 set， true 不需要重新走 set
-      if (!(this as any)[propKey]) {
-        (this as any)[propKey] = (this as any)[propKey];
-      }
-    }
   }
 
   $on = (eventName: string, eventHandler: EventHandler, el?: Element) => {
@@ -417,17 +457,20 @@ export class QuarkElement extends HTMLElement {
   componentWillUnmount() {}
 
   /**
+   * @deprecated since we have embraced more precisely controlled render scheduler mechanism,
+   * there's no need to use shouldComponentUpdate any more.
+   * 
    * 控制当前属性变化是否导致组件渲染
    * @param propName 属性名
-   * @param oldValue 属性旧值
+   * @param resolvedOldVal 属性旧值
    * @param newValue 属性新值
    * @returns boolean
    */
-  shouldComponentUpdate(propName: string, oldValue: string, newValue: string) {
-    return oldValue !== newValue;
+  shouldComponentUpdate(propName: string, resolvedOldVal: any, newValue: any) {
+    return resolvedOldVal !== newValue;
   }
 
-  componentDidUpdate(propName: string, oldValue: any, newValue: any) {}
+  componentDidUpdate(propName: string, resolvedOldVal: any, newValue: any) {}
 
   /**
    * 组件的 render 方法，
@@ -438,49 +481,68 @@ export class QuarkElement extends HTMLElement {
     return "" as any;
   }
 
-  private _initialRender = true
-
   connectedCallback() {
-    this._updateProperty();
-
-    /**
-     * 初始值重写后首次渲染
-     */
-    this._render();
-    this._initialRender = false;
+    this._updateProps();
+    new Watcher(
+      this,
+      () => { this._render() },
+      { render: true },
+    );
+    this.flushUpdatedQueue();
 
     if (isFunction(this.componentDidMount)) {
       this.componentDidMount();
     }
   }
 
-  attributeChangedCallback(name: string, oldValue: string, value: string) {
-    if (this._initialRender) {
-      return;
-    }
-    
-    const newValue = this[name] || value;
-    PropertyDepMap
-      .get(Object.getPrototypeOf(this.constructor))
-      ?.get(name)
-      ?.notify();
+  /** log old 'false' attribute value before resetting and removing it */
+  private _oldVals: Map<string, string | undefined> = new Map()
 
-    if (isFunction(this.shouldComponentUpdate)) {
-      if (!this.shouldComponentUpdate(name, oldValue, newValue)) {
-        return;
+  attributeChangedCallback(name: string, oldVal: string, newVal: string) {
+    // react specific patch, for more detailed explanation: https://github.com/facebook/react/issues/9230
+    // 对于自定义元素，React会直接将布尔值属性传递下去
+    // 这时候这里的value会是字符串'true'或'false'，对于'false'我们需要手动将该属性从自定义元素上移除
+    // 以避免CSS选择器将[attr="false"]视为等同于[attr]
+    if (newVal !== oldVal) {
+      if ((this.constructor as any).isBooleanProperty(name)) {
+        if (newVal === 'false') {
+          if (isFunction(this.componentDidUpdate)) {
+            this._oldVals.set(name, oldVal)
+          }
+          
+          this[name] = newVal;
+          return;
+        }
       }
     }
+    
+    const prop = Props.get(this)?.get(name);
 
-    this._render();
-
-    if (isFunction(this.componentDidUpdate)) {
-      this.componentDidUpdate(name, oldValue, newValue);
+    if (!prop) {
+      return;
     }
 
-    // 因为 React的属性变更并不会触发set，此时如果boolean值变更，这里的value会是字符串，组件内部通过get操作可以正常判断类型，但css里面有根据boolean属性设置样式的将会出现问题
-    if (value !== oldValue) {
-      // boolean 重走set
-      this._updateBooleanProperty(name);
+    // notify changes to this prop's watchers
+    prop.dep.notify()
+      
+    if (isFunction(this.componentDidUpdate)) {
+      const newValue = this[name];
+      let resolvedOldVal = oldVal
+      let oldValReset = this._oldVals.get(name)
+
+      if (oldValReset) {
+        this._oldVals.delete(name)
+        resolvedOldVal = oldValReset
+      }
+      
+      resolvedOldVal = prop.converter(resolvedOldVal);
+      this.queueUpdated(() => {
+        this.componentDidUpdate(
+          name,
+          resolvedOldVal,
+          newValue,
+        );
+      });
     }
   }
 
@@ -491,6 +553,5 @@ export class QuarkElement extends HTMLElement {
 
     this.eventController.removeAllListener();
     this.rootPatch(null);
-    this._initialRender = true;
   }
 }
