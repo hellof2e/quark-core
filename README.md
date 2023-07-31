@@ -177,13 +177,13 @@ import "your-element"
 
 让 Web 组件实现技术栈无关！
 
-### 性能参考
+## 性能参考
 
 一个略复杂的组件页面跑分截图：
 
 <img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
 
-### 单元测试
+## 单元测试
 我们使用了 [@open-wc/testing](https://www.npmjs.com/package/@open-wc/testing) 来进行单元测试
 以下是我们示例组件的 <my-component /> 的单元测试
 
@@ -233,7 +233,7 @@ describe("<my-component />", async () => {
 
 更多复杂示例参考我们 [quarkd](https://github.com/hellof2e/quark-design) 组件库仓库
 
-### 文档
+## 文档
 
 完整文档，请访问 [quarkc.hellobike.com](https://quarkc.hellobike.com)
 
