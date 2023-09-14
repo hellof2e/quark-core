@@ -20,7 +20,10 @@ if(~location.href.indexOf('localhost')) {
   console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
 }
 
-const isEmpty = (val: unknown) => !(val || val === false || val === 0);
+type Falsy = false | 0 | '' | null | undefined
+
+/** false和0不算空 */
+const isEmpty = (val: unknown): val is Exclude<Falsy, false | 0> => !(val || val === false || val === 0);
 
 const defaultConverter: converterFunction = (value, type?) => {
   let newValue = value;
@@ -191,9 +194,14 @@ export class QuarkElement extends HTMLElement {
             val = options.converter(value, options.type) as string;
           }
 
-          if (val) {
+          if (!isEmpty(val)) {
+            // * val 可能为 false 或 0
             if (typeof val === "boolean") {
-              this.setAttribute(name, "");
+              if (val) {
+                this.setAttribute(name, "");
+              } else {
+                this.removeAttribute(name);
+              }
             } else {
               this.setAttribute(name, val);
             }
