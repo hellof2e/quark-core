@@ -20,6 +20,7 @@
     "package.json"
   ],
   "scripts": {
+    "dev": "rollup -c --watch",
     "build": "rimraf lib && rollup -c",
     "changelog": "conventional-changelog -p angular -n './changelog-config.cjs' -i CHANGELOG.md -s"
   },
