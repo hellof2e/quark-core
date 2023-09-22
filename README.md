@@ -31,11 +31,15 @@ Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端�
 
 ### 联系我们
 
-微信扫码，可进技术交流群
 
+
+<details>
+  <summary>微信扫码，可进技术交流群</summary>
 <p>
   <img width="200" src="https://github.com/hellof2e/quark-core/assets/14307551/cf207f43-8220-4355-87e5-9a45d5d09a50" />
 </p>
+</details>
+
 
 
 ### 优秀案例
