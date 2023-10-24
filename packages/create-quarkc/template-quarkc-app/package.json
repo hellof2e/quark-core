@@ -22,6 +22,6 @@
   },
   "dependencies": {
     "@vaadin/router": "^1.7.5",
-    "quarkc": "^1.0.32"
+    "quarkc": "^1.0.40"
   }
 }
