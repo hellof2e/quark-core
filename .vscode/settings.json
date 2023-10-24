@@ -6,7 +6,7 @@
       "*.vue": "html"
     },
     "eslint.options": {
-      "configFile": "./.eslintrc.json"
+      "configFile": "./.eslintrc.cjs"
     },
     "eslint.validate": ["javascript", "vue", "html", "typescript"],
     "workbench.startupEditor": "none",

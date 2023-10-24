@@ -29,7 +29,6 @@ module.exports = defineConfig({
         destructuring: 'all',
       },
     ],
-
     'n/no-process-exit': 'off',
     'n/no-missing-import': 'off',
     'n/no-missing-require': [

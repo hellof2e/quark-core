@@ -106,7 +106,7 @@ export function customElement(
             }
           });
         }
-        
+
         return isBoolean;
       }
 
@@ -144,7 +144,7 @@ export function customElement(
             );
           });
         }
-        
+
       }
     }
 
@@ -262,6 +262,16 @@ export class QuarkElement extends HTMLElement {
     if (newRootVNode) {
       this.rootPatch(newRootVNode);
     }
+  }
+
+  // Reserve, may expand in the future
+  requestUpdate() {
+    this._render()
+  }
+
+  // Reserve, may expand in the future
+  update() {
+    this._render()
   }
 
   private _updateProperty() {
