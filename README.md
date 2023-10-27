@@ -49,7 +49,7 @@ Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端�
 |  作者   | github 地址  | 截图 / 链接
 |  ----  | ----  | ----- |
 | @xsf0105  | https://github.com/xsf0105/piano |  https://xsf0105.github.io/piano/ |
-| @hellof2e  | https://github.com/hellof2e/quark-doc-home |  ![1686575964690](https://github.com/hellof2e/quark-core/assets/14307551/9618427c-916b-4dfd-b28b-0e8e0f6ce744)  |
+| @hellof2e  | https://github.com/hellof2e/quark-doc-home |  ![1698373361898](https://github.com/hellof2e/quark-core/assets/14307551/a4cc3971-37c0-49f2-ac84-a53677344c9b) |
 
 #### 组件
 
