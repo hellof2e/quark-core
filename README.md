@@ -250,3 +250,7 @@ describe("<my-component />", async () => {
 
 完整文档，请访问 [quarkc.hellobike.com](https://quarkc.hellobike.com)
 
+## StackBlitz
+
+https://stackblitz.com/edit/quarkc-vite?embed=1&file=src%2Findex.tsx
+
