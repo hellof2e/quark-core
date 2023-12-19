@@ -15,7 +15,11 @@ export const connectStore = superclass => {
     constructor() {
         super();
         this._observers = [];
-        this.update();
+
+        // 区分 lit（lit 中存在 performUpdate）
+        if(!this.performUpdate) {
+          this.update(); // quarkc 中先去执行
+        }
     }
 
     // Your framework need this function to init observe state
