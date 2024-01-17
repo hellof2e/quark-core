@@ -12,6 +12,10 @@ export default defineConfig({
 				find: "quarkc",
 				replacement: resolve(__dirname, "../packages/core/src/index.ts"),
 			},
+			{
+				find: "quark-router",
+				replacement: resolve(__dirname, "../packages/router/src/index.ts"),
+			},
 		],
 	},
 })
