@@ -122,7 +122,7 @@ There are two types of `RouteConfig`s: `PathRouteConfig` and `URLPatternRouteCon
 `PathRouteConfig` lets you specify the URL pattern as a path string:
 
 ```ts
-{name: 'home', path: '/', render: () => html`<h1>Home</h1>`}
+{name: 'home', path: '/', render: () => (<h1>Home</h1>)}
 ```
 
 ```ts
@@ -136,7 +136,7 @@ export interface PathRouteConfig {
 `URLPatternRouteConfig` lets you specify the URL pattern as a [`URLPattern`](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern) object:
 
 ```ts
-{pattern: new URLPattern({pathname: '/'}), render: () => html`<h1>Home</h1>`}
+{pattern: new URLPattern({pathname: '/'}), render: () => (<h1>Home</h1>)}
 ```
 
 ```ts
@@ -155,8 +155,8 @@ Example with named parameter:
 
 ```ts
 {
-  path: '/profile/:id',
-  render: ({id}) => html`<x-profile .profileId=${id}></x-profile>`
+  path: '/sub/:id',
+  render: ({id}) => <sub-component id={id}/>
 }
 ```
 
@@ -165,7 +165,9 @@ Example with named parameter:
 An outlet is where a routes object renders the currently selected route's template. It can be used anywhere in the host element's template:
 
 ```ts
-html`<main>${this.routes.outlet()}</main>`;
+<div className="router-render">
+  { this._routes.outlet() }
+</div>
 ```
 
 #### enter() callbacks
@@ -177,7 +179,7 @@ A route can define an `enter()` callback that lets it do work before rendering a
 ```ts
 {
   path: '/*',
-  render: (params) => html`<x-foo></x-foo>`,
+  render: () => <home-component/>,
   enter: async (params) => {
     await import('./x-foo.js');
   },
@@ -189,7 +191,7 @@ or dynamically install new routes:
 ```ts
 {
   path: '/*',
-  render: (params) => html`<h1>Not found: params[0]</h1>`,
+  render: (params) => (<h1>Not found: {params[0]}</h1>),
   enter: async (params) => {
     const path = params[0];
     const dynamicRoute = getDynamicRoute(path);
@@ -239,43 +241,54 @@ Global or absolute links don't need a `link(url: string)` form - an absolute URL
 Nested routes allow child components to define a subset of the route space mounted at a URL prefix path chosen by a parent.
 
 ```ts
-class XParent extends LitElement {
-  private _routes = new Routes(this, [
-    {path: 'foo', render: () => html`<x-foo></x-foo>`},
+@customElement({ tag: "my-component" })
+class MyComponent extends QuarkElement {
+  private _routes = new Router(this, [
+    {path: '/', render: () => <home-component/>},
     // Here we mount a child component that defines its own sub-routes.
     // We need the trailing /* parameter to match on the prefix and pass
     // a path to the child to parse.
-    {path: '/child/*', render: () => html`<x-child></x-child>`},
-  ]);
+    {path: '/child/*', render: () => <child-component/>},
+  ])
+
   render() {
-    return html`${this._routes.outlet()}`;
+    return (
+      <>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/child/1">Child</a></li>
+        </ul>
+        <div className="router-render">
+          { this._routes.outlet() }
+        </div>
+      </>
+    );
   }
 }
 
-class XChild extends LitElement {
+@customElement({ tag: "child-component", style })
+class ChildComponent extends QuarkElement {
   private _routes = new Routes(this, [
-    {path: 'foo', render: () => html`<x-foo></x-foo>`},
-    {path: 'bar', render: () => html`<x-bar></x-bar>`},
-  ]);
+    {path: '1', render: () => <child-first/>},
+    {path: '2', render: () => <child-second/>},
+  ])
+
   render() {
-    return html`${this._routes.outlet()}`;
+    return (
+        <div className="router-render">
+          { this._routes.outlet() }
+        </div>
+    );
   }
 }
 ```
 
-In this example, the page can handle URLs `/foo`, `/child/foo` and `/child/bar`.
+In this example, the page can handle URLs `/`, `/child/1` and `/child/2`.
 
 ### `routes` Array
 
 `Routes` (and `Router`) have a property named `routes` that is an array of the route configurations. This array is mutable, so code an dynamically add and remove routes. Routes match in order of the array, so the array defines the route precedence.
 
-## TODO
+## Notes
 
-### Server router integration
-
-This client-side router is intended to be able to integrate with server-side routing, both configuration-based routers and convention-based routers like file-based routers.
-
-Current ideas for integration include a fallback route handler (installed by the app) that delegates to a server API call that returns additional route configuration dynamically. The minimal API needed in the client router are:
-
-1. The ability to dynamically add routes
-2. Fallback route handlers.
+this router is fork from [@lit-labs/router](https://github.com/lit/lit/tree/main/packages/labs/router) and I rewrote it to work with Quarkc.
