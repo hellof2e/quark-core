@@ -230,8 +230,8 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
           const oldValue = _value
           _value = value;
           this._render();
+          this._controllers?.forEach((c) => c.hostUpdated?.());
           if (isFunction(this.componentDidUpdate)) {
-            this._controllers?.forEach((c) => c.hostUpdated?.());
             this.componentDidUpdate(name, oldValue,value);
           }
         },
@@ -296,7 +296,8 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   // Reserve, may expand in the future
   requestUpdate() {
-    this._render()
+    this._render();
+    this._controllers?.forEach((c) => c.hostUpdated?.());
   }
 
   // Reserve, may expand in the future
@@ -378,6 +379,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
      * 初始值重写后首次渲染
      */
     this._render();
+    this._controllers?.forEach((c) => c.hostMounted?.());
     if (isFunction(this.componentDidMount)) {
       this.componentDidMount();
     }
@@ -392,9 +394,8 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
       }
     }
     this._render();
-
+    this._controllers?.forEach((c) => c.hostUpdated?.());
     if (isFunction(this.componentDidUpdate)) {
-      this._controllers?.forEach((c) => c.hostUpdated?.());
       this.componentDidUpdate(name, oldValue, newValue);
     }
 

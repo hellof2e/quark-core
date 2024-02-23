@@ -17,7 +17,10 @@ class MyComponent extends QuarkElement {
     {path: '/', render: () => <home-component/>},
     {path: '/sub/:id', render: ({id}) => <sub-component id={id}/>},
     {path: '/child/*', render: () => <child-component/>},
-  ])
+    {path: '/child', render: () => <child-component/>},
+  ], {
+    mode: 'hash'
+  })
 
 
   @property({ type: Number }) // 外部属性
@@ -57,9 +60,9 @@ class MyComponent extends QuarkElement {
           </div>
         </div>
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/sub/3222">Sub</a></li>
-          <li><a href="/child/1">Child</a></li>
+          <li><quark-link to="/">Home</quark-link></li>
+          <li><quark-link to="/sub/3222">/sub/3222</quark-link></li>
+          <li><quark-link to="/child/1">/Child/1</quark-link></li>
         </ul>
         <div className="router-render">
           { this._routes.outlet() }

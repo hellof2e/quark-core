@@ -5,3 +5,4 @@
  */
 export * from './routes.js';
 export {Router} from './router.js';
+export { default as QuarkLink } from './quark-link';

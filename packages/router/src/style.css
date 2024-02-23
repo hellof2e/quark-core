@@ -1,0 +1,23 @@
+:host a:link,
+:host a:hover,
+:host a:visited,
+:host a:active
+{
+    text-decoration: var(--quark-link-text-decoration, none);
+}
+
+:host a:link {
+    color: var(--quark-link-color, inherit);
+}
+
+:host a:hover {
+    color: var(--quark-link-hover-color, var(--quark-link-color, inherit));
+}
+
+:host a:visited {
+    color: var(--quark-link-visited-color, var(--quark-link-color, inherit));
+}
+
+:host a:active {
+    color: var(--quark-link-active-color, var(--quark-link-color, inherit));
+}

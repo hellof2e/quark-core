@@ -7,6 +7,8 @@
 /// <reference types="urlpattern-polyfill" />
 
 import type { ReactiveController, ReactiveControllerHost } from 'quarkc';
+import { eventBus } from "./eventEmitter";
+import { stringifyQuery } from './utils';
 
 export interface BaseRouteConfig {
   name?: string | undefined;
@@ -41,6 +43,26 @@ export interface URLPatternRouteConfig extends BaseRouteConfig {
  * render() callback used to render a match to the outlet.
  */
 export type RouteConfig = PathRouteConfig | URLPatternRouteConfig;
+
+export enum RouteMethodEnum {
+  push = 'quark-route-push',
+  replace = 'quark-route-replace',
+};
+
+export enum RouterJumpMethodEnum {
+  push = 'quark-router-push',
+  replace = 'quark-router-replace',
+};
+
+export interface RouteDetail {
+  path: string;
+  query?: {[key: string]: string};
+}
+
+export interface RouterJumpDetail {
+  path: string;
+  fullPath: string;
+}
 
 // A cache of URLPatterns created for PathRouteConfig.
 // Rather than converting all given RoutConfigs to URLPatternRouteConfig, this
@@ -135,6 +157,10 @@ export class Routes implements ReactiveController {
     this.fallback = options?.fallback;
   }
 
+  get host() {
+    return this._host;
+  }
+
   /**
    * Returns a URL string of the current route, including parent routes,
    * optionally replacing the local path with `pathname`.
@@ -204,12 +230,39 @@ export class Routes implements ReactiveController {
 
     // Propagate the tail match to children
     if (tailGroup !== undefined) {
-      console.log(tailGroup, this._childRoutes)
       for (const childRoutes of this._childRoutes) {
         childRoutes.goto(tailGroup);
       }
     }
     this._host.requestUpdate();
+  }
+
+  protected addListeners() {
+    const listener = (e: CustomEvent<RouteDetail>) => {
+      e.stopImmediatePropagation();
+      const { path: pathname, query } = e.detail;
+      const { path, fullPath } = this._resolvePathDetail(pathname, query);
+      this._host.dispatchEvent(new RouterJumpEvent(e.type.replace('route', 'router') as RouterJumpMethodEnum, {
+        path, fullPath
+      }));
+      console.log(e.detail, this._host, path, fullPath, e.type)
+    };
+    this._host.addEventListener(RouteMethodEnum.push, listener, false);
+    this._host.addEventListener(RouteMethodEnum.replace, listener, false);
+  }
+
+  private _resolvePathDetail(pathname: string, params?: {[name: string]: string}) {
+    const path = this.link(pathname);
+    if (!path) {
+      throw new Error('Invalid pathname');
+    }
+    let fullPath = path;
+    if (params) {
+      fullPath += stringifyQuery(params);
+    }
+    return {
+      path, fullPath
+    }
   }
 
   /**
@@ -245,6 +298,7 @@ export class Routes implements ReactiveController {
   }
 
   hostConnected() {
+    this.addListeners();
     this._host.addEventListener(
       RoutesConnectedEvent.eventName,
       this._onRoutesConnected
@@ -260,6 +314,13 @@ export class Routes implements ReactiveController {
     // this controller doesn't receive a tail match meant for another route.
     this._onDisconnect?.();
     this._parentRoutes = undefined;
+  }
+
+  hostMounted() {
+    eventBus.emit("routes-host-mounted", this);
+    eventBus.on("link-mounted", () => {
+      eventBus.emit("routes-host-mounted", this);
+    });
   }
 
   private _onRoutesConnected = (e: RoutesConnectedEvent) => {
@@ -309,7 +370,7 @@ const getTailGroup = (groups: {[key: string]: string | undefined}) => {
  * announce the child route and potentially connect to a parent routes controller.
  */
 export class RoutesConnectedEvent extends Event {
-  static readonly eventName = 'lit-routes-connected';
+  static readonly eventName = 'quark-routes-connected';
   readonly routes: Routes;
   onDisconnect?: () => void;
 
@@ -320,6 +381,30 @@ export class RoutesConnectedEvent extends Event {
       cancelable: false,
     });
     this.routes = routes;
+  }
+}
+
+// 定义路由事件类
+export class RouteEvent extends CustomEvent<RouteDetail> {
+  constructor(eventName: RouteMethodEnum, detail: RouteDetail) {
+    super(eventName, {
+      bubbles: true,
+      composed: true,
+      cancelable: false,
+      detail,
+    });
+  }
+}
+
+// 定义路由器跳转事件类
+export class RouterJumpEvent extends CustomEvent<RouterJumpDetail> {
+  constructor(eventName: RouterJumpMethodEnum, detail: RouterJumpDetail) {
+    super(eventName, {
+      bubbles: true,
+      composed: true,
+      cancelable: false,
+      detail,
+    });
   }
 }
 
