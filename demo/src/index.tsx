@@ -61,8 +61,8 @@ class MyComponent extends QuarkElement {
         </div>
         <ul>
           <li><quark-link to="/">Home</quark-link></li>
-          <li><quark-link to="/sub/3222">/sub/3222</quark-link></li>
-          <li><quark-link to="/child/1">/Child/1</quark-link></li>
+          <li><quark-link to="/sub/3222?d=1&we=2">/sub/3222</quark-link></li>
+          <li><quark-link replace to="/child/1">/Child/1</quark-link></li>
         </ul>
         <div className="router-render">
           { this._routes.outlet() }

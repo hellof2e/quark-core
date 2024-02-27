@@ -11,8 +11,8 @@ declare global {
 @customElement({ tag: "child-second", style })
 class Child2 extends QuarkElement {
   private _routes = new Routes(this, [
-    {path: '1', render: () => <div>2-1 content</div>},
-    {path: '2', render: () => <div>2-2 content</div>},
+    {path: '1', render: () => <div>child2-1 content</div>},
+    {path: '2', render: () => <div>child2-2 content</div>},
   ])
 
   componentDidMount() {
@@ -23,8 +23,7 @@ class Child2 extends QuarkElement {
       <>
         child2 content
         <ul>
-          <li><quark-link to="1">child2-1</quark-link></li>
-          <li><quark-link to="2">child2-2</quark-link></li>
+          <li><quark-link to="2">child/2/2</quark-link></li>
         </ul>
         { this._routes.outlet() }
       </>

@@ -57,11 +57,13 @@ export enum RouterJumpMethodEnum {
 export interface RouteDetail {
   path: string;
   query?: {[key: string]: string};
+  callback?: (error?: Error) => void;
 }
 
 export interface RouterJumpDetail {
   path: string;
   fullPath: string;
+  callback?: (error?: Error) => void;
 }
 
 // A cache of URLPatterns created for PathRouteConfig.
@@ -146,6 +148,14 @@ export class Routes implements ReactiveController {
   // to the parent? We can call `this._parentRoutes.disconnect(this)`.
   private _onDisconnect: (() => void) | undefined;
 
+  // emit to quark-link component for accept this
+  private _busRoutesListener = () => {
+    eventBus.emit("routes-host-mounted", this);
+  };
+
+  // for the dynamic jump
+  private _hostListener: ((e: CustomEvent<RouteDetail>) => void) | undefined;
+
   constructor(
     host: ReactiveControllerHost & HTMLElement,
     routes: Array<RouteConfig>,
@@ -184,14 +194,9 @@ export class Routes implements ReactiveController {
    * pattern with a tail wildcard pattern (`/*`).
    */
   async goto(pathname: string) {
-    // TODO (justinfagnani): handle absolute vs relative paths separately.
     // TODO (justinfagnani): do we need to detect when goto() is called while
-    // a previous goto() call is still pending?0
+    // a previous goto() call is still pending?
 
-    // TODO (justinfagnani): generalize this to handle query params and
-    // fragments. It currently only handles path names because it's easier to
-    // completely disregard the origin for now. The click handler only does
-    // an in-page navigation if the origin matches anyway.
     let tailGroup: string | undefined;
 
     if (this.routes.length === 0 && this.fallback === undefined) {
@@ -238,17 +243,16 @@ export class Routes implements ReactiveController {
   }
 
   protected addListeners() {
-    const listener = (e: CustomEvent<RouteDetail>) => {
+    this._hostListener = (e: CustomEvent<RouteDetail>) => {
       e.stopImmediatePropagation();
-      const { path: pathname, query } = e.detail;
+      const { path: pathname, query, callback } = e.detail;
       const { path, fullPath } = this._resolvePathDetail(pathname, query);
       this._host.dispatchEvent(new RouterJumpEvent(e.type.replace('route', 'router') as RouterJumpMethodEnum, {
-        path, fullPath
+        path, fullPath, callback
       }));
-      console.log(e.detail, this._host, path, fullPath, e.type)
     };
-    this._host.addEventListener(RouteMethodEnum.push, listener, false);
-    this._host.addEventListener(RouteMethodEnum.replace, listener, false);
+    this._host.addEventListener(RouteMethodEnum.push, this._hostListener, false);
+    this._host.addEventListener(RouteMethodEnum.replace, this._hostListener, false);
   }
 
   private _resolvePathDetail(pathname: string, params?: {[name: string]: string}) {
@@ -314,13 +318,14 @@ export class Routes implements ReactiveController {
     // this controller doesn't receive a tail match meant for another route.
     this._onDisconnect?.();
     this._parentRoutes = undefined;
+    eventBus.off("link-mounted", this._busRoutesListener);
+    this._host.removeEventListener(RouteMethodEnum.push, this._hostListener);
+    this._host.removeEventListener(RouteMethodEnum.replace, this._hostListener);
   }
 
   hostMounted() {
     eventBus.emit("routes-host-mounted", this);
-    eventBus.on("link-mounted", () => {
-      eventBus.emit("routes-host-mounted", this);
-    });
+    eventBus.on("link-mounted", this._busRoutesListener);
   }
 
   private _onRoutesConnected = (e: RoutesConnectedEvent) => {

@@ -29,6 +29,12 @@ const origin = location.origin || location.protocol + '//' + location.host;
 export class Router extends Routes {
   mode: RouterModeEnum;
 
+  private _busRouterLinstner = () => {
+    eventBus.emit("router-host-mounted", this);
+  }
+
+  private _rootHostListener: ((e: CustomEvent<RouterJumpDetail>) => void) | undefined;
+
   constructor(
     host: ReactiveControllerHost & HTMLElement,
     routes: Array<RouteConfig>,
@@ -46,7 +52,6 @@ export class Router extends Routes {
 
   override hostConnected() {
     super.hostConnected();
-    window.addEventListener('click', this._onClick);
     window.addEventListener('popstate', this._onPopState);
     // Kick off routed rendering by going to the current URL
     this.goto(this._resolvePath(window.location));
@@ -54,84 +59,49 @@ export class Router extends Routes {
 
   override hostDisconnected() {
     super.hostDisconnected();
-    window.removeEventListener('click', this._onClick);
     window.removeEventListener('popstate', this._onPopState);
+    eventBus.off("link-mounted", this._busRouterLinstner);
+    this.host.removeEventListener(RouterJumpMethodEnum.push, this._rootHostListener);
+    this.host.removeEventListener(RouterJumpMethodEnum.replace, this._rootHostListener);
   }
 
   override hostMounted() {
     super.hostMounted();
     eventBus.emit("router-host-mounted", this);
-    eventBus.on("link-mounted", () => {
-      eventBus.emit("router-host-mounted", this);
-    });
+    eventBus.on("link-mounted", this._busRouterLinstner);
   }
 
   protected override addListeners() {
     super.addListeners();
-    const listener = (e: CustomEvent<RouterJumpDetail>) => {
+    this._rootHostListener = (e: CustomEvent<RouterJumpDetail>) => {
       e.stopImmediatePropagation();
-      const { path, fullPath } = e.detail;
-      this._changeState(path, fullPath, e.type as RouterJumpMethodEnum);
+      this._changeState(e.detail, e.type as RouterJumpMethodEnum);
     };
-    this.host.addEventListener(RouterJumpMethodEnum.push, listener, false);
-    this.host.addEventListener(RouterJumpMethodEnum.replace, listener, false);
+    this.host.addEventListener(RouterJumpMethodEnum.push, this._rootHostListener, false);
+    this.host.addEventListener(RouterJumpMethodEnum.replace, this._rootHostListener, false);
   }
 
-  private _onClick = (e: MouseEvent) => {
-    const isNonNavigationClick =
-      e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey;
-    if (e.defaultPrevented || isNonNavigationClick) {
-      return;
-    }
-
-    const anchor = e
-      .composedPath()
-      .find((n) => (n as HTMLElement).tagName === 'A') as
-      | HTMLAnchorElement
-      | undefined;
-    if (
-      anchor === undefined ||
-      anchor.target !== '' ||
-      anchor.hasAttribute('download') ||
-      anchor.getAttribute('rel') === 'external'
-    ) {
-      return;
-    }
-
-    const href = anchor.href;
-    if (href === '' || href.startsWith('mailto:')) {
-      return;
-    }
-
-    const location = window.location;
-    if (anchor.origin !== origin) {
-      return;
-    }
-
-    e.preventDefault();
-    if (href !== location.href) {
-      window.history.pushState({}, '', href);
-      this.goto(this._resolvePath(anchor));
-    }
-  };
-
-  private _changeState(path:string, fullPath: string, method?: RouterJumpMethodEnum) {
-    if (this.mode === RouterModeEnum.hash) {
-      fullPath = `#${fullPath}`;
-    }
+  private async _changeState(detail: RouterJumpDetail, method?: RouterJumpMethodEnum) {
+    const {
+      path, fullPath, callback
+    } = detail;
+    const prefix = this.mode === RouterModeEnum.hash ? '#' : '';
     if (method === RouterJumpMethodEnum.replace) {
-      window.history.replaceState({}, '', fullPath);
+      window.history.replaceState({}, '', prefix + fullPath);
     } else {
-      window.history.pushState({}, '', fullPath);
+      window.history.pushState({}, '', prefix + fullPath);
     }
-    this.goto(path);
+    /* TODO 由于未渲染的childRoute的goto方法在onconnect的时候才执行，无法在父级执行的goto递归中获取
+    暂未实现路由进入完成后的callback及错误捕获等 */
+    await this.goto(path);
+    callback && callback();
   }
 
   private _resolvePath(anchor: HTMLAnchorElement|Location) {
     if (this.mode === RouterModeEnum.history) {
       return anchor.pathname;
     }
-    return anchor.hash.replace('#', '');
+    return anchor.hash?.replace('#', '').split('?')[0];
   }
 
   private _onPopState = (_e: PopStateEvent) => {
