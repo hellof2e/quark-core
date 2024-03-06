@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "jsxFactory": "QuarkElement.h",
+		"jsxFragmentFactory": "QuarkElement.Fragment",
+    "strict": true,
+    "sourceMap": false,
+    "removeComments": false,
+    "resolveJsonModule": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "outDir": "lib",
+    "declarationDir": "./lib",
+    "declaration": true /* 生成相关的 '.d.ts' 文件。 */,
+    "emitDeclarationOnly": true /* 只生成声明文件，不生成 js 文件*/,
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"]
+}

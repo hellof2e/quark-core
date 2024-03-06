@@ -5,6 +5,9 @@ import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
+import type { ReactiveControllerHost, ReactiveController } from "./reactiveController"
+export type { ReactiveControllerHost, ReactiveController }
+
 
 export interface Ref<T = any> {
   current: T;
@@ -154,7 +157,7 @@ export function customElement(
   };
 }
 
-export class QuarkElement extends HTMLElement {
+export class QuarkElement extends HTMLElement implements ReactiveControllerHost {
   static h = h;
   static Fragment = Fragment;
 
@@ -227,6 +230,7 @@ export class QuarkElement extends HTMLElement {
           const oldValue = _value
           _value = value;
           this._render();
+          this._controllers?.forEach((c) => c.hostUpdated?.());
           if (isFunction(this.componentDidUpdate)) {
             this.componentDidUpdate(name, oldValue,value);
           }
@@ -250,6 +254,8 @@ export class QuarkElement extends HTMLElement {
 
   private eventController: EventController = new EventController();
 
+  private _controllers?: Set<ReactiveController>;
+
   private rootPatch = (newRootVNode: any) => {
     if (this.shadowRoot) {
       render(newRootVNode, this.shadowRoot);
@@ -264,9 +270,34 @@ export class QuarkElement extends HTMLElement {
     }
   }
 
+  /**
+   * Registers a `ReactiveController` to participate in the element's reactive
+   * update cycle. The element automatically calls into any registered
+   * controllers during its lifecycle callbacks.
+   *
+   * If the element is connected when `addController()` is called, the
+   * controller's `hostConnected()` callback will be immediately called.
+   * @category controllers
+   */
+  addController(controller: ReactiveController) {
+    (this._controllers ??= new Set()).add(controller);
+    if (this.shadowRoot && this.isConnected) {
+      controller.hostConnected?.();
+    }
+  }
+
+  /**
+   * Removes a `ReactiveController` from the element.
+   * @category controllers
+   */
+  removeController(controller: ReactiveController) {
+    this._controllers?.delete(controller);
+  }
+
   // Reserve, may expand in the future
   requestUpdate() {
-    this._render()
+    this._render();
+    this._controllers?.forEach((c) => c.hostUpdated?.());
   }
 
   // Reserve, may expand in the future
@@ -343,12 +374,12 @@ export class QuarkElement extends HTMLElement {
 
   connectedCallback() {
     this._updateProperty();
-
+    this._controllers?.forEach((c) => c.hostConnected?.());
     /**
      * 初始值重写后首次渲染
      */
     this._render();
-
+    this._controllers?.forEach((c) => c.hostMounted?.());
     if (isFunction(this.componentDidMount)) {
       this.componentDidMount();
     }
@@ -363,7 +394,7 @@ export class QuarkElement extends HTMLElement {
       }
     }
     this._render();
-
+    this._controllers?.forEach((c) => c.hostUpdated?.());
     if (isFunction(this.componentDidUpdate)) {
       this.componentDidUpdate(name, oldValue, newValue);
     }
@@ -381,6 +412,7 @@ export class QuarkElement extends HTMLElement {
     }
 
     this.eventController.removeAllListener();
+    this._controllers?.forEach((c) => c.hostDisconnected?.());
     this.rootPatch(null);
   }
 }
