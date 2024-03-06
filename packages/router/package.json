@@ -11,13 +11,17 @@
       "import": "./lib/index.js",
       "types": "./lib/index.d.ts"
     },
-    "./router.js": {
+    "./router": {
       "import": "./lib/router.js",
       "types": "./lib/router.d.ts"
     },
-    "./routes.js": {
+    "./routes": {
       "import": "./lib/routes.js",
       "types": "./lib/routes.d.ts"
+    },
+    "./quark-link": {
+      "import": "./lib/quark-link.js",
+      "types": "./lib/quark-link.d.ts"
     }
   },
   "browserslist": "chrome >= 53, edge >= 79, firefox >= 63, opera >= 40, safari >= 10.1, ChromeAndroid >= 53,  FirefoxAndroid >= 63, ios_saf >= 10.3, Samsung >= 6.0",
@@ -33,9 +37,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.8",
-    "quarkc": "^1.0.40",
     "tslib": "^2.6.2",
     "urlpattern-polyfill": "^9.0.0"
+  },
+  "peerDependencies": {
+    "quarkc": "^1.0.41"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",

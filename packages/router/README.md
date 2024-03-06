@@ -1,18 +1,45 @@
 # quark-router
 
-A router for quarkc project.
+为quarkc项目提供的路由控制器，支持`history`和`hash`两种路由模式.
 
-## Install
+<p align="center">
+  <span> 简体中文 | </span>
+  <a href="https://github.com/hellof2e/quark-core/blob/main/packages/router/README.en-US.md">
+    English
+  </a>
+</p>
+
+## 安装
+
+```
+npm i quark-router -S
+```
+
+你可以从`quark-router`中全部引入：
 
 ```ts
 import { Router, Routes } from "quark-router"
 ```
+注意：此时`quark-link`组件作为自定义组件已从`quark-router`中引入并定义，可直接使用，无需再次引入。
 
-## Overview
+也可以按需单独引入：
 
-`quark-router` is a component-oriented router API vended as reactive controllers. Routes are configured as part of component definitions, and integrated into the component lifecycle and rendering.
+```ts
+import { Router } from "quark-router/router"
+```
+```ts
+import { Routes } from "quark-router/routes"
+```
+```ts
+import "quark-router/quark-link"
+```
 
-Usage will generally look like this, with a configuration in a reactive controller, and rendering done via route-specific render callbacks and an "outlet" to use in the main render() method:
+## 总览
+
+quark-router 是作为响应式控制器提供的面向组件的路由 API。路由作为组件定义的一部分进行配置，并集成到组件的生命周期和渲染中。
+
+通常的使用方式如下，在一个响应式控制器中进行配置，并通过特定路由的渲染回调以及在render方法中使用的“outlet”来完成渲染：
+
 
 ```ts
 @customElement({ tag: "my-component" })
@@ -27,9 +54,9 @@ class MyComponent extends QuarkElement {
     return (
       <>
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/sub/3222">Sub</a></li>
-          <li><a href="/child/1">Child</a></li>
+          <li><quark-link to="/">Home</quark-link></li>
+          <li><quark-link to="/sub/3222">Sub</quark-link></li>
+          <li><quark-link to="/child/1" replace>Child</quark-link></li>
         </ul>
         <div className="router-render">
           { this._routes.outlet() }
@@ -38,43 +65,54 @@ class MyComponent extends QuarkElement {
     );
   }
 }
-
 ```
 
-Routes can be nested: a route path can include a trailing `/*` pattern to match against a prefix, and will automatically propagate that prefix to Routes controllers defined in child elements.
+路由可以嵌套：路由路径可以包含一个尾随的 `/* `来匹配子路径，并且会被自动传递给在子元素中定义的 Routes 控制器。
 
-The general shape of the API includes:
+API的一般表现形式包括：
 
-- A `Router` controller that's used as a top-level singleton to set up event listeners
-- A `Routes` controller for declaring routes inside components
-- Declaration of routes with [`URLPattern`](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern) and render callbacks
-- Extraction of URL pattern parameters into data objects passed to render callbacks
-- A `routes.outlet()` method that renders the current route's render callback
-- A `routes.link()` method to generate URLs to use in `<a>` tags, etc.
-- A `routes.goto()` method for performing a navigation
+- 作为顶级单例使用的 `Router` 控制器
+- 用于在组件内声明路由的 `Routes` 控制器
+- 用[`URLPattern`](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern)声明路由并呈现回调
+- 可将URL模式参数提取传递到呈现回调的数据对象中
+- 用于创建链接并处理URL生成的`quark-link`组件
+- routes.outlet() 方法，用于渲染当前路由的渲染回调
+- routes.link() 方法，用于获取当前路由位置对应的绝对路径
+- routes.goto() 方法，执行导航的方法（只完成渲染，不改变URL）
+- 组件内可执行自身的`dispatchEvent`方法，传递定义的事件来进行动态跳转
 
 ## API
 
 ### Router
 
-A Router is a controller (a subclass of the Routes controller) for use at the top-level of an application. It's main purpose is to set up global `click` and `popstate` event listeners (which should be installed only once on a page). It can optionally contain route definitions as a convenience.
+`Router`是`Routes` 控制器的一个子类，用于应用程序内路由模块的顶层。它的主要目的是设置全局的事件监听器（这些监听器在页面上应该只安装一次）和启动顶层路由跳转。
+它可以选择性地配置第三个参数`options`，`options`内可配置2个可选字段：`fallback`字段，当导航地址匹配不到任何路由配置时，则默认进入到该配置；`mode`字段，表明项目要应用的路由模式，未配置时，默认为`history`模式。
 
-It can be installed with no configuration:
+代码例子如下：
 
 ```ts
 @customElement({ tag: "my-component" })
 class MyComponent extends QuarkElement {
-  private router = new Router(this);
+  private router = new Router(this, [
+    {path: '/', render: () => <home-component/>},
+  ]);
+
+  render() {
+    return this.router.outlet();
+  }
 }
 ```
 
-Or contain route configurations:
+也可以包含其他额外配置：
 
 ```ts
 @customElement({ tag: "my-component" })
 class MyComponent extends QuarkElement {
-  private router = new Router(this, {
+  private router = new Router(this, [
     {path: '/', render: () => <home-component/>},
+  ], {
+    mode: 'hash',
+    fallback: { render: () => <home-component/> }
   });
 
   render() {
@@ -83,12 +121,13 @@ class MyComponent extends QuarkElement {
 }
 ```
 
+
 ### Routes
 
-Routes is the main interface into the router API. A Routes controller contains route definitions and the templates that each route renders:
+Routes 是进入路由器 API 的主要接口。一个 Routes 控制器包含路由定义以及每个路由将要渲染的模板（注意子路由开头不要加`/`）：
 
 ```ts
-@customElement({ tag: "child-component", style })
+@customElement({ tag: "child-component" })
 class ChildComponent extends QuarkElement {
   private _routes = new Routes(this, [
     {path: '1', render: () => <child-first/>},
@@ -96,30 +135,17 @@ class ChildComponent extends QuarkElement {
   ])
 
   render() {
-    return (
-      <div className="main">
-        <ul>
-          <li><a href="/child/1">child1</a></li>
-          <li><a href="/child/2">child2</a></li>
-        </ul>
-        <div className="router-render">
-          { this._routes.outlet() }
-        </div>
-      </div>
-    );
+    return this._routes.outlet();
   }
 }
 ```
-
-The second argument is the route configuration: an array of `RouteConfig` objects.
+第二个参数是路由配置：一个`RouteConfig[]`类型的数组。
 
 #### RouteConfig
 
-A RouteConfig contains at the minimum the pattern to match URLs against and a template to render. Names can be provided to reference routes for link generation.
-
-There are two types of `RouteConfig`s: `PathRouteConfig` and `URLPatternRouteConfig`:
-
-`PathRouteConfig` lets you specify the URL pattern as a path string:
+一个RouteConfig至少包含要匹配url的模式和要呈现的模板。可以提供名称来引用生成链路的路由。
+RouteConfig有两种类型：`PathRouteConfig`和`URLPatternRouteConfig`：
+`PathRouteConfig`让你指定URL模式为路径字符串：
 
 ```ts
 {name: 'home', path: '/', render: () => (<h1>Home</h1>)}
@@ -133,7 +159,7 @@ export interface PathRouteConfig {
 }
 ```
 
-`URLPatternRouteConfig` lets you specify the URL pattern as a [`URLPattern`](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern) object:
+`URLPatternRouteConfig`让你指定URL模式为一个 [`URLPattern`](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern) 对象：
 
 ```ts
 {pattern: new URLPattern({pathname: '/'}), render: () => (<h1>Home</h1>)}
@@ -147,11 +173,9 @@ export interface URLPatternRouteConfig {
 }
 ```
 
-#### Render callbacks
+#### Render 回调
 
-The render callback is called when the outlet method of the Routes object is called. It is passed an object with the parameters extracted from the matching URL.
-
-Example with named parameter:
+当Routes对象的outlet方法被调用时，渲染回调函数被调用。它被传递给一个对象，其中包含从匹配URL中提取的参数。带有命名参数的示例：
 
 ```ts
 {
@@ -162,7 +186,7 @@ Example with named parameter:
 
 #### Outlets
 
-An outlet is where a routes object renders the currently selected route's template. It can be used anywhere in the host element's template:
+`outlet()`是routes对象渲染当前所匹配到的路由模板的地方。它可以在宿主元素模板中的任何地方使用:
 
 ```ts
 <div className="router-render">
@@ -170,11 +194,9 @@ An outlet is where a routes object renders the currently selected route's templa
 </div>
 ```
 
-#### enter() callbacks
+#### enter() 回调
 
-A route can define an `enter()` callback that lets it do work before rendering and optionally reject that route as a match.
-
-`enter()` can be used to load and wait for necessary component definitions:
+路由可以定义一个`enter()`回调，让它在渲染之前完成工作，并选择性地拒绝匹配的路由。 `enter()`可用于加载并等待必要的组件定义：
 
 ```ts
 {
@@ -186,7 +208,7 @@ A route can define an `enter()` callback that lets it do work before rendering a
 }
 ```
 
-or dynamically install new routes:
+或者动态安装新路由：
 
 ```ts
 {
@@ -198,56 +220,122 @@ or dynamically install new routes:
     if (dynamicRoute) {
       const {routes} = this._router;
       routes.splice(routes.length - 1, 0, dynamicRoute);
-      // Trigger the router again
+      // 重新触发路由
       await this._router.goto('/' + path);
-      // Reject this route so the dynamic one is matched
+      // 拒绝此路由，以便匹配动态路由
       return false;
     }
   }
 }
 ```
-
 #### `goto()`
 
-`goto(url: string)` is a programmatic navigation API. It takes full URLs for top-level navigation and relative URLs for navigation within a nested route space.
+`goto(url: string)`是一个编程导航API。它使用完整的url进行顶层导航，使用相对url进行嵌套路由空间内的导航。手动调用此方法只执行传入导航的渲染，不改变当前URL。
 
-`goto(name: string, params: object)` _(not implemented)_ allows navigation via named routes. The name and params are scoped to the Routes object it's called on, though nested routes can be triggered by a "tail" parameter - the match of a trailing `/*` parameter (See tail groups).
-
-`goto()` returns a Promise that resolves when any triggered async `enter()` callbacks have completed.
+`goto()`返回一个Promise，该Promise会在任何触发的async`enter()`回调完成时resolve。
 
 #### `link()`
 
-Components need to generate links to resources within the app. It's desirable to not require that link generation has global knowledge of URLs, so links should be able to be generated with either only local information, or with abstracted parameters. `routes.link()` helps generate different kinds of links:
+`link(pathname?: string)`返回当前路由的URL字符串拼接pathname，包括父路由; 当pathname以`/`开头时会被视为绝对路径被直接返回。
 
-##### Relative links
 
-Relative links are relative to the parent route and its current state, and can be specified with a path string or name and parameters.
+### `quark-link` 组件
 
-Examples
+使用`quark-link`组件创建路由链接，组件接收2个属性如下：
 
-- `this._routes.link(user.id)` - within a `<x-user>` component that has a route pattern like `':id'`, this would link to another user profile.
-- `this._routes.link('profile', {id: user.id})` - the same URL generated with a named route
+| 参数  | 说明                             | 类型               | 默认值 |
+| ----- | -------------------------------- | ------------------ | ------ |
+| to | 导航路径，可设置为相对路径和绝对路径。以`/`开头的路径会被视为绝对路径；若为相对路径，组件内会根据所在位置最靠近的路由设置来生成绝对路径  | `string`           | -      |
+| replace  | 跳转时是否替换当前历史栈 | `boolean` | `false`    |
 
-These links work regardless of where the component is mounted in the URL space.
 
-##### Global links
+例子：
 
-_Not implemented_
+```ts
+@customElement({ tag: "child-component", style })
+class ChildComponent extends QuarkElement {
+  private _routes = new Routes(this, [
+    {path: '1', render: () => <child-first/>},
+    {path: '2/*', render: () => <child-second/>},
+  ])
 
-Global or absolute links don't need a `link(url: string)` form - an absolute URL can already be used in the `href` attribute of an `<a>` tag. But links within components shouldn't need to be tied to the specific URL layout - you should be able to describe the route by name and parameters. These names and parameters need to be nested to work with nested routes. _TBD_
+  render() {
+    return (
+      <div className="main">
+        <ul>
+          <li><quark-link to="1">child/1</quark-link></li>
+          <li><quark-link to="2/1" replace>child/2/1</quark-link></li>
+        </ul>
+        <div className="router-render">
+          { this._routes.outlet() }
+        </div>
+      </div>
+    );
+  }
+}
+```
 
-### Nested Routes
+### 动态跳转
 
-Nested routes allow child components to define a subset of the route space mounted at a URL prefix path chosen by a parent.
+在路由根组件（安装了顶层路由配置的组件）以及它的任意子孙组件内，都可以通过执行组件自身的`dispatchEvent`方法，传递跳转事件来进行路由的动态跳转。
+可从`quark-router`中导出要传递的事件类以及事件名等：
+
+```ts
+import { Routes, RouteEvent, RouteMethodEnum } from "quark-router"
+
+@customElement({ tag: "child-first" })
+class ChildFirst extends QuarkElement {
+
+  goToLink() {
+    this.dispatchEvent(
+      new RouteEvent(RouteMethodEnum.push, {
+        path: '2/1'
+      })
+    );
+  }
+
+  render() {
+    return (
+      <>
+        <button onClick={() => this.goToLink()}>go to child2-1</button>
+      </>
+    );
+  }
+}
+```
+
+`RouteEvent`配置包含两个参数，第一个参数为跳转事件名称，表示跳转方式，类型为`RouteMethodEnum`：
+
+```ts
+export interface RouteMethodEnum {
+  push = 'quark-route-push',
+  replace = 'quark-route-replace',
+}
+```
+
+第二个参数为路由详情，类型为`RouteDetail`：
+
+```ts
+export interface RouteDetail {
+  path: string;
+  query?: {[key: string]: string}; // 路径上添加的参数，会被序列号为?xx=xx&xx=xx加在path之后
+  callback?: (error?: Error) => void; // 目前callback函数只能确保在等待enter回调执行完成之后才执行，暂未实现路由渲染完成后的回调及错误捕获
+}
+```
+
+### 嵌套路由
+
+嵌套路由允许子组件在父组件选择的URL前缀路径上定义路由空间的子集。
 
 ```ts
 @customElement({ tag: "my-component" })
 class MyComponent extends QuarkElement {
   private _routes = new Router(this, [
     {path: '/', render: () => <home-component/>},
-    // Here we mount a child component that defines its own sub-routes.
-    // We need the trailing /* parameter to match on the prefix and pass
-    // a path to the child to parse.
+    /**
+     * 这里我们挂载了一个子组件，它定义了自己的子路由。 
+     * 我们需要后面的/*形参匹配前缀并传递要解析的子节点的路径。
+     */
     {path: '/child/*', render: () => <child-component/>},
   ])
 
@@ -255,8 +343,9 @@ class MyComponent extends QuarkElement {
     return (
       <>
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/child/1">Child</a></li>
+          <li><quark-link to="/">Home</quark-link></li>
+          <li><quark-link to="/child/1">Child1</quark-link></li>
+          <li><quark-link to="/child/2">Child2</quark-link></li>
         </ul>
         <div className="router-render">
           { this._routes.outlet() }
@@ -282,13 +371,12 @@ class ChildComponent extends QuarkElement {
   }
 }
 ```
+在这个例子中，页面可以处理url`/`，`/child/1`和`/child/2`。
 
-In this example, the page can handle URLs `/`, `/child/1` and `/child/2`.
+### `routes` 数组
 
-### `routes` Array
+`Routes`(和`Router`)有一个名为`routes`的属性，它是路由配置的数组。这个数组是可变的，所以代码可以动态地添加和删除路由。路由按照数组的顺序匹配，因此数组定义了路由优先级。
 
-`Routes` (and `Router`) have a property named `routes` that is an array of the route configurations. This array is mutable, so code an dynamically add and remove routes. Routes match in order of the array, so the array defines the route precedence.
+## 说明
 
-## Notes
-
-this router is fork from [@lit-labs/router](https://github.com/lit/lit/tree/main/packages/labs/router) and I rewrote it to work with Quarkc.
+`quark-router`是由[@lit-labs/router](https://github.com/lit/lit/tree/main/packages/labs/router)fork而来，我在此基础上做了一些修改使其适用于Quarkc项目，并加入了一些日常项目中需要用到的功能接口。
