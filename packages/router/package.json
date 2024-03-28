@@ -1,6 +1,6 @@
 {
   "name": "quark-router",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A router for Quark",
   "type": "module",
   "main": "./lib/index.js",
@@ -41,7 +41,7 @@
     "urlpattern-polyfill": "^9.0.0"
   },
   "peerDependencies": {
-    "quarkc": "^1.0.40"
+    "quarkc": "^1.0.41"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",
