@@ -1,12 +1,12 @@
 {
     "editor.codeActionsOnSave": {
-      "source.fixAll": true
+      "source.fixAll": "explicit"
     },
     "files.associations": {
       "*.vue": "html"
     },
     "eslint.options": {
-      "configFile": "./.eslintrc.json"
+      "configFile": "./.eslintrc.cjs"
     },
     "eslint.validate": ["javascript", "vue", "html", "typescript"],
     "workbench.startupEditor": "none",

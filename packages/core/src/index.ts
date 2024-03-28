@@ -6,6 +6,9 @@ import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
 import { Dep, UserWatcherOptions, Watcher } from './computed';
+import type { ReactiveControllerHost, ReactiveController } from "./reactiveController"
+export type { ReactiveControllerHost, ReactiveController }
+
 
 export interface Ref<T = any> {
   current: T;
@@ -21,7 +24,10 @@ if(process.env.NODE_ENV === 'development') {
   console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
 }
 
-const isEmpty = (val: unknown) => !(val || val === false || val === 0);
+type Falsy = false | 0 | '' | null | undefined
+
+/** false和0不算空 */
+const isEmpty = (val: unknown): val is Exclude<Falsy, false | 0> => !(val || val === false || val === 0);
 
 const defaultConverter: converterFunction = (value, type?) => {
   let newValue = value;
@@ -305,11 +311,13 @@ export function customElement(
   };
 }
 
-export class QuarkElement extends HTMLElement {
+export class QuarkElement extends HTMLElement implements ReactiveControllerHost {
   static h = h;
   static Fragment = Fragment;
   
   private _updatedQueue: (() => void)[] = [];
+
+  private _renderWatcher: Watcher | undefined = undefined;
 
   private queueUpdated(cb: () => void) {
     this._updatedQueue.push(cb)
@@ -340,6 +348,8 @@ export class QuarkElement extends HTMLElement {
 
           value = newValue;
           getDep().notify();
+          // this._render();
+          // this._controllers?.forEach((c) => c.hostUpdated?.());
 
           if (isFunction(this.componentDidUpdate)) {
             this.queueUpdated(() => {
@@ -407,6 +417,8 @@ export class QuarkElement extends HTMLElement {
 
   private eventController: EventController = new EventController();
 
+  private _controllers?: Set<ReactiveController>;
+
   private rootPatch = (newRootVNode: any) => {
     if (this.shadowRoot) {
       render(newRootVNode, this.shadowRoot);
@@ -428,6 +440,43 @@ export class QuarkElement extends HTMLElement {
         this[propName] = this.getAttribute(attrName);
       }
     );
+  }
+
+  /**
+   * Registers a `ReactiveController` to participate in the element's reactive
+   * update cycle. The element automatically calls into any registered
+   * controllers during its lifecycle callbacks.
+   *
+   * If the element is connected when `addController()` is called, the
+   * controller's `hostConnected()` callback will be immediately called.
+   * @category controllers
+   */
+  addController(controller: ReactiveController) {
+    (this._controllers ??= new Set()).add(controller);
+    if (this.shadowRoot && this.isConnected) {
+      controller.hostConnected?.();
+    }
+  }
+
+  /**
+   * Removes a `ReactiveController` from the element.
+   * @category controllers
+   */
+  removeController(controller: ReactiveController) {
+    this._controllers?.delete(controller);
+  }
+
+  // Reserve, may expand in the future
+  requestUpdate() {
+    // this._render();
+    // this._controllers?.forEach((c) => c.hostUpdated?.());
+    this._renderWatcher?.update();
+  }
+
+  // Reserve, may expand in the future
+  update() {
+    // this._render()
+    this._renderWatcher?.update();
   }
 
   $on = (eventName: string, eventHandler: EventHandler, el?: Element) => {
@@ -484,9 +533,16 @@ export class QuarkElement extends HTMLElement {
 
   connectedCallback() {
     this._updateProps();
-    new Watcher(
+    this._controllers?.forEach((c) => c.hostConnected?.());
+    let initRender = true;
+    this._renderWatcher = new Watcher(
       this,
-      () => { this._render() },
+      () => {
+        this._render();
+        const renderCbType = !initRender ? 'hostUpdated' : 'hostMounted';
+        this._controllers?.forEach((c) => c[renderCbType]?.());
+        initRender = false;
+      },
       { render: true },
     );
     this.flushUpdatedQueue();
@@ -527,6 +583,7 @@ export class QuarkElement extends HTMLElement {
 
     // notify changes to this prop's watchers
     prop.dep.notify()
+    // this._controllers?.forEach((c) => c.hostUpdated?.());
       
     if (isFunction(this.componentDidUpdate)) {
       const newValue = this[propName];
@@ -555,6 +612,7 @@ export class QuarkElement extends HTMLElement {
     }
 
     this.eventController.removeAllListener();
+    this._controllers?.forEach((c) => c.hostDisconnected?.());
     this.rootPatch(null);
   }
 }
