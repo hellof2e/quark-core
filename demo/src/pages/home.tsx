@@ -14,7 +14,7 @@ class MyComponent extends QuarkElement {
 
 
   componentDidMount() {
-    console.log("dom loaded!")
+    console.log("dom loaded!", 'home')
     // ...
   }
 

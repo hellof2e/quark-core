@@ -16,6 +16,7 @@ class Child2 extends QuarkElement {
   ])
 
   componentDidMount() {
+    console.log('dom loaded!', 'child-second')
   }
 
   render() {

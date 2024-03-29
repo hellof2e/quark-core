@@ -468,15 +468,15 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   // Reserve, may expand in the future
   requestUpdate() {
-    // this._render();
-    // this._controllers?.forEach((c) => c.hostUpdated?.());
-    this._renderWatcher?.update();
+    console.log('requestUpdate')
+    this.getOrInitRenderWatcher().update();
   }
 
   // Reserve, may expand in the future
   update() {
+    console.log('update')
     // this._render()
-    this._renderWatcher?.update();
+    this.getOrInitRenderWatcher().update()
   }
 
   $on = (eventName: string, eventHandler: EventHandler, el?: Element) => {
@@ -531,25 +531,39 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     return "" as any;
   }
 
+  private getOrInitRenderWatcher() {
+    if (!this._renderWatcher) {
+      console.error('getOrInitRenderWatcher if', this);
+      let initRender = true;
+      this._renderWatcher = new Watcher(
+        this,
+        () => {
+          console.error('render watcher callback')
+          this._render();
+          const renderCbType = !initRender ? 'hostUpdated' : 'hostMounted';
+          this._controllers?.forEach((c) => c[renderCbType]?.());
+  
+          if (initRender) {
+            initRender = false;
+
+            if (isFunction(this.componentDidMount)) {
+              this.componentDidMount();
+            }
+          } else {
+            this.flushUpdatedQueue();
+          }
+        },
+        { render: true },
+      );
+    }
+
+    return this._renderWatcher
+  }
+
   connectedCallback() {
     this._updateProps();
     this._controllers?.forEach((c) => c.hostConnected?.());
-    let initRender = true;
-    this._renderWatcher = new Watcher(
-      this,
-      () => {
-        this._render();
-        const renderCbType = !initRender ? 'hostUpdated' : 'hostMounted';
-        this._controllers?.forEach((c) => c[renderCbType]?.());
-        initRender = false;
-      },
-      { render: true },
-    );
-    this.flushUpdatedQueue();
-
-    if (isFunction(this.componentDidMount)) {
-      this.componentDidMount();
-    }
+    this.getOrInitRenderWatcher();
   }
 
   /** log old 'false' attribute value before resetting and removing it */

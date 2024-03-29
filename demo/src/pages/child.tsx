@@ -17,6 +17,7 @@ class Child1 extends QuarkElement {
 
 
   componentDidMount() {
+    console.log('dom loaded!', 'child')
   }
 
   goToLink() {

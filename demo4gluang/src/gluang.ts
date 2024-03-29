@@ -18,12 +18,14 @@ export const connectStore = superclass => {
 
         // 区分 lit（lit 中存在 performUpdate）
         if(!this.performUpdate) {
+          console.log('before update')
           this.update(); // quarkc 中先去执行
         }
     }
 
     // Your framework need this function to init observe state
     update() {
+      console.log('gluang update')
       stateRecorder.start();
       super.update();
       this._initStateObservers();
