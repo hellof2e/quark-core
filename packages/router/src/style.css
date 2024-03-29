@@ -4,6 +4,8 @@
 :host a:active
 {
     text-decoration: var(--quark-link-text-decoration, none);
+    font-size: var(--quark-link-font-size, medium);
+    font-family: var(--quark-link-font-family, inherit);
 }
 
 :host a:link {

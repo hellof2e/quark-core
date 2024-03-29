@@ -29,6 +29,10 @@ const plugins = [
   terser(),
   filesize(),
 ];
+const external = [
+  '@babel/runtime',
+  'quarkc'
+];
 const input = [
   "./src/index.ts",
   "./src/router.ts",
@@ -47,6 +51,20 @@ export default defineConfig([
       },
     ],
     plugins,
-    external: /@babel\/runtime/,
+    external,
   },
+  {
+    input: "./src/index.ts",
+    output: {
+      format: 'umd',
+      name: 'quarkRouter',
+      file: './umd/index.js',
+      globals: {
+        quarkc: "Quarkc",
+      },
+      sourcemap: true
+    },
+    plugins,
+    external,
+  }
 ]);

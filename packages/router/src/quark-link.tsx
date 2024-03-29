@@ -68,7 +68,7 @@ class QuarkLink extends QuarkElement {
   // TODO 可配置link生成的标签
   render() {
     return (
-      <a href={this.prefix + (this.path || this.to)} onClick={(e) => this.handleLinkClick(e)}>
+      <a href={this.prefix + (this.path || this.to)} onClick={(e) => this.handleLinkClick(e)} part="root">
           <slot></slot>
       </a>
     );
