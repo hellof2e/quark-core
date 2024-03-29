@@ -61,8 +61,8 @@ export class Router extends Routes {
     super.hostDisconnected();
     window.removeEventListener('popstate', this._onPopState);
     eventBus.off("link-mounted", this._busRouterLinstner);
-    this.host.removeEventListener(RouterJumpMethodEnum.push, this._rootHostListener);
-    this.host.removeEventListener(RouterJumpMethodEnum.replace, this._rootHostListener);
+    this.host.removeEventListener(RouterJumpMethodEnum.push, this._rootHostListener!);
+    this.host.removeEventListener(RouterJumpMethodEnum.replace, this._rootHostListener!);
   }
 
   override hostMounted() {
