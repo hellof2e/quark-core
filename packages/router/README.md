@@ -20,7 +20,6 @@ npm i quark-router -S
 ```ts
 import { Router, Routes } from "quark-router"
 ```
-
 注意：此时`quark-link`组件作为自定义组件已从`quark-router`中引入并定义，可直接使用，无需再次引入。
 
 也可以按需单独引入：
