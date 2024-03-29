@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "dev": "rollup -c --watch",
-    "build": "vite build --config vite.config.build.ts && vite build --config vite.config.build-umd.ts && tsc --emitDeclarationOnly",
+    "build": "vite build --config vite.config.build.ts && vite build --config vite.config.build-umd.ts",
     "changelog": "conventional-changelog -p angular -n './changelog-config.cjs' -i CHANGELOG.md -s"
   },
   "dependencies": {
