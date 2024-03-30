@@ -5,7 +5,7 @@ import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
-import { Dep, UserWatcherOptions, Watcher } from './computed';
+import { Dep, nextTick, UserWatcherOptions, Watcher } from './computed';
 import type { ReactiveControllerHost, ReactiveController } from "./reactiveController"
 export type { ReactiveControllerHost, ReactiveController }
 
@@ -368,7 +368,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
       }
     }
     
-    this._updatedQueue.forEach(cb => cb())
+    this._updatedQueue.forEach(cb => cb());
     this._updatedQueue = [];
   }
 
@@ -541,10 +541,14 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     );
   }
 
+  $nextTick(cb: (...args: any[]) => any) {
+    return nextTick(cb, this);
+  }
+
   /**
    * 此时组件 dom 已插入到页面中，等同于 connectedCallback() { super.connectedCallback(); }
    */
-  componentDidMount() {};
+  componentDidMount() {}
 
   /**
    * disconnectedCallback 触发时、dom 移除前执行，等同于 disconnectedCallback() { super.disconnectedCallback(); }
@@ -579,7 +583,8 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     return false;
   }
 
-  componentDidUpdate(propName: string, oldValue: any, newValue: any) {};
+  /** @deprecated use \@watch directive instead for same purposes */
+  componentDidUpdate(propName: string, oldValue: any, newValue: any) {}
 
   /**
    * 组件的 render 方法，

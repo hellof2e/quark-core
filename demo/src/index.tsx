@@ -44,8 +44,7 @@ class MyComponent extends QuarkElement {
 
   shouldComponentUpdate(propName, oldValue, newValue) {
     if (propName === 'innerCount') {
-      console.log(propName, oldValue, newValue)
-      return newValue <= 10 || newValue >= 20;
+      return newValue <= 10;
     }
 
     return true;

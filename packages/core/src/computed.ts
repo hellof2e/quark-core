@@ -13,8 +13,10 @@ export type WatcherGetter = () => any
 const watchers: Watcher[] = []
 /** all waiting watchers' id */
 const watcherIds = new Set<number>()
-/** is there any flush task pending —— before entering next event loop */
-let flushPending = false
+/** is there any watcher flush task pending —— before entering next event loop */
+let watcherFlushing = false
+/** is there any callback to flush */
+let cbFlushing = false;
 
 /** prepare micro task */
 const queueMicroTask = (callback: (...args: any[]) => any) => {
@@ -23,6 +25,38 @@ const queueMicroTask = (callback: (...args: any[]) => any) => {
   } else {
     Promise.resolve().then(callback)
   }
+};
+
+const cbs: { (...args: any[]): any }[] = [];
+const flushCbs = () => {
+  const cbsToFlush = cbs.splice(0, cbs.length);
+
+  for (let i = 0; i < cbsToFlush.length; i++) {
+    cbsToFlush[i]();
+  }
+
+  cbFlushing = false;
+};
+
+export const nextTick = (cb?: (...args: any[]) => any, ctx?: any) => {
+  let _resolve: (value: unknown) => void;
+  let _promise = !cb && new Promise((resolve) => {
+    _resolve = resolve;
+  });
+  cbs.push(() => {
+    if (cb) {
+      cb.call(ctx)
+    } else {
+      _resolve(ctx);
+    }
+  });
+
+  if (!cbFlushing) {
+    cbFlushing = true;
+    queueMicroTask(flushCbs);
+  }
+
+  return _promise;
 };
 
 // const flushUpdatedQueue = (watchers: Watcher[]) => {
@@ -54,7 +88,7 @@ const flushWatcherQueue = () => {
   // reset
   watchers.length = 0
   watcherIds.clear()
-  flushPending = false
+  watcherFlushing = false
 }
 
 /** add watcher to queue */
@@ -65,9 +99,9 @@ const queueWatcher = (watcher: Watcher) => {
     watcherIds.add(id)
     watchers.push(watcher)
       
-    if (!flushPending) {
-      flushPending = true
-      queueMicroTask(flushWatcherQueue)
+    if (!watcherFlushing) {
+      watcherFlushing = true
+      nextTick(flushWatcherQueue)
     }
   }
 }
