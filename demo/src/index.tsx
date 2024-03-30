@@ -14,7 +14,7 @@ declare global {
 @customElement({ tag: "my-component", style })
 class MyComponent extends QuarkElement {
   private _routes = new Router(this, [
-    {path: '/', render: () => <home-component count={this.count} />},
+    {path: '/', render: () => <home-component count={this.resolvedCount} />},
     {path: '/sub/:id', render: ({id}) => <sub-component id={id}/>},
     {path: '/child/*', render: () => <child-component/>},
     {path: '/child', render: () => <child-component/>},
