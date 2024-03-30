@@ -10,7 +10,6 @@ import { store } from '../store';
 
 @customElement({ tag: "app-header", style })
 class MyComponent extends connectStore(QuarkElement) {
-
   handleSwitch = () => {
     store.author = store.author === 'Sun Tzu' ? 'Guess who?' : 'Sun Tzu';
   }

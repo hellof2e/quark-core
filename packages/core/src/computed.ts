@@ -25,21 +25,21 @@ const queueMicroTask = (callback: (...args: any[]) => any) => {
   }
 };
 
-const flushUpdatedQueue = (watchers: Watcher[]) => {
-  let i = watchers.length
+// const flushUpdatedQueue = (watchers: Watcher[]) => {
+//   let i = watchers.length
 
-  while (i--) {
-    const watcher = watchers[i]
-    const {
-      render,
-      inst,
-    } = watcher
+//   while (i--) {
+//     const watcher = watchers[i]
+//     const {
+//       render,
+//       inst,
+//     } = watcher
 
-    if (render && inst) {
-      inst.flushUpdatedQueue()
-    }
-  }
-}
+//     if (render && inst) {
+//       inst.flushUpdatedQueue()
+//     }
+//   }
+// }
 
 /** flush watcher queue */
 const flushWatcherQueue = () => {
@@ -49,7 +49,7 @@ const flushWatcherQueue = () => {
     watcher.run()
   }
 
-  flushUpdatedQueue(watchers)
+  // flushUpdatedQueue(watchers)
 
   // reset
   watchers.length = 0

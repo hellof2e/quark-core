@@ -49,8 +49,8 @@ const defaultPropertyDeclaration: PropertyDeclaration = {
 };
 
 export const property = (options: PropertyDeclaration = {}) => {
-  return (target: unknown, propName: string) => {
-    return (target as { constructor: typeof QuarkElement }).constructor.createProperty(
+  return (target: QuarkElement, propName: string) => {
+    return (target.constructor as typeof QuarkElement).createProperty(
       propName,
       options
     );
@@ -58,14 +58,14 @@ export const property = (options: PropertyDeclaration = {}) => {
 };
 
 export const state = () => {
-  return (target: unknown, propName: string) => {
-    return (target as { constructor: typeof QuarkElement }).constructor.createState(propName);
+  return (target: QuarkElement, propName: string) => {
+    return (target.constructor as typeof QuarkElement).createState(propName);
   };
 };
 
 export const computed = () => {
-  return (target: unknown, propName: string, descriptor: PropertyDescriptor) => {
-    return (target as { constructor: typeof QuarkElement }).constructor.computed(
+  return (target: QuarkElement, propName: string, descriptor: PropertyDescriptor) => {
+    return (target.constructor as typeof QuarkElement).computed(
       propName,
       descriptor,
     );
@@ -73,8 +73,8 @@ export const computed = () => {
 };
 
 export const watch = (path: string, options?: Omit<UserWatcherOptions, 'cb'>) => {
-  return (target: unknown, propName: string, descriptor: PropertyDescriptor) => {
-    return (target as { constructor: typeof QuarkElement }).constructor.watch(
+  return (target: QuarkElement, propName: string, descriptor: PropertyDescriptor) => {
+    return (target.constructor as typeof QuarkElement).watch(
       propName,
       descriptor,
       path,
@@ -187,8 +187,10 @@ export function customElement(
           }
         }
 
-        const comp = Object.getPrototypeOf(this.constructor);
-        const stateDescriptors = StateDescriptors.get(comp);
+        // * 获取包装类实例的父类（即继承了QuarkElement的类——用户书写的组件类）
+        // * get parent class (user-defined component class that extends QuarkElement) of wrapper class
+        const Component = Object.getPrototypeOf(this.constructor);
+        const stateDescriptors = StateDescriptors.get(Component);
         
         if (stateDescriptors?.size) {
           stateDescriptors.forEach((descriptorCreator, propName) => {
@@ -204,7 +206,7 @@ export function customElement(
          * 重写类的属性描述符，并重写属性初始值。
          * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
          */
-        const propDefs = PropDefs.get(comp);
+        const propDefs = PropDefs.get(Component);
         
         if (propDefs?.size) {
           propDefs.forEach((def, attrName) => {
@@ -280,7 +282,7 @@ export function customElement(
           });
         }
 
-        const computedDescriptors = ComputedDescriptors.get(comp)
+        const computedDescriptors = ComputedDescriptors.get(Component)
 
         if (computedDescriptors?.size) {
           computedDescriptors.forEach((descriptorCreator, propKey) => {
@@ -292,7 +294,7 @@ export function customElement(
           });
         }
 
-        const watchers = UserWatchers.get(comp)
+        const watchers = UserWatchers.get(Component)
 
         if (watchers?.size) {
           watchers.forEach(({
@@ -313,19 +315,61 @@ export function customElement(
 
 export class QuarkElement extends HTMLElement implements ReactiveControllerHost {
   static h = h;
+  
   static Fragment = Fragment;
   
   private _updatedQueue: (() => void)[] = [];
 
+  /** 组件是否已挂载 */
+  private _mounted = false;
+  
   private _renderWatcher: Watcher | undefined = undefined;
 
   private queueUpdated(cb: () => void) {
     this._updatedQueue.push(cb)
   }
 
-  public flushUpdatedQueue() {
+  private hasDidUpdateCb() {
+    return this.hasOwnLifeCycleMethod('componentDidUpdate');
+  }
+
+  private hasOwnLifeCycleMethod(methodName: 'componentDidMount' | 'componentDidUpdate' | 'shouldComponentUpdate') {
+    return Object.getPrototypeOf(
+      this.constructor // base class
+    ) // wrapper class
+      .prototype // user-defined class
+      .hasOwnProperty(methodName);
+  }
+
+  /** handler for processing tasks after render */
+  public postRender() {
+    if (!this._mounted) {
+      this._mounted = true;
+      const hasPendingUpdate = !!this._updatedQueue.length;
+
+      if (this.hasOwnLifeCycleMethod('componentDidMount')) {
+        if (hasPendingUpdate) {
+          // * when componentDidMount and componentDidUpate are both defined
+          // * componentDidUpate should be ignored at mount phase
+          this._updatedQueue = [];
+          this.componentDidMount();
+          return;
+        }
+
+        this.componentDidMount();
+      } else {
+        // * for historic reasons, componentDidUpate was used for both mounting and updating
+        // * so we should also call it at mount phase
+        if (process.env.NODE_ENV === 'development') {
+          if (hasPendingUpdate) {
+            console.warn('by design, componentDidUpdate should not be invoked at mount phase, use componentDidMount for initialization logic instead.');
+          }
+        }
+      }
+    }
+    
     this._updatedQueue.forEach(cb => cb())
-    this._updatedQueue = []
+    this._updatedQueue = [];
   }
 
   // 内部属性装饰器
@@ -346,12 +390,14 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
             return;
           }
 
+          if (this.shouldPreventUpdate(propName, resolvedOldVal, newValue)) {
+            return;
+          }
+
           value = newValue;
           getDep().notify();
-          // this._render();
-          // this._controllers?.forEach((c) => c.hostUpdated?.());
 
-          if (isFunction(this.componentDidUpdate)) {
+          if (this.hasDidUpdateCb()) {
             this.queueUpdated(() => {
               this.componentDidUpdate(propName, resolvedOldVal, newValue);
             });
@@ -468,14 +514,13 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   // Reserve, may expand in the future
   requestUpdate() {
-    console.log('requestUpdate')
+    console.error('requestUpdate', this)
     this.getOrInitRenderWatcher().update();
   }
 
   // Reserve, may expand in the future
   update() {
-    console.log('update')
-    // this._render()
+    console.error('update', this)
     this.getOrInitRenderWatcher().update()
   }
 
@@ -499,7 +544,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   /**
    * 此时组件 dom 已插入到页面中，等同于 connectedCallback() { super.connectedCallback(); }
    */
-  componentDidMount() {}
+  componentDidMount() {};
 
   /**
    * disconnectedCallback 触发时、dom 移除前执行，等同于 disconnectedCallback() { super.disconnectedCallback(); }
@@ -507,20 +552,34 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   componentWillUnmount() {}
 
   /**
-   * @deprecated since we have embraced more precisely controlled render scheduler mechanism,
-   * there's no need to use shouldComponentUpdate any more.
+   * @deprecated
+   * since we have embraced more precisely controlled render scheduler mechanism,
+   * there's no need to use shouldComponentUpdate any more,
+   * and will be removed in next major version.
    * 
    * 控制当前属性变化是否导致组件渲染
    * @param propName 属性名
-   * @param resolvedOldVal 属性旧值
+   * @param oldValue 属性旧值
    * @param newValue 属性新值
    * @returns boolean
    */
-  shouldComponentUpdate(propName: string, resolvedOldVal: any, newValue: any) {
-    return resolvedOldVal !== newValue;
+  shouldComponentUpdate(propName: string, oldValue: any, newValue: any) {
+    return oldValue !== newValue;
   }
 
-  componentDidUpdate(propName: string, resolvedOldVal: any, newValue: any) {}
+  shouldPreventUpdate(propName: string, oldValue: any, newValue: any) {
+    if (this.hasOwnLifeCycleMethod('shouldComponentUpdate')) {
+      return !this.shouldComponentUpdate(
+        propName,
+        oldValue,
+        newValue,
+      );
+    }
+
+    return false;
+  }
+
+  componentDidUpdate(propName: string, oldValue: any, newValue: any) {};
 
   /**
    * 组件的 render 方法，
@@ -533,25 +592,13 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   private getOrInitRenderWatcher() {
     if (!this._renderWatcher) {
-      console.error('getOrInitRenderWatcher if', this);
-      let initRender = true;
       this._renderWatcher = new Watcher(
         this,
         () => {
-          console.error('render watcher callback')
           this._render();
-          const renderCbType = !initRender ? 'hostUpdated' : 'hostMounted';
+          const renderCbType = this._mounted ? 'hostUpdated' : 'hostMounted';
           this._controllers?.forEach((c) => c[renderCbType]?.());
-  
-          if (initRender) {
-            initRender = false;
-
-            if (isFunction(this.componentDidMount)) {
-              this.componentDidMount();
-            }
-          } else {
-            this.flushUpdatedQueue();
-          }
+          this.postRender();
         },
         { render: true },
       );
@@ -595,21 +642,26 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
       }
     }
 
+    const newValue = this[propName];
+    let resolvedOldVal = oldVal
+    let oldValReset = this._oldVals.get(propName)
+
+    if (oldValReset) {
+      this._oldVals.delete(propName)
+      resolvedOldVal = oldValReset
+    }
+    
+    resolvedOldVal = prop.converter(resolvedOldVal);
+    
+    if (this.shouldPreventUpdate(propName, resolvedOldVal, newValue)) {
+      return;
+    }
+
     // notify changes to this prop's watchers
     prop.dep.notify()
     // this._controllers?.forEach((c) => c.hostUpdated?.());
       
-    if (isFunction(this.componentDidUpdate)) {
-      const newValue = this[propName];
-      let resolvedOldVal = oldVal
-      let oldValReset = this._oldVals.get(propName)
-
-      if (oldValReset) {
-        this._oldVals.delete(propName)
-        resolvedOldVal = oldValReset
-      }
-      
-      resolvedOldVal = prop.converter(resolvedOldVal);
+    if (this.hasDidUpdateCb()) {
       this.queueUpdated(() => {
         this.componentDidUpdate(
           propName,
@@ -628,5 +680,6 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     this.eventController.removeAllListener();
     this._controllers?.forEach((c) => c.hostDisconnected?.());
     this.rootPatch(null);
+    this._mounted = false;
   }
 }

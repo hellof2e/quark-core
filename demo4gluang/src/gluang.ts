@@ -15,19 +15,25 @@ export const connectStore = superclass => {
     constructor() {
         super();
         this._observers = [];
+    }
 
-        // 区分 lit（lit 中存在 performUpdate）
-        if(!this.performUpdate) {
-          console.log('before update')
-          this.update(); // quarkc 中先去执行
-        }
+    connectedCallback() {
+      // 区分 lit（lit 中存在 performUpdate）
+      if(!this.performUpdate) {
+        this.update(true); // quarkc 中先去执行
+      }
     }
 
     // Your framework need this function to init observe state
-    update() {
-      console.log('gluang update')
+    update(init = false) {
       stateRecorder.start();
-      super.update();
+
+      if (!init) {
+        super.update();
+      } else {
+        super.connectedCallback();
+      }
+
       this._initStateObservers();
     }
 
