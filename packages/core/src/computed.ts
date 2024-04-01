@@ -19,8 +19,8 @@ let flushing = false
 let flushWaiting = false;
 /** flushing watcher index */
 let flushIndex = 0;
-/** is there any callback to flush */
-let cbFlushing = false;
+/** is callbacks flushing task already queued */
+let cbsFlushWaiting = false;
 
 /** prepare micro task */
 const queueMicroTask = (callback: (...args: any[]) => any) => {
@@ -33,13 +33,12 @@ const queueMicroTask = (callback: (...args: any[]) => any) => {
 
 const cbs: { (...args: any[]): any }[] = [];
 const flushCbs = () => {
+  cbsFlushWaiting = false;
   const cbsToFlush = cbs.splice(0, cbs.length);
 
   for (let i = 0; i < cbsToFlush.length; i++) {
     cbsToFlush[i]();
   }
-
-  cbFlushing = false;
 };
 
 export const nextTick = (cb?: (...args: any[]) => any, ctx?: any) => {
@@ -55,8 +54,8 @@ export const nextTick = (cb?: (...args: any[]) => any, ctx?: any) => {
     }
   });
 
-  if (!cbFlushing) {
-    cbFlushing = true;
+  if (!cbsFlushWaiting) {
+    cbsFlushWaiting = true;
     queueMicroTask(flushCbs);
   }
 
