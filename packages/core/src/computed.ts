@@ -13,8 +13,12 @@ export type WatcherGetter = () => any
 const watchers: Watcher[] = []
 /** all waiting watchers' id */
 const watcherIds = new Set<number>()
-/** is there any watcher flush task pending —— before entering next event loop */
-let watcherFlushing = false
+/** are wathcers being flushed */
+let flushing = false
+/** is flushing task already queued */
+let flushWaiting = false;
+/** flushing watcher index */
+let flushIndex = 0;
 /** is there any callback to flush */
 let cbFlushing = false;
 
@@ -77,11 +81,12 @@ export const nextTick = (cb?: (...args: any[]) => any, ctx?: any) => {
 
 /** flush watcher queue */
 const flushWatcherQueue = () => {
+  flushing = true;
   // make sure updates from parent to child, user watchers to render watchers.
   watchers.sort((a, b) => a.id - b.id);
   
-  for (let i = 0; i < watchers.length; i++) {
-    const watcher = watchers[i]
+  for (flushIndex = 0; flushIndex < watchers.length; flushIndex++) {
+    const watcher = watchers[flushIndex]
     watcherIds.delete(watcher.id)
     watcher.run()
   }
@@ -91,21 +96,37 @@ const flushWatcherQueue = () => {
   // reset
   watchers.length = 0
   watcherIds.clear()
-  watcherFlushing = false
+  flushing = false
+  flushWaiting = false
 }
 
 /** add watcher to queue */
 const queueWatcher = (watcher: Watcher) => {
   const { id } = watcher
-  
-  if (!watcherIds.has(id)) {
-    watcherIds.add(id)
+
+  if (watcherIds.has(id)) {
+    return;
+  }
+
+  watcherIds.add(id)
+    
+  if (!flushing) {
     watchers.push(watcher)
-      
-    if (!watcherFlushing) {
-      watcherFlushing = true
-      nextTick(flushWatcherQueue)
+  } else {
+    let placeIndex = watchers.findIndex(target => target.id > id);
+
+    if (placeIndex === -1) {
+      placeIndex = watchers.length;
+    } else if (placeIndex > flushIndex) {
+      placeIndex = flushIndex + 1;
     }
+
+    watchers.splice(placeIndex, 0, watcher)
+  }
+
+  if (!flushWaiting) {
+    flushWaiting = true;
+    nextTick(flushWatcherQueue);
   }
 }
 
