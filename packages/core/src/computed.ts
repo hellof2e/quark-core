@@ -77,6 +77,9 @@ export const nextTick = (cb?: (...args: any[]) => any, ctx?: any) => {
 
 /** flush watcher queue */
 const flushWatcherQueue = () => {
+  // make sure updates from parent to child, user watchers to render watchers.
+  watchers.sort((a, b) => a.id - b.id);
+  
   for (let i = 0; i < watchers.length; i++) {
     const watcher = watchers[i]
     watcherIds.delete(watcher.id)
