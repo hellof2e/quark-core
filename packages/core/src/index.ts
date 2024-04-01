@@ -511,13 +511,11 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   // Reserve, may expand in the future
   requestUpdate() {
-    console.error('requestUpdate', this)
     this.getOrInitRenderWatcher().update();
   }
 
   // Reserve, may expand in the future
   update() {
-    console.error('update', this)
     this.getOrInitRenderWatcher().update()
   }
 
