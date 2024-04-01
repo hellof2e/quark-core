@@ -1,4 +1,4 @@
-import { QuarkElement, customElement } from "quarkc"
+import { QuarkElement, customElement, state, watch } from "quarkc"
 import style from "./index.less?inline"
 import suntzu from "./suntzu.jpeg"
 
@@ -10,8 +10,25 @@ import { store } from '../store';
 
 @customElement({ tag: "app-header", style })
 class MyComponent extends connectStore(QuarkElement) {
+  @state()
+  showAuthorName = false
+
+  @watch('showAuthorName')
+  handleShowChange(newVal) {
+    console.log('handleShowChange', newVal)
+    store.author = newVal ? 'Sun Tzu' : 'Guess who?';
+  }
+  
   handleSwitch = () => {
-    store.author = store.author === 'Sun Tzu' ? 'Guess who?' : 'Sun Tzu';
+    this.showAuthorName = !this.showAuthorName;
+  }
+
+  componentDidUpdate(propName, oldVal, newVal) {
+    console.log('componentDidUpdate', propName, oldVal, newVal)
+  }
+
+  componentUpdated() {
+    console.log('componentUpdated', this.showAuthorName, store.author)
   }
 
   render() {

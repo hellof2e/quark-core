@@ -333,7 +333,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     return this.hasOwnLifeCycleMethod('componentDidUpdate');
   }
 
-  private hasOwnLifeCycleMethod(methodName: 'componentDidMount' | 'componentDidUpdate' | 'shouldComponentUpdate') {
+  private hasOwnLifeCycleMethod(methodName: 'componentDidMount' | 'componentDidUpdate' | 'shouldComponentUpdate' | 'componentUpdated') {
     return Object.getPrototypeOf(
       this.constructor // base class
     ) // wrapper class
@@ -343,7 +343,9 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   /** handler for processing tasks after render */
   public postRender() {
-    if (!this._mounted) {
+    let mounted = this._mounted;
+    
+    if (!mounted) {
       this._mounted = true;
       const hasPendingUpdate = !!this._updatedQueue.length;
 
@@ -370,6 +372,12 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     
     this._updatedQueue.forEach(cb => cb());
     this._updatedQueue = [];
+
+    if (mounted) {
+      if (this.hasOwnLifeCycleMethod('componentUpdated')) {
+        this.componentUpdated();
+      }
+    }
   }
 
   // 内部属性装饰器
@@ -580,6 +588,9 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   /** @deprecated use \@watch directive instead for same purposes */
   componentDidUpdate(propName: string, oldValue: any, newValue: any) {}
+
+  /** called when all props and states updated */
+  componentUpdated() {}
 
   /**
    * 组件的 render 方法，
