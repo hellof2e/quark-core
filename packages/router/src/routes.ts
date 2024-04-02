@@ -310,6 +310,8 @@ export class Routes implements ReactiveController {
     const event = new RoutesConnectedEvent(this);
     this._host.dispatchEvent(event);
     this._onDisconnect = event.onDisconnect;
+    eventBus.emit("routes-host-mounted", this);
+    eventBus.on("link-mounted", this._busRoutesListener);
   }
 
   hostDisconnected() {
@@ -321,11 +323,6 @@ export class Routes implements ReactiveController {
     eventBus.off("link-mounted", this._busRoutesListener);
     this._host.removeEventListener(RouteMethodEnum.push, this._hostListener!);
     this._host.removeEventListener(RouteMethodEnum.replace, this._hostListener!);
-  }
-
-  hostMounted() {
-    eventBus.emit("routes-host-mounted", this);
-    eventBus.on("link-mounted", this._busRoutesListener);
   }
 
   private _onRoutesConnected = (e: RoutesConnectedEvent) => {

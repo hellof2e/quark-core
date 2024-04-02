@@ -52,6 +52,8 @@ export class Router extends Routes {
 
   override hostConnected() {
     super.hostConnected();
+    eventBus.emit("router-host-mounted", this);
+    eventBus.on("link-mounted", this._busRouterLinstner);
     window.addEventListener('popstate', this._onPopState);
     // Kick off routed rendering by going to the current URL
     this.goto(this._resolvePath(window.location));
@@ -63,12 +65,6 @@ export class Router extends Routes {
     eventBus.off("link-mounted", this._busRouterLinstner);
     this.host.removeEventListener(RouterJumpMethodEnum.push, this._rootHostListener!);
     this.host.removeEventListener(RouterJumpMethodEnum.replace, this._rootHostListener!);
-  }
-
-  override hostMounted() {
-    super.hostMounted();
-    eventBus.emit("router-host-mounted", this);
-    eventBus.on("link-mounted", this._busRouterLinstner);
   }
 
   protected override addListeners() {

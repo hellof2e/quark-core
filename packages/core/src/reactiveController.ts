@@ -60,9 +60,4 @@ export interface ReactiveController {
    *
    */
   hostUpdated?(): void;
-
-  /**
-   * Called when the host is mounted, just after the host calls first render.
-   */
-    hostMounted?():void;
 }
