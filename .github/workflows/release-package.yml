@@ -60,11 +60,6 @@ jobs:
           path: "./packages/core"
         id: package-version
 
-
-      # 生成 Changelog
-      - name: Changelog
-        run: pnpm run changlog
-
       # 提交 Tag
       - name: create git tag
         env:
@@ -76,7 +71,13 @@ jobs:
           git tag v${{ steps.package-version.outputs.version }}
           git push origin v${{ steps.package-version.outputs.version }}
 
-
+      - uses: BobAnkh/auto-generate-changelog@v1.2.5
+        with:
+          REPO_NAME: 'hellof2e/quark-core-docs'
+          ACCESS_TOKEN: ${{secrets.GIT_ACTION}}
+          PATH: 'CHANGELOG.md'
+          COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
+          TYPE: 'feat:Feature,fix:Bug Fixes,docs:Documentation,refactor:Refactor,perf:Performance Improvements'
 
       # 下面主要是创建 github 的release
       # 关于创建 release 的更多参数，可以查看 actions/create-release@v1
