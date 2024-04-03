@@ -73,7 +73,7 @@ jobs:
 
       - uses: BobAnkh/auto-generate-changelog@v1.2.5
         with:
-          REPO_NAME: 'hellof2e/quark-core-docs'
+          REPO_NAME: 'hellof2e/quark-core'
           ACCESS_TOKEN: ${{secrets.GIT_ACTION}}
           PATH: 'CHANGELOG.md'
           COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
