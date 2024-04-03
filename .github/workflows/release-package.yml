@@ -75,7 +75,7 @@ jobs:
         with:
           REPO_NAME: 'hellof2e/quark-core'
           ACCESS_TOKEN: ${{secrets.GIT_ACTION}}
-          PATH: 'CHANGELOG.md'
+          PATH: '/packages/core/CHANGELOG.md'
           COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
           TYPE: 'feat:Feature,fix:Bug Fixes,docs:Documentation,refactor:Refactor,perf:Performance Improvements'
 
