@@ -264,10 +264,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   private _render() {
     const newRootVNode = this.render();
-
-    if (newRootVNode) {
-      this.rootPatch(newRootVNode);
-    }
+    this.rootPatch(newRootVNode);
   }
 
   /**
