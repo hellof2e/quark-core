@@ -3,8 +3,8 @@ name: Release
 on:
   push:
     branches: [main]
-    paths:
-      - 'packages/core/package.json'
+    # paths:
+    #   - 'packages/core/package.json'
 
 jobs:
   release:
@@ -60,9 +60,10 @@ jobs:
           path: './packages/core'
         id: package-version
 
-      # # 生成 Changelog
-      # - name: Changelog
-      #   run: pnpm run changlog
+
+      # 生成 Changelog
+      - name: Changelog
+        run: pnpm run changlog
 
       # 提交 Tag
       - name: create git tag
@@ -71,8 +72,11 @@ jobs:
         run: |
           git config --local user.email "sanqi_med@163.com"
           git config --local user.name "Sanqi"
+          git commit -a -m "Feat: update changelog"
           git tag v${{ steps.package-version.outputs.version }}
           git push origin v${{ steps.package-version.outputs.version }}
+
+
 
       # 下面主要是创建 github 的release
       # 关于创建 release 的更多参数，可以查看 actions/create-release@v1
