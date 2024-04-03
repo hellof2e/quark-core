@@ -73,6 +73,7 @@ jobs:
           git config --local user.email "sanqi_med@163.com"
           git config --local user.name "Sanqi"
           git commit -a -m "Feat: update changelog"
+          git push origin main
           git tag v${{ steps.package-version.outputs.version }}
           git push origin v${{ steps.package-version.outputs.version }}
 
