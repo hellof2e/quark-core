@@ -3,8 +3,8 @@ name: Release
 on:
   push:
     branches: [main]
-    # paths:
-    #   - "packages/core/package.json"
+    paths:
+      - "packages/core/package.json"
 
 jobs:
   release:
