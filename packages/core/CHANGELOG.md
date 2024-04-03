@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [v1.0.48](https://github.com/hellof2e/quark-core/releases/tag/v1.0.48) - 2024-04-03 08:20:02
+
+请点击查看 [更新日志](https://github.com/hellof2e/quark-core/blob/main/packages/core/CHANGELOG.md).
+
+### Bug Fixes
+
+- general:
+  - fixe: remove conventional-changelog ([a5586bb](https://github.com/hellof2e/quark-core/commit/a5586bb0d51eff15516d22280b4f0b013fa1aa7f))
+
 ## [v1.0.47](https://github.com/hellof2e/quark-core/releases/tag/v1.0.47) - 2024-04-03 08:13:01
 
 请点击查看 [更新日志](https://github.com/hellof2e/quark-core/blob/main/packages/core/CHANGELOG.md).
