@@ -71,14 +71,6 @@ jobs:
           git tag v${{ steps.package-version.outputs.version }}
           git push origin v${{ steps.package-version.outputs.version }}
 
-      - uses: BobAnkh/auto-generate-changelog@v1.2.5
-        with:
-          REPO_NAME: 'hellof2e/quark-core'
-          ACCESS_TOKEN: ${{secrets.GIT_ACTION}}
-          PATH: '/packages/core/CHANGELOG.md'
-          COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
-          TYPE: 'feat:Feature,fix:Bug Fixes,docs:Documentation,refactor:Refactor,perf:Performance Improvements'
-
       # 下面主要是创建 github 的release
       # 关于创建 release 的更多参数，可以查看 actions/create-release@v1
       - name: Create Release for Tag
@@ -92,3 +84,11 @@ jobs:
           prerelease: false # 是否为预发布版本
           body: |
             请点击查看 [更新日志](https://github.com/hellof2e/quark-core/blob/main/packages/core/CHANGELOG.md).
+
+      - uses: BobAnkh/auto-generate-changelog@v1.2.5
+        with:
+          REPO_NAME: 'hellof2e/quark-core'
+          ACCESS_TOKEN: ${{secrets.GIT_ACTION}}
+          PATH: '/packages/core/CHANGELOG.md'
+          COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
+          TYPE: 'feat:Feature,fix:Bug Fixes,docs:Documentation,refactor:Refactor,perf:Performance Improvements'
