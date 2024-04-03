@@ -108,6 +108,6 @@ jobs:
           # In this example `release_version` is fetched from `workflow_dispatch` events input.
           # You can use any other method to fetch the release version
           # such as environment variable or from output of another action
-          release_version: ${{ github.event.inputs.release_version }}
+          release_version: ${{ steps.package-version.outputs.version }}
           # Optional
           github_token: ${{ secrets.GIT_ACTION }}
