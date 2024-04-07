@@ -376,6 +376,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
      * 初始值重写后首次渲染
      */
     this._render();
+    this._controllers?.forEach((c) => c.hostMounted?.());
     if (isFunction(this.componentDidMount)) {
       this.componentDidMount();
     }
