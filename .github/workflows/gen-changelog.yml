@@ -1,0 +1,21 @@
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: BobAnkh/auto-generate-changelog@v1.2.5
+        with:
+          REPO_NAME: 'hellof2e/quark-core'
+          ACCESS_TOKEN: ${{secrets.GIT_ACTION}}
+          PATH: '/packages/core/CHANGELOG.md'
+          COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
+          TYPE: 'feat:Feature,fix:Bug Fixes,docs:Documentation,refactor:Refactor,perf:Performance Improvements'
