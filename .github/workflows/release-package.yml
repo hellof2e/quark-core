@@ -73,17 +73,17 @@ jobs:
 
       # 下面主要是创建 github 的release
       # 关于创建 release 的更多参数，可以查看 actions/create-release@v1
-      - name: Create Release for Tag
-        id: release_tag
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTION }} # 这块需要用到 github的token，因为需要对分之进行代码推送
-        with:
-          tag_name: v${{ steps.package-version.outputs.version }}
-          release_name: Release v${{ steps.package-version.outputs.version }}
-          prerelease: false # 是否为预发布版本
-          body: |
-            请点击查看 [更新日志](https://github.com/hellof2e/quark-core/releases/tag/v${{ steps.package-version.outputs.version }}).
+      # - name: Create Release for Tag
+      #   id: release_tag
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GIT_ACTION }} # 这块需要用到 github的token，因为需要对分之进行代码推送
+      #   with:
+      #     tag_name: v${{ steps.package-version.outputs.version }}
+      #     release_name: Release v${{ steps.package-version.outputs.version }}
+      #     prerelease: false # 是否为预发布版本
+      #     body: |
+      #       请点击查看 [更新日志](https://github.com/hellof2e/quark-core/releases/tag/v${{ steps.package-version.outputs.version }}).
 
       - run: npx changelogithub # or changelogithub@0.12 if ensure the stable result
         env:
