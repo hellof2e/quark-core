@@ -84,3 +84,7 @@ jobs:
           prerelease: false # 是否为预发布版本
           body: |
             请点击查看 [更新日志](https://github.com/hellof2e/quark-core/blob/main/packages/core/CHANGELOG.md).
+
+      - run: npx changelogithub # or changelogithub@0.12 if ensure the stable result
+        env:
+          GITHUB_TOKEN: ${{secrets.GIT_ACTION}}
