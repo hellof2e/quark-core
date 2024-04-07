@@ -1,8 +1,12 @@
+name: Release
+
+permissions:
+  contents: write
+
 on:
   push:
-    # Pattern matched against refs/tags
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   release:
@@ -12,10 +16,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: BobAnkh/auto-generate-changelog@v1.2.5
+      - uses: actions/setup-node@v3
         with:
-          REPO_NAME: 'hellof2e/quark-core'
-          ACCESS_TOKEN: ${{secrets.GIT_ACTION}}
-          PATH: '/packages/core/CHANGELOG.md'
-          COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
-          TYPE: 'feat:Feature,fix:Bug Fixes,docs:Documentation,refactor:Refactor,perf:Performance Improvements'
+          node-version: 16.x
+
+      - run: npx changelogithub # or changelogithub@0.12 if ensure the stable result
+        env:
+          GITHUB_TOKEN: ${{secrets.GIT_ACTION}}
