@@ -9,7 +9,6 @@
     "dev4gluang": "pnpm run -C demo4gluang dev",
     "codeformat": "prettier --write *",
     "build": "pnpm -r --filter='./packages/create-quarkc' run build",
-    "changlog": "pnpm run -C packages/core changelog",
     "build4Core": "pnpm run -C packages/core build"
   },
   "devDependencies": {
