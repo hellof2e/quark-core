@@ -1,4 +1,4 @@
-import { QuarkElement, property, customElement } from "quarkc"
+import { QuarkElement, property, customElement, state, computed } from "quarkc"
 import { Router } from "quark-router"
 import "./pages/home"
 import "./pages/sub"
@@ -14,7 +14,7 @@ declare global {
 @customElement({ tag: "my-component", style })
 class MyComponent extends QuarkElement {
   private _routes = new Router(this, [
-    {path: '/', render: () => <home-component/>},
+    {path: '/', render: () => <home-component count={this.resolvedCount} />},
     {path: '/sub/:id', render: ({id}) => <sub-component id={id}/>},
     {path: '/child/*', render: () => <child-component/>},
     {path: '/child', render: () => <child-component/>},
@@ -29,15 +29,34 @@ class MyComponent extends QuarkElement {
   @property({ type: String })
   text
 
+  @state()
+  innerCount = 0;
+
+  @computed()
+  get resolvedCount() {
+    return this.count + this.innerCount;
+  }
+
   add = () => {
     // 内部事件
-    this.count += 1
+    this.innerCount += 1
   };
 
-  componentDidMount() {
-    console.log("dom loaded!")
-    // ...
+  shouldComponentUpdate(propName, oldValue, newValue) {
+    if (propName === 'innerCount') {
+      return newValue <= 10;
+    }
+
+    return true;
   }
+
+  componentDidUpdate() {
+    console.log("parent dom updated!")
+  }
+
+  // componentDidMount() {
+  //   console.log("parent dom loaded!")
+  // }
 
   render() {
     return (
@@ -56,7 +75,7 @@ class MyComponent extends QuarkElement {
           <h1>{this.text} Quarkc</h1>
 
           <div className="card">
-            <button onClick={this.add}>count is: {this.count}</button>
+            <button onClick={this.add}>count is: {this.resolvedCount}</button>
           </div>
         </div>
         <ul>

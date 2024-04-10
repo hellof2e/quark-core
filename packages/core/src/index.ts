@@ -5,6 +5,7 @@ import { PropertyDeclaration, converterFunction } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
+import { Dep, nextTick, UserWatcherOptions, Watcher } from './computed';
 import type { ReactiveControllerHost, ReactiveController } from "./reactiveController"
 export type { ReactiveControllerHost, ReactiveController }
 
@@ -19,7 +20,7 @@ export function createRef<T = any>(): Ref<T | null> {
 
 export const Fragment: any = OriginFragment;
 
-if(~location.href.indexOf('localhost')) {
+if(process.env.NODE_ENV === 'development') {
   console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
 }
 
@@ -48,30 +49,90 @@ const defaultPropertyDeclaration: PropertyDeclaration = {
 };
 
 export const property = (options: PropertyDeclaration = {}) => {
-  return (target: unknown, name: string) => {
+  return (target: QuarkElement, propName: string) => {
     return (target.constructor as typeof QuarkElement).createProperty(
-      name,
+      propName,
       options
     );
   };
 };
 
 export const state = () => {
-  return (target: unknown, name: string) => {
-    return (target.constructor as typeof QuarkElement).createState(name);
+  return (target: QuarkElement, propName: string) => {
+    return (target.constructor as typeof QuarkElement).createState(propName);
   };
 };
 
-const ElementProperties: DblKeyMap<
+export const computed = () => {
+  return (target: QuarkElement, propName: string, descriptor: PropertyDescriptor) => {
+    return (target.constructor as typeof QuarkElement).computed(
+      propName,
+      descriptor,
+    );
+  };
+};
+
+export const watch = (path: string, options?: Omit<UserWatcherOptions, 'cb'>) => {
+  return (target: QuarkElement, propName: string, descriptor: PropertyDescriptor) => {
+    return (target.constructor as typeof QuarkElement).watch(
+      propName,
+      descriptor,
+      path,
+      options,
+    );
+  };
+}
+
+type PropertyDescriptorCreator = (defaultValue?: any) => PropertyDescriptor
+
+const StateDescriptors: DblKeyMap<
   typeof QuarkElement,
   string,
-  PropertyDeclaration
+  PropertyDescriptorCreator
 > = new DblKeyMap();
 
-const Descriptors: DblKeyMap<
+/** convert attribute value to prop value */
+type Attr2PropConverter = (value: string | null) => any
+
+/** all declared props' definitions, with attribute name as sub key */
+const PropDefs: DblKeyMap<
   typeof QuarkElement,
   string,
-  (defaultValue?: any) => PropertyDescriptor
+  {
+    /** prop decorator options passed */
+    options: PropertyDeclaration;
+    /** created dependency for the prop, it's initialization will be delayed until Object.defineProperty */
+    propName: string;
+  }
+> = new DblKeyMap();
+
+/** quark element instance's props' map, with attribute name as sub key */
+const Props: DblKeyMap<
+  QuarkElement,
+  string,
+  {
+    /** created dependency for the prop */
+    dep: Dep;
+    converter: Attr2PropConverter;
+    propName: string;
+  }
+> = new DblKeyMap();
+
+/** quark element instance's prop values stored */
+
+
+const ComputedDescriptors: DblKeyMap<
+  typeof QuarkElement,
+  string,
+  PropertyDescriptorCreator
+> = new DblKeyMap();
+
+const UserWatchers: DblKeyMap<
+  typeof QuarkElement,
+  string,
+  {
+    path: string;
+  } & UserWatcherOptions
 > = new DblKeyMap();
 
 export function customElement(
@@ -82,35 +143,28 @@ export function customElement(
 
   return (target: typeof QuarkElement) => {
     class NewQuarkElement extends target {
-      static get observedAttributes() {
-        const attributes: string[] = [];
-        const targetProperties = ElementProperties.get(target);
-        if (targetProperties) {
-          targetProperties.forEach((elOption, elName) => {
-            if (elOption.observed) {
-              attributes.push(elName);
-            }
-          });
+      static get observedProps() {
+        const defs = PropDefs.get(target);
+
+        if (!defs) {
+          return []
         }
-        return attributes;
+        
+        return [...defs.entries()].filter(([_, { options }]) => !!options.observed);
       }
 
-      static isBooleanProperty(propertyName: string) {
-        let isBoolean = false;
-        const targetProperties = ElementProperties.get(target);
-        if (targetProperties) {
-          targetProperties.forEach((elOption, elName) => {
-            if (
-              elOption.type === Boolean &&
-              propertyName === elName
-            ) {
-              isBoolean = true;
-              return isBoolean;
-            }
-          });
+      static get observedAttributes() {
+        return this.observedProps.map(([attrName]) => attrName);
+      }
+
+      static isBooleanProperty(attrName: string) {
+        const def = PropDefs.get(target)?.get(attrName);
+
+        if (!def) {
+          return false;
         }
 
-        return isBoolean;
+        return def.options.type === Boolean;
       }
 
       constructor() {
@@ -133,21 +187,123 @@ export function customElement(
           }
         }
 
-        /**
-         * 重写类的属性描述符，并重写属性初始值。
-         * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
-         */
-        const targetDescriptors = Descriptors.get(Object.getPrototypeOf(this.constructor))
-        if (targetDescriptors) {
-          targetDescriptors.forEach((descriptorCreator, propertyName) => {
+        // * 获取包装类实例的父类（即继承了QuarkElement的类——用户书写的组件类）
+        // * get parent class (user-defined component class that extends QuarkElement) of wrapper class
+        const Component = Object.getPrototypeOf(this.constructor);
+        const stateDescriptors = StateDescriptors.get(Component);
+        
+        if (stateDescriptors?.size) {
+          stateDescriptors.forEach((descriptorCreator, propName) => {
             Object.defineProperty(
               this,
-              propertyName,
-              descriptorCreator((this as any)[propertyName])
+              propName,
+              descriptorCreator(this[propName])
             );
           });
         }
 
+        /**
+         * 重写类的属性描述符，并重写属性初始值。
+         * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
+         */
+        const propDefs = PropDefs.get(Component);
+        
+        if (propDefs?.size) {
+          propDefs.forEach((def, attrName) => {
+            const {
+              options: {
+                type,
+                converter,
+              },
+              propName,
+            } = def;
+            const defaultValue = this[propName];
+            const convertAttrValue = (value: string | null) => {
+              // 判断val是否为空值
+              // const isEmpty = () => !(val || val === false || val === 0)
+              // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
+              // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
+              //
+              // 条件表达式推导过程
+              // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
+              // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
+              // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
+              // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
+              if (
+                isEmpty(value)
+                && (type !== Boolean || value !== '')
+                && !isEmpty(defaultValue)
+              ) {
+                return defaultValue;
+              }
+
+              if (isFunction(converter)) {
+                return converter(value, type) as string;
+              }
+
+              return value;
+            };
+            const dep = new Dep();
+            Props.set(this, attrName, {
+              propName,
+              dep,
+              converter: convertAttrValue,
+            });
+            // make attribute reactive
+            Object.defineProperty(
+              this,
+              propName,
+              {
+                get(this: QuarkElement): any {
+                  dep.depend()
+                  return convertAttrValue(this.getAttribute(attrName));
+                },
+                set(this: QuarkElement, newValue: string | boolean | null) {
+                  let val = newValue;
+        
+                  if (isFunction(converter)) {
+                    val = converter(newValue, type);
+                  }
+        
+                  if (val) {
+                    if (typeof val === "boolean") {
+                      this.setAttribute(attrName, "");
+                    } else {
+                      this.setAttribute(attrName, val);
+                    }
+                  } else {
+                    this.removeAttribute(attrName);
+                  }
+                },
+                configurable: true,
+                enumerable: true,
+              }
+            );
+          });
+        }
+
+        const computedDescriptors = ComputedDescriptors.get(Component)
+
+        if (computedDescriptors?.size) {
+          computedDescriptors.forEach((descriptorCreator, propKey) => {
+            Object.defineProperty(
+              this,
+              propKey,
+              descriptorCreator()
+            );
+          });
+        }
+
+        const watchers = UserWatchers.get(Component)
+
+        if (watchers?.size) {
+          watchers.forEach(({
+            path,
+            ...options
+          }) => {
+            new Watcher(this, path, options);
+          });
+        }
       }
     }
 
@@ -159,80 +315,100 @@ export function customElement(
 
 export class QuarkElement extends HTMLElement implements ReactiveControllerHost {
   static h = h;
+  
   static Fragment = Fragment;
+  
+  private _updatedQueue: (() => void)[] = [];
 
-  // 外部属性装饰器，抹平不同框架使用差异
-  protected static getPropertyDescriptor(
-    name: string,
-    options: PropertyDeclaration
-  ): (defaultValue?: any) => PropertyDescriptor {
-    return (defaultValue?: any) => {
-      return {
-        get(this: QuarkElement): any {
-          let val = this.getAttribute(name);
+  /** 组件是否已挂载 */
+  private _mounted = false;
+  
+  private _renderWatcher: Watcher | undefined = undefined;
 
-          if (!isEmpty(defaultValue)) {
-            // 判断val是否为空值
-            // const isEmpty = () => !(val || val === false || val === 0)
-            // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
-            // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
-            //
-            // 条件表达式推导过程
-            // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
-            // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
-            // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
-            // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
-            if (isEmpty(val) && (options.type !== Boolean || val !== "")) {
-              return defaultValue;
-            }
-          }
-          if (isFunction(options.converter)) {
-            val = options.converter(val, options.type) as string;
-          }
-          return val;
-        },
-        set(this: QuarkElement, value: string | boolean | null) {
-          let val = value as string;
-          if (isFunction(options.converter)) {
-            val = options.converter(value, options.type) as string;
-          }
+  private queueUpdated(cb: () => void) {
+    this._updatedQueue.push(cb)
+  }
 
-          if (!isEmpty(val)) {
-            // * val 可能为 false 或 0
-            if (typeof val === "boolean") {
-              if (val) {
-                this.setAttribute(name, "");
-              } else {
-                this.removeAttribute(name);
-              }
-            } else {
-              this.setAttribute(name, val);
-            }
-          } else {
-            this.removeAttribute(name);
+  private hasDidUpdateCb() {
+    return this.hasOwnLifeCycleMethod('componentDidUpdate');
+  }
+
+  private hasOwnLifeCycleMethod(methodName: 'componentDidMount' | 'componentDidUpdate' | 'shouldComponentUpdate' | 'componentUpdated') {
+    return Object.getPrototypeOf(
+      this.constructor // base class
+    ) // wrapper class
+      .prototype // user-defined class
+      .hasOwnProperty(methodName);
+  }
+
+  /** handler for processing tasks after render */
+  public postRender() {
+    let mounted = this._mounted;
+    
+    if (!mounted) {
+      this._mounted = true;
+      const hasPendingUpdate = !!this._updatedQueue.length;
+
+      if (this.hasOwnLifeCycleMethod('componentDidMount')) {
+        if (hasPendingUpdate) {
+          // * when componentDidMount and componentDidUpate are both defined
+          // * componentDidUpate should be ignored at mount phase
+          this._updatedQueue = [];
+          this.componentDidMount();
+          return;
+        }
+
+        this.componentDidMount();
+      } else {
+        // * for historic reasons, componentDidUpate was used for both mounting and updating
+        // * so we should also call it at mount phase
+        if (process.env.NODE_ENV === 'development') {
+          if (hasPendingUpdate) {
+            console.warn('by design, componentDidUpdate should not be invoked at mount phase, use componentDidMount for initialization logic instead.');
           }
-        },
-        configurable: true,
-        enumerable: true,
-      };
-    };
+        }
+      }
+    }
+    
+    this._updatedQueue.forEach(cb => cb());
+    this._updatedQueue = [];
+
+    if (mounted) {
+      if (this.hasOwnLifeCycleMethod('componentUpdated')) {
+        this.componentUpdated();
+      }
+    }
   }
 
   // 内部属性装饰器
-  protected static getStateDescriptor(name: string): () => PropertyDescriptor {
+  protected static getStateDescriptor(propName: string): () => PropertyDescriptor {
     return (defaultValue?: any) => {
-      let _value = defaultValue;
+      let value = defaultValue;
+      let dep: Dep | undefined;
+      const getDep = () => dep || (dep = new Dep());
       return {
         get(this: QuarkElement): any {
-          return _value;
+          getDep().depend()
+          return value;
         },
-        set(this: QuarkElement, value: string | boolean | null) {
-          const oldValue = _value
-          _value = value;
-          this._render();
-          this._controllers?.forEach((c) => c.hostUpdated?.());
-          if (isFunction(this.componentDidUpdate)) {
-            this.componentDidUpdate(name, oldValue,value);
+        set(this: QuarkElement, newValue: string | boolean | null) {
+          const resolvedOldVal = value;
+
+          if (Object.is(resolvedOldVal, newValue)) {
+            return;
+          }
+
+          if (this.shouldPreventUpdate(propName, resolvedOldVal, newValue)) {
+            return;
+          }
+
+          value = newValue;
+          getDep().notify();
+
+          if (this.hasDidUpdateCb()) {
+            this.queueUpdated(() => {
+              this.componentDidUpdate(propName, resolvedOldVal, newValue);
+            });
           }
         },
         configurable: true,
@@ -241,15 +417,56 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     };
   }
 
-  static createProperty(name: string, options: PropertyDeclaration) {
-    const newOpt = Object.assign({}, defaultPropertyDeclaration, options);
-    const attributeName = options.attribute || name;
-    ElementProperties.set(this, attributeName, newOpt);
-    Descriptors.set(this, name, this.getPropertyDescriptor(attributeName, newOpt));
+  static createProperty(propName: string, options: PropertyDeclaration) {
+    const attrName = options.attribute || propName;
+    PropDefs.set(this, attrName, {
+      options: {
+        ...defaultPropertyDeclaration,
+        ...options,
+      },
+      propName,
+    });
   }
 
-  static createState(name: string) {
-    Descriptors.set(this, name, this.getStateDescriptor(name));
+  static createState(propName: string) {
+    StateDescriptors.set(this, propName, this.getStateDescriptor(propName));
+  }
+
+  static computed(propName: string, descriptor: PropertyDescriptor) {
+    if (descriptor.get) {
+      ComputedDescriptors.set(this, propName, () => {
+        let watcher: Watcher;
+        return {
+          configurable: true,
+          enumerable: true,
+          get(this: QuarkElement) {
+            if (!watcher) {
+              watcher = new Watcher(this, descriptor.get!, { computed: true });
+            }
+
+            watcher.dep.depend();
+            return watcher.get();
+          },
+        };
+      });
+    }
+  }
+
+  static watch(
+    propName: string,
+    descriptor: PropertyDescriptor,
+    path: string,
+    options?: UserWatcherOptions,
+  ) {
+    const { value } = descriptor;
+
+    if (typeof value === 'function') {
+      UserWatchers.set(this, propName, {
+        ...options,
+        path,
+        cb: value,
+      });
+    }
   }
 
   private eventController: EventController = new EventController();
@@ -265,6 +482,15 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   private _render() {
     const newRootVNode = this.render();
     this.rootPatch(newRootVNode);
+  }
+
+  /** 对传入的值根据类型进行转换处理 */
+  private _updateProps() {
+    (this.constructor as any).observedProps.forEach(
+      ([attrName, { propName }]) => {
+        this[propName] = this.getAttribute(attrName);
+      }
+    );
   }
 
   /**
@@ -293,31 +519,12 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   // Reserve, may expand in the future
   requestUpdate() {
-    this._render();
-    this._controllers?.forEach((c) => c.hostUpdated?.());
+    this.getOrInitRenderWatcher().update();
   }
 
   // Reserve, may expand in the future
   update() {
-    this._render()
-  }
-
-  private _updateProperty() {
-    (this.constructor as any).observedAttributes.forEach(
-      (propertyName: string) => {
-        (this as any)[propertyName] = (this as any)[propertyName];
-      }
-    );
-  }
-
-  private _updateBooleanProperty(propertyName: string) {
-    // 判断是否是 boolean
-    if ((this.constructor as any).isBooleanProperty(propertyName)) {
-      // 针对 false 场景走一次 set， true 不需要重新走 set
-      if (!(this as any)[propertyName]) {
-        (this as any)[propertyName] = (this as any)[propertyName];
-      }
-    }
+    this.getOrInitRenderWatcher().update()
   }
 
   $on = (eventName: string, eventHandler: EventHandler, el?: Element) => {
@@ -337,6 +544,10 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     );
   }
 
+  $nextTick(cb: (...args: any[]) => any) {
+    return nextTick(cb, this);
+  }
+
   /**
    * 此时组件 dom 已插入到页面中，等同于 connectedCallback() { super.connectedCallback(); }
    */
@@ -348,17 +559,38 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   componentWillUnmount() {}
 
   /**
+   * @deprecated
+   * since we have embraced more precisely controlled render scheduler mechanism,
+   * there's no need to use shouldComponentUpdate any more,
+   * and will be removed in next major version.
+   * 
    * 控制当前属性变化是否导致组件渲染
    * @param propName 属性名
    * @param oldValue 属性旧值
    * @param newValue 属性新值
    * @returns boolean
    */
-  shouldComponentUpdate(propName: string, oldValue: string, newValue: string) {
+  shouldComponentUpdate(propName: string, oldValue: any, newValue: any) {
     return oldValue !== newValue;
   }
 
+  shouldPreventUpdate(propName: string, oldValue: any, newValue: any) {
+    if (this.hasOwnLifeCycleMethod('shouldComponentUpdate')) {
+      return !this.shouldComponentUpdate(
+        propName,
+        oldValue,
+        newValue,
+      );
+    }
+
+    return false;
+  }
+
+  /** @deprecated use \@watch directive instead for same purposes */
   componentDidUpdate(propName: string, oldValue: any, newValue: any) {}
+
+  /** called when all props and states updated */
+  componentUpdated() {}
 
   /**
    * 组件的 render 方法，
@@ -369,37 +601,85 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     return "" as any;
   }
 
-  connectedCallback() {
-    this._updateProperty();
-    this._controllers?.forEach((c) => c.hostConnected?.());
-    /**
-     * 初始值重写后首次渲染
-     */
-    this._render();
-    this._controllers?.forEach((c) => c.hostMounted?.());
-    if (isFunction(this.componentDidMount)) {
-      this.componentDidMount();
+  private getOrInitRenderWatcher() {
+    if (!this._renderWatcher) {
+      this._renderWatcher = new Watcher(
+        this,
+        () => {
+          this._render();
+          const renderCbType = this._mounted ? 'hostUpdated' : 'hostMounted';
+          this._controllers?.forEach((c) => c[renderCbType]?.());
+          this.postRender();
+        },
+        { render: true },
+      );
     }
+
+    return this._renderWatcher
   }
 
-  attributeChangedCallback(name: string, oldValue: string, value: string) {
-    // 因为 React 的属性变更并不会触发 set，此时如果 boolean 值变更，这里的 value 会是字符串，组件内部通过 get 操作可以获取到正确的类型
-    const newValue = this[name] || value;
-    if (isFunction(this.shouldComponentUpdate)) {
-      if (!this.shouldComponentUpdate(name, oldValue, newValue)) {
-        return;
-      }
-    }
-    this._render();
-    this._controllers?.forEach((c) => c.hostUpdated?.());
-    if (isFunction(this.componentDidUpdate)) {
-      this.componentDidUpdate(name, oldValue, newValue);
+  connectedCallback() {
+    this._updateProps();
+    this._controllers?.forEach((c) => c.hostConnected?.());
+    this.getOrInitRenderWatcher();
+  }
+
+  /** log old 'false' attribute value before resetting and removing it */
+  private _oldVals: Map<string, string | undefined> = new Map()
+
+  attributeChangedCallback(attrName: string, oldVal: string, newVal: string) {
+    const prop = Props.get(this)?.get(attrName);
+
+    if (!prop) {
+      return;
     }
 
-    // 因为 React的属性变更并不会触发set，此时如果boolean值变更，这里的value会是字符串，组件内部通过get操作可以正常判断类型，但css里面有根据boolean属性设置样式的将会出现问题
-    if (value !== oldValue) {
-      // boolean 重走set
-      this._updateBooleanProperty(name);
+    const { propName } = prop;
+    
+    // react specific patch, for more detailed explanation: https://github.com/facebook/react/issues/9230
+    // 对于自定义元素，React会直接将布尔值属性传递下去
+    // 这时候这里的value会是字符串'true'或'false'，对于'false'我们需要手动将该属性从自定义元素上移除
+    // 以避免CSS选择器将[attr="false"]视为等同于[attr]
+    if (newVal !== oldVal) {
+      if ((this.constructor as any).isBooleanProperty(attrName)) {
+        if (newVal === 'false') {
+          if (isFunction(this.componentDidUpdate)) {
+            this._oldVals.set(propName, oldVal)
+          }
+          
+          this[propName] = newVal;
+          return;
+        }
+      }
+    }
+
+    const newValue = this[propName];
+    let resolvedOldVal = oldVal
+    let oldValReset = this._oldVals.get(propName)
+
+    if (oldValReset) {
+      this._oldVals.delete(propName)
+      resolvedOldVal = oldValReset
+    }
+    
+    resolvedOldVal = prop.converter(resolvedOldVal);
+    
+    if (this.shouldPreventUpdate(propName, resolvedOldVal, newValue)) {
+      return;
+    }
+
+    // notify changes to this prop's watchers
+    prop.dep.notify()
+    // this._controllers?.forEach((c) => c.hostUpdated?.());
+      
+    if (this.hasDidUpdateCb()) {
+      this.queueUpdated(() => {
+        this.componentDidUpdate(
+          propName,
+          resolvedOldVal,
+          newValue,
+        );
+      });
     }
   }
 
@@ -411,5 +691,6 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     this.eventController.removeAllListener();
     this._controllers?.forEach((c) => c.hostDisconnected?.());
     this.rootPatch(null);
+    this._mounted = false;
   }
 }
