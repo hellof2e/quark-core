@@ -3,7 +3,7 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "baseUrl": ".",
-    "rootDir": "./src",
+    "rootDir": ".",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -26,6 +26,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts"],
   "exclude": ["node_modules"]
 }

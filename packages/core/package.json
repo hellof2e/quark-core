@@ -21,7 +21,8 @@
   ],
   "scripts": {
     "dev": "rollup -c --watch",
-    "build": "rimraf lib && rollup -c"
+    "build": "rimraf lib && rollup -c",
+    "test": "web-test-runner test/**/*.test.ts --node-resolve"
   },
   "dependencies": {
     "@babel/runtime": "^7.22.5"
@@ -31,13 +32,18 @@
     "@babel/plugin-proposal-decorators": "^7.22.5",
     "@babel/plugin-transform-runtime": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
+    "@open-wc/testing": "^4.0.0",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^21.1.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^8.5.0",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^14.18.52",
+    "@web/dev-server-esbuild": "^1.0.2",
+    "@web/test-runner": "^0.18.1",
+    "mocha": "^10.4.0",
     "rimraf": "3.0.2",
     "rollup": "2.77.0",
     "rollup-plugin-filesize": "^10.0.0",
