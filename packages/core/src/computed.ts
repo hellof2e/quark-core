@@ -1,4 +1,5 @@
 import { QuarkElement } from "."
+import { noop } from "./core/util"
 
 /** dependency universal id */
 let uid = 0
@@ -12,8 +13,14 @@ export type WatcherGetter = () => any
 const watchers: Watcher[] = []
 /** all waiting watchers' id */
 const watcherIds = new Set<number>()
-/** is there any flush task pending —— before entering next event loop */
-let flushPending = false
+/** are wathcers being flushed */
+let flushing = false
+/** is flushing task already queued */
+let flushWaiting = false;
+/** flushing watcher index */
+let flushIndex = 0;
+/** is callbacks flushing task already queued */
+let cbsFlushWaiting = false;
 
 /** prepare micro task */
 const queueMicroTask = (callback: (...args: any[]) => any) => {
@@ -24,34 +31,122 @@ const queueMicroTask = (callback: (...args: any[]) => any) => {
   }
 };
 
+const cbs: { (...args: any[]): any }[] = [];
+const flushCbs = () => {
+  cbsFlushWaiting = false;
+  const cbsToFlush = cbs.splice(0, cbs.length);
+
+  for (let i = 0; i < cbsToFlush.length; i++) {
+    cbsToFlush[i]();
+  }
+};
+
+export const nextTick = (cb?: (...args: any[]) => any, ctx?: any) => {
+  let _resolve: (value: unknown) => void;
+  let _promise = !cb && new Promise((resolve) => {
+    _resolve = resolve;
+  });
+  cbs.push(() => {
+    if (cb) {
+      cb.call(ctx)
+    } else {
+      _resolve(ctx);
+    }
+  });
+
+  if (!cbsFlushWaiting) {
+    cbsFlushWaiting = true;
+    queueMicroTask(flushCbs);
+  }
+
+  return _promise;
+};
+
+// const flushUpdatedQueue = (watchers: Watcher[]) => {
+//   let i = watchers.length
+
+//   while (i--) {
+//     const watcher = watchers[i]
+//     const {
+//       render,
+//       inst,
+//     } = watcher
+
+//     if (render && inst) {
+//       inst.flushUpdatedQueue()
+//     }
+//   }
+// }
+
 /** flush watcher queue */
 const flushWatcherQueue = () => {
-  for (let i = 0; i < watchers.length; i++) {
-    const watcher = watchers[i]
+  flushing = true;
+  // make sure updates from parent to child, user watchers to render watchers.
+  watchers.sort((a, b) => a.id - b.id);
+  
+  for (flushIndex = 0; flushIndex < watchers.length; flushIndex++) {
+    const watcher = watchers[flushIndex]
     watcherIds.delete(watcher.id)
     watcher.run()
   }
 
+  // flushUpdatedQueue(watchers)
+
   // reset
   watchers.length = 0
   watcherIds.clear()
-  flushPending = false
+  flushing = false
+  flushWaiting = false
 }
 
 /** add watcher to queue */
 const queueWatcher = (watcher: Watcher) => {
   const { id } = watcher
-  
-  if (!watcherIds.has(id)) {
-    watcherIds.add(id)
+
+  if (watcherIds.has(id)) {
+    return;
+  }
+
+  watcherIds.add(id)
+    
+  if (!flushing) {
     watchers.push(watcher)
-      
-    if (!flushPending) {
-      flushPending = true
-      queueMicroTask(flushWatcherQueue)
+  } else {
+    let placeIndex = watchers.findIndex(target => target.id > id);
+
+    if (placeIndex === -1) {
+      placeIndex = watchers.length;
+    } else if (placeIndex > flushIndex) {
+      placeIndex = flushIndex + 1;
     }
+
+    watchers.splice(placeIndex, 0, watcher)
+  }
+
+  if (!flushWaiting) {
+    flushWaiting = true;
+    nextTick(flushWatcherQueue);
   }
 }
+
+interface SharedWatcherOptions {
+  /** watcher's callback */
+  cb?: (newVal: any, oldVal: any) => void
+}
+
+export interface UserWatcherOptions extends SharedWatcherOptions {
+  /** call immediately after first-time render */
+  immediate?: boolean;
+}
+
+interface InternalWatcherOptions extends SharedWatcherOptions {
+  /** is render watcher */
+  render?: boolean;
+  /** is computed watcher */
+  computed?: boolean;
+}
+
+type WatcherOptions = UserWatcherOptions & InternalWatcherOptions
 
 export class Watcher {
   /** watcher's id */
@@ -75,18 +170,32 @@ export class Watcher {
   dirty = true
   /** is computed watcher */
   computed: boolean
-  /** callback */
+  /** watcher's callback */
   cb: ((newVal: any, oldVal: any) => void)
+  /** is render watcher */
+  render: boolean
   
   constructor(
     inst: QuarkElement,
     getterOrExpr: WatcherGetter | string,
-    computed: boolean = false,
-    cb: (newVal: any, oldVal: any) => void = () => {}
+    options: WatcherOptions,
   ) {
     this.id = ++uid
     this.inst = inst
+    const defaultOptions: Required<WatcherOptions> = {
+      cb: noop,
+      render: false,
+      computed: false,
+      immediate: false,
+    }
+    const {
+      computed,
+      render,
+      cb,
+      immediate,
+    } = { ...defaultOptions, ...options }
     this.computed = computed
+    this.render = render
 
     if (typeof getterOrExpr === 'function') {
       this.getter = getterOrExpr
@@ -100,8 +209,12 @@ export class Watcher {
     
     this.cb = cb
 
-    if (!this.computed) {
-      this.value = this.get()
+    if (!computed) {
+      if (!immediate) {
+        this.value = this.get()
+      } else {
+        this.run();
+      }
     }
   }
 
@@ -155,7 +268,7 @@ export class Watcher {
   }
 
   /** invoke callback after successfully updated */
-  ensureUpdated(cb: (newValue: any, oldValue: any) => void) {
+  updateAndInvoke(cb: (newValue: any, oldValue: any) => void) {
     const value = this.compute()
     const oldValue = this.value
 
@@ -177,7 +290,7 @@ export class Watcher {
         this.dirty = true
       } else {
         // * notify watchers of this watcher（for computed）
-        this.ensureUpdated(() => {
+        this.updateAndInvoke(() => {
           this.dep.notify()
         })
       }
@@ -188,7 +301,7 @@ export class Watcher {
 
   /** run callback of watcher */
   run() {
-    this.ensureUpdated(this.cb)
+    this.updateAndInvoke(this.cb)
   }
 }
 
@@ -208,13 +321,16 @@ export class Dep {
     this.watchers.add(watcher)
   }
 
+  /** stop watching this dependency */
   unwatch(watcher: Watcher) {
     this.watchers.delete(watcher)
   }
 
   /** notify update to its watchers */
   notify() {
-    this.watchers.forEach(watcher => watcher.update())
+    this.watchers.forEach(watcher => {
+      watcher.update()
+    })
   }
 
   /**

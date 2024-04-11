@@ -2,6 +2,17 @@
 
 基于本工程，您可以构建属于自己的跨技术栈/无框架 组件。
 
+
+可以用下面命令生成本工程模版！
+
+```bash
+npm create quarkc@latest
+```
+
+文档见：https://quark-ecosystem.github.io/quarkc-docs/#/
+
+
+
 ## 如何使用
 
 ```

@@ -1,7 +1,7 @@
 {
   "name": "quarkc",
-  "version": "1.0.39",
-  "description": "Web components quark-element",
+  "version": "2.0.0",
+  "description": "A Web Components framework",
   "type": "module",
   "main": "./lib/index.umd.js",
   "module": "./lib/index.js",
@@ -20,8 +20,8 @@
     "package.json"
   ],
   "scripts": {
-    "build": "rimraf lib && rollup -c",
-    "changelog": "conventional-changelog -p angular -n './changelog-config.cjs' -i CHANGELOG.md -s"
+    "dev": "rollup -c --watch",
+    "build": "rimraf lib && rollup -c"
   },
   "dependencies": {
     "@babel/runtime": "^7.22.5"
@@ -38,7 +38,6 @@
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^8.5.0",
     "@types/node": "^14.18.52",
-    "conventional-changelog-cli": "^3.0.0",
     "rimraf": "3.0.2",
     "rollup": "2.77.0",
     "rollup-plugin-filesize": "^10.0.0",

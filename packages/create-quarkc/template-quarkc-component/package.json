@@ -24,7 +24,7 @@
     "web components"
   ],
   "dependencies": {
-    "quarkc": "^1.0.17"
+    "quarkc": "^1.0.40"
   },
   "devDependencies": {
     "@types/node": "^20.2.5",
