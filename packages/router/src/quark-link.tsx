@@ -38,7 +38,7 @@ class QuarkLink extends QuarkElement {
      * @param routes 路由对象
      */
     const listener = (routes: Routes) => {
-      if (routes?.host.shadowRoot.contains(this)) {
+      if (routes?.host?.shadowRoot?.contains(this)) {
         /* 如果接收到发送事件的距离最近的父/祖先级节点，则截获routes对象，获取link方法生成的path路径
         并取消监听，避免再接受到其他无关事件 */
         this.path = this.path || routes.link(this.to);
@@ -68,7 +68,7 @@ class QuarkLink extends QuarkElement {
   // TODO 可配置link生成的标签
   render() {
     return (
-      <a href={this.prefix + (this.path || this.to)} onClick={(e) => this.handleLinkClick(e)}>
+      <a href={this.prefix + (this.path || this.to)} onClick={(e) => this.handleLinkClick(e)} part="root">
           <slot></slot>
       </a>
     );

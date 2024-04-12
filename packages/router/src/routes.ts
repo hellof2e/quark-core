@@ -319,8 +319,8 @@ export class Routes implements ReactiveController {
     this._onDisconnect?.();
     this._parentRoutes = undefined;
     eventBus.off("link-mounted", this._busRoutesListener);
-    this._host.removeEventListener(RouteMethodEnum.push, this._hostListener);
-    this._host.removeEventListener(RouteMethodEnum.replace, this._hostListener);
+    this._host.removeEventListener(RouteMethodEnum.push, this._hostListener!);
+    this._host.removeEventListener(RouteMethodEnum.replace, this._hostListener!);
   }
 
   hostMounted() {
@@ -416,5 +416,9 @@ export class RouterJumpEvent extends CustomEvent<RouterJumpDetail> {
 declare global {
   interface HTMLElementEventMap {
     [RoutesConnectedEvent.eventName]: RoutesConnectedEvent;
+    [RouteMethodEnum.push]: RouteEvent;
+    [RouteMethodEnum.replace]: RouteEvent;
+    [RouterJumpMethodEnum.push]: RouterJumpEvent;
+    [RouterJumpMethodEnum.replace]: RouterJumpEvent;
   }
 }
