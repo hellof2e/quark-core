@@ -13,7 +13,6 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
-        '@babel/runtime',
         'quarkc',
       ],
       output: {
