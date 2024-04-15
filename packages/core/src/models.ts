@@ -3,7 +3,7 @@ export type converterFunction = (val: any, type?: TypeHint) => any;
 
 export interface PropertyDeclaration {
   /**
-   * 是否响应式属性，接收外部的参数变化，会自动加入observedAttributes数组中
+   * 是否响应式属性，接收外部的参数变化，会自动加入_observedProps数组中
    */
   readonly observed?: boolean | string;
   /**
@@ -19,4 +19,6 @@ export interface PropertyDeclaration {
    * 创建内部属性名和外部属性名不同时，可以通过改属性指定外部属性名称
    */
   readonly attribute?: string;
+  /** 是否为组件内部属性——不作为HTML属性传递 */
+  readonly internal?: boolean;
 }

@@ -1,4 +1,4 @@
-import { QuarkElement, property, customElement, state, computed } from "quarkc"
+import { QuarkElement, property, customElement, state, computed } from "../../packages/core"
 import { Router } from "quark-router"
 import "./pages/home"
 import "./pages/sub"
@@ -16,8 +16,10 @@ class MyComponent extends QuarkElement {
   private _routes = new Router(this, [
     {path: '/', render: () => <home-component count={this.resolvedCount} />},
     {path: '/sub/:id', render: ({id}) => <sub-component id={id}/>},
-    {path: '/child/*', render: () => <child-component/>},
-    {path: '/child', render: () => <child-component/>},
+    {path: '/child/*', render: () => <child-component welcomes={this.welcomes} onShClose={() => {
+      console.log('onShClose')
+    }} />},
+    {path: '/child', render: () => <child-component />},
   ], {
     mode: 'hash'
   })
@@ -27,10 +29,13 @@ class MyComponent extends QuarkElement {
   count = 0 // 可以设置默认值
 
   @property({ type: String })
-  text
+  text = ''
 
   @state()
   innerCount = 0;
+
+  @state()
+  welcomes: string[] = [];
 
   @computed()
   get resolvedCount() {
@@ -54,9 +59,19 @@ class MyComponent extends QuarkElement {
     console.log("parent dom updated!")
   }
 
-  // componentDidMount() {
-  //   console.log("parent dom loaded!")
-  // }
+  componentDidMount() {
+    console.log("parent dom loaded!")
+    const WELCOME = 'Welcome to Quark!';
+    let i = 0;
+    const timer = window.setInterval(() => {
+      if (i >= WELCOME.length) {
+        window.clearInterval(timer);
+        return;
+      }
+      
+      this.welcomes = [...this.welcomes, WELCOME[i++]];
+    }, 100);
+  }
 
   render() {
     return (

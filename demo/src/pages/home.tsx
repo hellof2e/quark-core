@@ -1,4 +1,4 @@
-import { QuarkElement, property, customElement, watch, state, computed } from "quarkc"
+import { QuarkElement, property, customElement, watch, state, computed } from "../../../packages/core"
 import style from "./style.less?inline"
 
 declare global {

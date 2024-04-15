@@ -1,4 +1,4 @@
-import { QuarkElement, property, customElement } from "quarkc"
+import { QuarkElement, property, customElement } from "../../../packages/core"
 import { Routes, RouteEvent, RouteMethodEnum } from "quark-router"
 import "./child-second"
 import style from "./style.less?inline"
@@ -14,8 +14,7 @@ declare global {
 class Child1 extends QuarkElement {
   @property({ type: String })
   text = "hello world"
-
-
+  
   componentDidMount() {
     console.log('dom loaded!', 'child')
   }
@@ -55,6 +54,19 @@ class ChildComponent extends QuarkElement {
   @property({ type: String })
   text = "hello world"
 
+  @property({ internal: true })
+  welcomes: string[] = [];
+
+  componentDidMount() {
+    window.setTimeout(() => {
+      console.log('child emit')
+      // this.$emit('shClose')
+      // this.$emit('sh-close')
+      // this.$emit('shclose')
+      // this.$emit('ShClose')
+    }, 1000);
+  }
+
   render() {
     return (
       <div className="main">
@@ -65,6 +77,7 @@ class ChildComponent extends QuarkElement {
         <div className="router-render">
           { this._routes.outlet() }
         </div>
+       <p>{this.welcomes.join('')}</p>
       </div>
     );
   }

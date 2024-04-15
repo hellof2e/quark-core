@@ -1,4 +1,4 @@
-import { QuarkElement, property, state, customElement } from 'quarkc'
+import { QuarkElement, property, state, customElement } from '../../../packages/core'
 import type { Routes } from './routes';
 import type { Router } from './router';
 import { RouterModeEnum } from './router';
