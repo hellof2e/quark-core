@@ -137,7 +137,7 @@ const UserWatchers: DblKeyMap<
 
 function getWrapperClass(target: typeof QuarkElement, style: string) {
   return class QuarkElementWrapper extends target {
-    static get _observedProps() {
+    static get _observedAttrs() {
       return [...(PropDefs.get(target)?.entries() || [])].filter(([_, { options }]) => !!options.observed);
     }
 
@@ -501,9 +501,9 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     this.rootPatch(newRootVNode);
   }
 
-  /** 对传入的值根据类型进行转换处理 */
+  /** update properties by DOM attributes' changes */
   private _updateProps() {
-    (this.constructor as QuarkElementWrapper)._observedProps.forEach(
+    (this.constructor as QuarkElementWrapper)._observedAttrs.forEach(
       ([attrName, { propName }]) => {
         this[propName] = this.getAttribute(attrName);
       }
