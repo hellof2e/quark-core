@@ -119,7 +119,7 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 		) {
 			try {
 				// * update internal props here
-				if (dom._isInternalProp?.()) {
+				if (dom._isInternalProp?.(name)) {
 					dom[name] = value;
 				} else {
 					dom[name] = value == null ? '' : value;

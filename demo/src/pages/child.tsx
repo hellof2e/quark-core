@@ -54,19 +54,6 @@ class ChildComponent extends QuarkElement {
   @property({ type: String })
   text = "hello world"
 
-  @property({ internal: true })
-  welcomes: string[] = [];
-
-  componentDidMount() {
-    window.setTimeout(() => {
-      console.log('child emit')
-      // this.$emit('shClose')
-      // this.$emit('sh-close')
-      // this.$emit('shclose')
-      // this.$emit('ShClose')
-    }, 1000);
-  }
-
   render() {
     return (
       <div className="main">
@@ -77,7 +64,6 @@ class ChildComponent extends QuarkElement {
         <div className="router-render">
           { this._routes.outlet() }
         </div>
-       <p>{this.welcomes.join('')}</p>
       </div>
     );
   }

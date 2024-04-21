@@ -14,11 +14,9 @@ declare global {
 @customElement({ tag: "my-component", style })
 class MyComponent extends QuarkElement {
   private _routes = new Router(this, [
-    {path: '/', render: () => <home-component count={this.resolvedCount} />},
+    {path: '/', render: () => <home-component count={this.resolvedCount} welcomes={this.welcomes} />},
     {path: '/sub/:id', render: ({id}) => <sub-component id={id}/>},
-    {path: '/child/*', render: () => <child-component welcomes={this.welcomes} onShClose={() => {
-      console.log('onShClose')
-    }} />},
+    {path: '/child/*', render: () => <child-component />},
     {path: '/child', render: () => <child-component />},
   ], {
     mode: 'hash'
@@ -47,6 +45,19 @@ class MyComponent extends QuarkElement {
     this.innerCount += 1
   };
 
+  showWelcome() {
+    const WELCOME = 'Welcome to Quark!';
+    let i = 0;
+    const timer = window.setInterval(() => {
+      if (i >= WELCOME.length) {
+        window.clearInterval(timer);
+        return;
+      }
+      
+      this.welcomes = [...this.welcomes, WELCOME[i++]];
+    }, 100);
+  }
+
   shouldComponentUpdate(propName, oldValue, newValue) {
     if (propName === 'innerCount') {
       return newValue <= 10;
@@ -61,16 +72,7 @@ class MyComponent extends QuarkElement {
 
   componentDidMount() {
     console.log("parent dom loaded!")
-    const WELCOME = 'Welcome to Quark!';
-    let i = 0;
-    const timer = window.setInterval(() => {
-      if (i >= WELCOME.length) {
-        window.clearInterval(timer);
-        return;
-      }
-      
-      this.welcomes = [...this.welcomes, WELCOME[i++]];
-    }, 100);
+    this.showWelcome();
   }
 
   render() {

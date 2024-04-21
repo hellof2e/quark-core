@@ -57,6 +57,12 @@ export const property = (options: PropertyDeclaration = {}) => {
   };
 };
 
+export const internalProp = () => {
+  return (target: QuarkElement, propName: string) => {
+    return (target.constructor as typeof QuarkElement).createProperty(propName, { internal: true });
+  };
+};
+
 export const state = () => {
   return (target: QuarkElement, propName: string) => {
     return (target.constructor as typeof QuarkElement).createState(propName);
@@ -439,7 +445,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
       options: {
         ...defaultPropertyDeclaration,
         ...options,
-        ...(options.internal ? { observed: false } : null)
+        ...(options.internal ? { observed: false } : null),
       },
       propName,
     });
