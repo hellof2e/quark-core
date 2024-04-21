@@ -143,8 +143,13 @@ const UserWatchers: DblKeyMap<
 
 function getWrapperClass(target: typeof QuarkElement, style: string) {
   return class QuarkElementWrapper extends target {
-    static get observedAttributes() {
+    static get _observedAttrs() {
       return [...(PropDefs.get(target)?.entries() || [])].filter(([_, { options }]) => !!options.observed);
+    }
+
+    /** ! HTML SPEC field: specify the attribute names to watch for changes */
+    static get observedAttributes() {
+      return this._observedAttrs.map(([attrName]) => attrName);
     }
 
     static _isInternalProp(propName: string) {
@@ -509,7 +514,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
   /** update properties by DOM attributes' changes */
   private _updateProps() {
-    (this.constructor as QuarkElementWrapper).observedAttributes.forEach(
+    (this.constructor as QuarkElementWrapper)._observedAttrs.forEach(
       ([attrName, { propName }]) => {
         this[propName] = this.getAttribute(attrName);
       }
