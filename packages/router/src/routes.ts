@@ -6,7 +6,7 @@
 
 /// <reference types="urlpattern-polyfill" />
 
-import type { ReactiveController, ReactiveControllerHost } from 'quarkc';
+import type { ReactiveController, ReactiveControllerHost } from '../../../packages/core';
 import { eventBus } from "./eventEmitter";
 import { stringifyQuery } from './utils';
 

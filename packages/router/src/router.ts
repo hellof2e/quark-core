@@ -3,7 +3,7 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-import type { ReactiveControllerHost } from 'quarkc';
+import type { ReactiveControllerHost } from '../../../packages/core';
 import { Routes, RouterJumpMethodEnum } from './routes';
 import type {RouteConfig, BaseRouteConfig, RouterJumpDetail } from './routes';
 import { eventBus } from "./eventEmitter";

@@ -118,7 +118,13 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 			name in dom
 		) {
 			try {
-				dom[name] = value == null ? '' : value;
+				// * update internal props here
+				if (dom._isInternalProp?.(name)) {
+					dom[name] = value;
+				} else {
+					dom[name] = value == null ? '' : value;
+				}
+				
 				// labelled break is 1b smaller here than a return statement (sorry)
 				break o;
 			} catch (e) { }
