@@ -1,4 +1,4 @@
-import { QuarkElement, property, customElement } from "quarkc"
+import { QuarkElement, property, customElement } from "../../../packages/core"
 import { Routes, RouteEvent, RouteMethodEnum } from "quark-router"
 import "./child-second"
 import style from "./style.less?inline"
@@ -14,8 +14,7 @@ declare global {
 class Child1 extends QuarkElement {
   @property({ type: String })
   text = "hello world"
-
-
+  
   componentDidMount() {
     console.log('dom loaded!', 'child')
   }

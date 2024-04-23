@@ -57,6 +57,12 @@ export const property = (options: PropertyDeclaration = {}) => {
   };
 };
 
+export const internalProp = () => {
+  return (target: QuarkElement, propName: string) => {
+    return (target.constructor as typeof QuarkElement).createProperty(propName, { internal: true });
+  };
+};
+
 export const state = () => {
   return (target: QuarkElement, propName: string) => {
     return (target.constructor as typeof QuarkElement).createState(propName);
@@ -135,180 +141,201 @@ const UserWatchers: DblKeyMap<
   } & UserWatcherOptions
 > = new DblKeyMap();
 
+function getWrapperClass(target: typeof QuarkElement, style: string) {
+  return class QuarkElementWrapper extends target {
+    static get _observedAttrs() {
+      return [...(PropDefs.get(target)?.entries() || [])].filter(([_, { options }]) => !!options.observed);
+    }
+
+    /** ! HTML SPEC field: specify the attribute names to watch for changes */
+    static get observedAttributes() {
+      return this._observedAttrs.map(([attrName]) => attrName);
+    }
+
+    static _isInternalProp(propName: string) {
+      const def = PropDefs.get(target)?.get(propName);
+      return def
+        ? !!def.options.internal
+        : false;
+    }
+
+    static _isBoolProp(attrName: string) {
+      const def = PropDefs.get(target)?.get(attrName);
+
+      if (!def) {
+        return false;
+      }
+
+      return def.options.type === Boolean;
+    }
+
+    constructor() {
+      super();
+
+      const shadowRoot = this.attachShadow({ mode: "open" });
+
+      if (shadowRoot) {
+        // Create Css
+        if (typeof CSSStyleSheet === "function" && shadowRoot.adoptedStyleSheets) {
+          // Use constructed style first
+          const sheet = new CSSStyleSheet();
+          sheet.replaceSync(style);
+          shadowRoot.adoptedStyleSheets = [sheet];
+        } else {
+          // Fallback
+          const styleEl = document.createElement("style");
+          styleEl.innerHTML = style;
+          shadowRoot.append(styleEl);
+        }
+      }
+
+      // * 获取包装类实例的父类（即继承了QuarkElement的类——用户书写的组件类）
+      // * get parent class (user-defined component class that extends QuarkElement) of wrapper class
+      const UserComp = Object.getPrototypeOf(this.constructor) as typeof QuarkElement;
+      const stateDescriptors = StateDescriptors.get(UserComp);
+      
+      if (stateDescriptors?.size) {
+        stateDescriptors.forEach((descriptorCreator, propName) => {
+          Object.defineProperty(
+            this,
+            propName,
+            descriptorCreator(this[propName])
+          );
+        });
+      }
+
+      /**
+       * 重写类的属性描述符，并重写属性初始值。
+       * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
+       */
+      const propDefs = PropDefs.get(UserComp);
+      
+      if (propDefs?.size) {
+        propDefs.forEach((def, attrName) => {
+          const {
+            options: {
+              type,
+              converter,
+              internal,
+            },
+            propName,
+          } = def;
+          const defaultValue = this[propName];
+
+          if (internal) {
+            Object.defineProperty(
+              this,
+              propName,
+              UserComp.getStateDescriptor(propName)(defaultValue)
+            );
+            return;
+          }
+          
+          const convertAttrValue = (value: string | null) => {
+            // 判断val是否为空值
+            // const isEmpty = () => !(val || val === false || val === 0)
+            // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
+            // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
+            //
+            // 条件表达式推导过程
+            // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
+            // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
+            // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
+            // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
+            if (
+              isEmpty(value)
+              && (type !== Boolean || value !== '')
+              && !isEmpty(defaultValue)
+            ) {
+              return defaultValue;
+            }
+
+            if (isFunction(converter)) {
+              return converter(value, type) as string;
+            }
+
+            return value;
+          };
+          const dep = new Dep();
+          Props.set(this, attrName, {
+            propName,
+            dep,
+            converter: convertAttrValue,
+          });
+          // make attribute reactive
+          Object.defineProperty(
+            this,
+            propName,
+            {
+              get(this: QuarkElement): any {
+                dep.depend()
+                return convertAttrValue(this.getAttribute(attrName));
+              },
+              set(this: QuarkElement, newValue: string | boolean | null) {
+                let val = newValue;
+      
+                if (isFunction(converter)) {
+                  val = converter(newValue, type);
+                }
+      
+                if (val) {
+                  if (typeof val === "boolean") {
+                    this.setAttribute(attrName, "");
+                  } else {
+                    this.setAttribute(attrName, val);
+                  }
+                } else {
+                  this.removeAttribute(attrName);
+                }
+              },
+              configurable: true,
+              enumerable: true,
+            }
+          );
+        });
+      }
+
+      const computedDescriptors = ComputedDescriptors.get(UserComp)
+
+      if (computedDescriptors?.size) {
+        computedDescriptors.forEach((descriptorCreator, propKey) => {
+          Object.defineProperty(
+            this,
+            propKey,
+            descriptorCreator()
+          );
+        });
+      }
+
+      const watchers = UserWatchers.get(UserComp)
+
+      if (watchers?.size) {
+        watchers.forEach(({
+          path,
+          ...options
+        }) => {
+          new Watcher(this, path, options);
+        });
+      }
+    }
+  }
+}
+
+type QuarkElementWrapper = ReturnType<typeof getWrapperClass>
+
 export function customElement(
   params: string | { tag: string; style?: string }
 ) {
-  const { tag, style = "" } =
-    typeof params === "string" ? { tag: params } : params;
+  const {
+    tag,
+    style = '',
+  } = typeof params === "string"
+    ? { tag: params }
+    : params;
 
   return (target: typeof QuarkElement) => {
-    class NewQuarkElement extends target {
-      static get observedProps() {
-        const defs = PropDefs.get(target);
-
-        if (!defs) {
-          return []
-        }
-        
-        return [...defs.entries()].filter(([_, { options }]) => !!options.observed);
-      }
-
-      static get observedAttributes() {
-        return this.observedProps.map(([attrName]) => attrName);
-      }
-
-      static isBooleanProperty(attrName: string) {
-        const def = PropDefs.get(target)?.get(attrName);
-
-        if (!def) {
-          return false;
-        }
-
-        return def.options.type === Boolean;
-      }
-
-      constructor() {
-        super();
-
-        const shadowRoot = this.attachShadow({ mode: "open" });
-
-        if (shadowRoot) {
-          // Create Css
-          if (typeof CSSStyleSheet === "function" && shadowRoot.adoptedStyleSheets) {
-            // Use constructed style first
-            const sheet = new CSSStyleSheet();
-            sheet.replaceSync(style);
-            shadowRoot.adoptedStyleSheets = [sheet];
-          } else {
-            // Fallback
-            const styleEl = document.createElement("style");
-            styleEl.innerHTML = style;
-            shadowRoot.append(styleEl);
-          }
-        }
-
-        // * 获取包装类实例的父类（即继承了QuarkElement的类——用户书写的组件类）
-        // * get parent class (user-defined component class that extends QuarkElement) of wrapper class
-        const Component = Object.getPrototypeOf(this.constructor);
-        const stateDescriptors = StateDescriptors.get(Component);
-        
-        if (stateDescriptors?.size) {
-          stateDescriptors.forEach((descriptorCreator, propName) => {
-            Object.defineProperty(
-              this,
-              propName,
-              descriptorCreator(this[propName])
-            );
-          });
-        }
-
-        /**
-         * 重写类的属性描述符，并重写属性初始值。
-         * 注：由于子类的属性初始化晚于当前基类的构造函数，同名属性会导致属性描述符被覆盖，所以必须放在基类构造函数之后执行
-         */
-        const propDefs = PropDefs.get(Component);
-        
-        if (propDefs?.size) {
-          propDefs.forEach((def, attrName) => {
-            const {
-              options: {
-                type,
-                converter,
-              },
-              propName,
-            } = def;
-            const defaultValue = this[propName];
-            const convertAttrValue = (value: string | null) => {
-              // 判断val是否为空值
-              // const isEmpty = () => !(val || val === false || val === 0)
-              // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
-              // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
-              //
-              // 条件表达式推导过程
-              // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
-              // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
-              // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
-              // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
-              if (
-                isEmpty(value)
-                && (type !== Boolean || value !== '')
-                && !isEmpty(defaultValue)
-              ) {
-                return defaultValue;
-              }
-
-              if (isFunction(converter)) {
-                return converter(value, type) as string;
-              }
-
-              return value;
-            };
-            const dep = new Dep();
-            Props.set(this, attrName, {
-              propName,
-              dep,
-              converter: convertAttrValue,
-            });
-            // make attribute reactive
-            Object.defineProperty(
-              this,
-              propName,
-              {
-                get(this: QuarkElement): any {
-                  dep.depend()
-                  return convertAttrValue(this.getAttribute(attrName));
-                },
-                set(this: QuarkElement, newValue: string | boolean | null) {
-                  let val = newValue;
-        
-                  if (isFunction(converter)) {
-                    val = converter(newValue, type);
-                  }
-        
-                  if (val) {
-                    if (typeof val === "boolean") {
-                      this.setAttribute(attrName, "");
-                    } else {
-                      this.setAttribute(attrName, val);
-                    }
-                  } else {
-                    this.removeAttribute(attrName);
-                  }
-                },
-                configurable: true,
-                enumerable: true,
-              }
-            );
-          });
-        }
-
-        const computedDescriptors = ComputedDescriptors.get(Component)
-
-        if (computedDescriptors?.size) {
-          computedDescriptors.forEach((descriptorCreator, propKey) => {
-            Object.defineProperty(
-              this,
-              propKey,
-              descriptorCreator()
-            );
-          });
-        }
-
-        const watchers = UserWatchers.get(Component)
-
-        if (watchers?.size) {
-          watchers.forEach(({
-            path,
-            ...options
-          }) => {
-            new Watcher(this, path, options);
-          });
-        }
-      }
-    }
-    
     if (!customElements.get(tag)) {
-      customElements.define(tag, NewQuarkElement);
+      customElements.define(tag, getWrapperClass(target, style));
     }
   };
 }
@@ -381,7 +408,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   // 内部属性装饰器
-  protected static getStateDescriptor(propName: string): () => PropertyDescriptor {
+  protected static getStateDescriptor(propName: string) {
     return (defaultValue?: any) => {
       let value = defaultValue;
       let dep: Dep | undefined;
@@ -423,6 +450,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
       options: {
         ...defaultPropertyDeclaration,
         ...options,
+        ...(options.internal ? { observed: false } : null),
       },
       propName,
     });
@@ -484,9 +512,9 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     this.rootPatch(newRootVNode);
   }
 
-  /** 对传入的值根据类型进行转换处理 */
+  /** update properties by DOM attributes' changes */
   private _updateProps() {
-    (this.constructor as any).observedProps.forEach(
+    (this.constructor as QuarkElementWrapper)._observedAttrs.forEach(
       ([attrName, { propName }]) => {
         this[propName] = this.getAttribute(attrName);
       }
@@ -641,7 +669,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     // 这时候这里的value会是字符串'true'或'false'，对于'false'我们需要手动将该属性从自定义元素上移除
     // 以避免CSS选择器将[attr="false"]视为等同于[attr]
     if (newVal !== oldVal) {
-      if ((this.constructor as any).isBooleanProperty(attrName)) {
+      if ((this.constructor as QuarkElementWrapper)._isBoolProp(attrName)) {
         if (newVal === 'false') {
           if (isFunction(this.componentDidUpdate)) {
             this._oldVals.set(propName, oldVal)

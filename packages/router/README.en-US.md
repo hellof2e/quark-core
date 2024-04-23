@@ -20,16 +20,19 @@ You can import all of them from `quark-router`:
 ```ts
 import { Router, Routes } from "quark-router"
 ```
-Note: The `quark-link` component has been introduced and defined from the 'quark-router' as a custom component at this time, and can be used directly without re-introduction.
+
+Note: The `quark-link` component has been introduced and defined from the `quark-router` as a custom component at this time, and can be used directly without re-introduction.
 
 It can also be introduced separately on demand:
 
 ```ts
 import { Router } from "quark-router/router"
 ```
+
 ```ts
 import { Routes } from "quark-router/routes"
 ```
+
 ```ts
 import "quark-router/quark-link"
 ```
@@ -44,24 +47,30 @@ Usage will generally look like this, with a configuration in a reactive controll
 @customElement({ tag: "my-component" })
 class MyComponent extends QuarkElement {
   private _routes = new Router(this, [
-    {path: '/', render: () => <home-component/>},
-    {path: '/sub/:id', render: ({id}) => <sub-component id={id}/>},
-    {path: '/child/*', render: () => <child-component/>},
+    { path: "/", render: () => <home-component /> },
+    { path: "/sub/:id", render: ({ id }) => <sub-component id={id} /> },
+    { path: "/child/*", render: () => <child-component /> },
   ])
 
   render() {
     return (
       <>
         <ul>
-          <li><quark-link to="/">Home</quark-link></li>
-          <li><quark-link to="/sub/3222">Sub</quark-link></li>
-          <li><quark-link to="/child/1" replace>Child</quark-link></li>
+          <li>
+            <quark-link to="/">Home</quark-link>
+          </li>
+          <li>
+            <quark-link to="/sub/3222">Sub</quark-link>
+          </li>
+          <li>
+            <quark-link to="/child/1" replace>
+              Child
+            </quark-link>
+          </li>
         </ul>
-        <div className="router-render">
-          { this._routes.outlet() }
-        </div>
+        <div className="router-render">{this._routes.outlet()}</div>
       </>
-    );
+    )
   }
 }
 ```
@@ -93,11 +102,11 @@ eg:
 @customElement({ tag: "my-component" })
 class MyComponent extends QuarkElement {
   private router = new Router(this, [
-    {path: '/', render: () => <home-component/>},
-  ]);
+    { path: "/", render: () => <home-component /> },
+  ])
 
   render() {
-    return this.router.outlet();
+    return this.router.outlet()
   }
 }
 ```
@@ -107,15 +116,17 @@ Additional configurations can also be included:
 ```ts
 @customElement({ tag: "my-component" })
 class MyComponent extends QuarkElement {
-  private router = new Router(this, [
-    {path: '/', render: () => <home-component/>},
-  ], {
-    mode: 'hash',
-    fallback: { render: () => <home-component/> }
-  });
+  private router = new Router(
+    this,
+    [{ path: "/", render: () => <home-component /> }],
+    {
+      mode: "hash",
+      fallback: { render: () => <home-component /> },
+    }
+  )
 
   render() {
-    return this.router.outlet();
+    return this.router.outlet()
   }
 }
 ```
@@ -128,12 +139,12 @@ Routes is the main interface into the router API. A Routes controller contains r
 @customElement({ tag: "child-component" })
 class ChildComponent extends QuarkElement {
   private _routes = new Routes(this, [
-    {path: '1', render: () => <child-first/>},
-    {path: '2', render: () => <child-second/>},
+    { path: "1", render: () => <child-first /> },
+    { path: "2", render: () => <child-second /> },
   ])
 
   render() {
-    return this._routes.outlet();
+    return this._routes.outlet()
   }
 }
 ```
@@ -154,9 +165,9 @@ There are two types of `RouteConfig`s: `PathRouteConfig` and `URLPatternRouteCon
 
 ```ts
 export interface PathRouteConfig {
-  name?: string | undefined;
-  path: string;
-  render: (params: {[key: string]: string}) => unknown;
+  name?: string | undefined
+  path: string
+  render: (params: { [key: string]: string }) => unknown
 }
 ```
 
@@ -168,9 +179,9 @@ export interface PathRouteConfig {
 
 ```ts
 export interface URLPatternRouteConfig {
-  name?: string | undefined;
-  pattern: URLPattern;
-  render: (params: {[key: string]: string}) => unknown;
+  name?: string | undefined
+  pattern: URLPattern
+  render: (params: { [key: string]: string }) => unknown
 }
 ```
 
@@ -192,9 +203,7 @@ Example with named parameter:
 An outlet is where a routes object renders the currently selected route's template. It can be used anywhere in the host element's template:
 
 ```ts
-<div className="router-render">
-  { this._routes.outlet() }
-</div>
+<div className="router-render">{this._routes.outlet()}</div>
 ```
 
 #### enter() callbacks
@@ -244,15 +253,14 @@ or dynamically install new routes:
 
 `link(pathname?: string)` return the URL string of the current route, concatenated the parent route. When the pathname begins with '/', it is treated as an absolute path and is returned directly.
 
-
 ### `quark-link` Component
 
 Using the `quark-link` component to create a routing link, which receives 2 properties as follows:
 
-| Attribute  | Description                             | Type               | Default |
-| ----- | -------------------------------- | ------------------ | ------ |
-| to | Navigation path, can be set to relative path or absolute path. Paths that start with '/' are considered absolute paths; If it is a relative path, the absolute path is generated within the component based on the route Settings closest to the location  | `string`           | -      |
-| replace  | Whether to replace the current history stack | `boolean` | `false`    |
+| Attribute | Description                                                                                                                                                                                                                                               | Type      | Default |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------- |
+| to        | Navigation path, can be set to relative path or absolute path. Paths that start with '/' are considered absolute paths; If it is a relative path, the absolute path is generated within the component based on the route Settings closest to the location | `string`  | -       |
+| replace   | Whether to replace the current history stack                                                                                                                                                                                                              | `boolean` | `false` |
 
 Example:
 
@@ -260,23 +268,59 @@ Example:
 @customElement({ tag: "child-component", style })
 class ChildComponent extends QuarkElement {
   private _routes = new Routes(this, [
-    {path: '1', render: () => <child-first/>},
-    {path: '2/*', render: () => <child-second/>},
+    { path: "1", render: () => <child-first /> },
+    { path: "2/*", render: () => <child-second /> },
   ])
 
   render() {
     return (
       <div className="main">
         <ul>
-          <li><quark-link to="1">child/1</quark-link></li>
-          <li><quark-link to="2/1" replace>child/2/1</quark-link></li>
+          <li>
+            <quark-link to="1">child/1</quark-link>
+          </li>
+          <li>
+            <quark-link to="2/1" replace>
+              child/2/1
+            </quark-link>
+          </li>
         </ul>
-        <div className="router-render">
-          { this._routes.outlet() }
-        </div>
+        <div className="router-render">{this._routes.outlet()}</div>
       </div>
-    );
+    )
   }
+}
+```
+
+#### Set `quark-link` component style
+
+The component provides the following [CSS variables](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Using_CSS_custom_properties), can be used for the custom style.
+
+| Name                           | Description                     | Default Value        |
+| ------------------------------ | ------------------------------- | -------------------- |
+| `--quark-link-text-decoration` | link text-decoration            | `none`               |
+| `--quark-link-font-size`       | link font size                  | `medium`             |
+| `--quark-link-font-family`     | link font family                | `inherit`            |
+| `--quark-link-color`           | link color                      | `inherit`            |
+| `--quark-link-hover-color`     | color of the link hover state   | `--quark-link-color` |
+| `--quark-link-visited-color`   | color of the link visited state | `--quark-link-color` |
+| `--quark-link-active-color`    | color of the link active state  | `--quark-link-color` |
+
+Example:
+
+```css
+quark-link {
+  --quark-link-text-decoration: underline;
+  --quark-link-color: blue;
+}
+```
+
+Or use ::part [CSS Pseudo-elements](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Pseudo-elements) to customize any style of the component。Note when using [Compatibility issues](https://developer.mozilla.org/zh-CN/docs/Web/CSS/::part).
+
+```css
+quark-link::part(root) {
+  background: red;
+  color: yellow;
 }
 ```
 
@@ -289,13 +333,12 @@ import { Routes, RouteEvent, RouteMethodEnum } from "quark-router"
 
 @customElement({ tag: "child-first" })
 class ChildFirst extends QuarkElement {
-
   goToLink() {
     this.dispatchEvent(
       new RouteEvent(RouteMethodEnum.push, {
-        path: '2/1'
+        path: "2/1",
       })
-    );
+    )
   }
 
   render() {
@@ -303,13 +346,12 @@ class ChildFirst extends QuarkElement {
       <>
         <button onClick={() => this.goToLink()}>go to child2-1</button>
       </>
-    );
+    )
   }
 }
 ```
 
 The `RouteEvent` configuration contains two parameters, the first of which is the jump event name, which indicates the jump method, and is of type `RouteMethodEnum` :
-
 
 ```ts
 export interface RouteMethodEnum {
@@ -322,7 +364,7 @@ The second parameter is the route details of type `RouteDetail` :
 
 ```ts
 export interface RouteDetail {
-  path: string;
+  path: string; // can be set to relative path or absolute path
   query?: {[key: string]: string}; // Parameters added to the path will be converted to '?xx=xx&xx=xx' is added after path
   callback?: (error?: Error) => void; /**
    * At present `callback` function only can make sure it's executed after waiting for the completion of the enter callback execution.
@@ -338,42 +380,42 @@ Nested routes allow child components to define a subset of the route space mount
 @customElement({ tag: "my-component" })
 class MyComponent extends QuarkElement {
   private _routes = new Router(this, [
-    {path: '/', render: () => <home-component/>},
+    { path: "/", render: () => <home-component /> },
     // Here we mount a child component that defines its own sub-routes.
     // We need the trailing /* parameter to match on the prefix and pass
     // a path to the child to parse.
-    {path: '/child/*', render: () => <child-component/>},
+    { path: "/child/*", render: () => <child-component /> },
   ])
 
   render() {
     return (
       <>
         <ul>
-          <li><quark-link to="/">Home</quark-link></li>
-          <li><quark-link to="/child/1">Child1</quark-link></li>
-          <li><quark-link to="/child/2">Child2</quark-link></li>
+          <li>
+            <quark-link to="/">Home</quark-link>
+          </li>
+          <li>
+            <quark-link to="/child/1">Child1</quark-link>
+          </li>
+          <li>
+            <quark-link to="/child/2">Child2</quark-link>
+          </li>
         </ul>
-        <div className="router-render">
-          { this._routes.outlet() }
-        </div>
+        <div className="router-render">{this._routes.outlet()}</div>
       </>
-    );
+    )
   }
 }
 
 @customElement({ tag: "child-component", style })
 class ChildComponent extends QuarkElement {
   private _routes = new Routes(this, [
-    {path: '1', render: () => <child-first/>},
-    {path: '2', render: () => <child-second/>},
+    { path: "1", render: () => <child-first /> },
+    { path: "2", render: () => <child-second /> },
   ])
 
   render() {
-    return (
-        <div className="router-render">
-          { this._routes.outlet() }
-        </div>
-    );
+    return <div className="router-render">{this._routes.outlet()}</div>
   }
 }
 ```

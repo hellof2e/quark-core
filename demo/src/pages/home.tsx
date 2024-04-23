@@ -1,5 +1,5 @@
-import { QuarkElement, property, customElement, watch, state, computed } from "quarkc"
-import style from "./style.less?inline"
+import { QuarkElement, computed, customElement, internalProp, property, state, watch } from "../../../packages/core";
+import style from "./style.less?inline";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -14,6 +14,9 @@ class MyComponent extends QuarkElement {
 
   @property({ type: Number })
   count = 0
+
+  @internalProp()
+  welcomes: string[] = [];
 
   @state()
   loggerRunCount = 0
@@ -62,7 +65,7 @@ class MyComponent extends QuarkElement {
   render() {
     return (
       <div className="main">
-        home
+        home {this.welcomes.join('')}
         <br/>passed down count: {this.count}
         <br />watcher run count: {this.loggerRunCount}
         <br/>{this.counterGreet}

@@ -3,7 +3,7 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-import type { ReactiveControllerHost } from 'quarkc';
+import type { ReactiveControllerHost } from '../../../packages/core';
 import { Routes, RouterJumpMethodEnum } from './routes';
 import type {RouteConfig, BaseRouteConfig, RouterJumpDetail } from './routes';
 import { eventBus } from "./eventEmitter";
@@ -61,8 +61,8 @@ export class Router extends Routes {
     super.hostDisconnected();
     window.removeEventListener('popstate', this._onPopState);
     eventBus.off("link-mounted", this._busRouterLinstner);
-    this.host.removeEventListener(RouterJumpMethodEnum.push, this._rootHostListener);
-    this.host.removeEventListener(RouterJumpMethodEnum.replace, this._rootHostListener);
+    this.host.removeEventListener(RouterJumpMethodEnum.push, this._rootHostListener!);
+    this.host.removeEventListener(RouterJumpMethodEnum.replace, this._rootHostListener!);
   }
 
   override hostMounted() {
