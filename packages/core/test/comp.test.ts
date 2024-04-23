@@ -1,18 +1,23 @@
-// import { fixture, expect } from '@open-wc/testing';
-// import './components/hello-world';
+import { fixture, expect } from '@open-wc/testing';
+import './components/hello-world';
 
-// describe('<hello-world>', async () => {
-//   const comp = await fixture('<hello-world></hello-world>');
-//   it('shadow root exist', () => {
-//     expect(comp.shadowRoot).to.exist;
-//   });
-//   describe('content', () => {
-//     const childNode = comp.shadowRoot?.childNodes[0];
-//     it('renders a div', () => {
-//       expect(childNode?.nodeName).to.equal('DIV');
-//     });
-//     it('shows welcome words', () => {
-//       expect(childNode?.textContent).to.equal('hello, world!');
-//     });
-//   });
-// });
+const renderComp = async () => {
+  return fixture('<hello-world></hello-world>');
+};
+
+describe('<hello-world>', () => {
+  it('shadow root exist', async () => {
+    const comp = await renderComp();
+    expect(comp.shadowRoot).to.exist;
+  });
+
+  it('renders a div', async () => {
+    const comp = await renderComp();
+    expect(comp.shadowRoot?.childNodes[0]?.nodeName).to.equal('DIV');
+  });
+
+  it('shows welcome words', async () => {
+    const comp = await renderComp();
+    expect(comp.shadowRoot?.childNodes[0]?.textContent).to.equal('hello, world!');
+  });
+});

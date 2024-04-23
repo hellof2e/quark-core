@@ -14,7 +14,7 @@ declare global {
 @customElement({ tag })
 class HelloWorld extends QuarkElement {
   render() {
-    return (<div>hello, world!</div>);
+    return <div>hello, world!</div>;
   }
 }
 
