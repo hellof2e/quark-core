@@ -306,7 +306,7 @@ export function customElement(
         }
       }
     }
-
+    
     if (!customElements.get(tag)) {
       customElements.define(tag, NewQuarkElement);
     }

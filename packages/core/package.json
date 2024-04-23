@@ -22,7 +22,8 @@
   "scripts": {
     "dev": "rollup -c --watch",
     "build": "rimraf lib && rollup -c",
-    "test": "web-test-runner test/**/*.test.ts --node-resolve"
+    "test": "web-test-runner test/**/*.test.ts --node-resolve --puppeteer",
+    "test:watch": "web-test-runner test/**/*.test.ts --node-resolve --puppeteer --watch"
   },
   "dependencies": {
     "@babel/runtime": "^7.22.5"
@@ -43,6 +44,7 @@
     "@types/node": "^14.18.52",
     "@web/dev-server-esbuild": "^1.0.2",
     "@web/test-runner": "^0.18.1",
+    "@web/test-runner-puppeteer": "^0.16.0",
     "mocha": "^10.4.0",
     "rimraf": "3.0.2",
     "rollup": "2.77.0",
