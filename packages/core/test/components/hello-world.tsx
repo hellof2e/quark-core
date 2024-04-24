@@ -17,5 +17,3 @@ class HelloWorld extends QuarkElement {
     return <div>hello, world!</div>;
   }
 }
-
-export default HelloWorld;

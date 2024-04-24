@@ -1,56 +1,65 @@
 import { fixture, expect } from '@open-wc/testing';
-import HelloWorld from './components/hello-world';
-import QuarkCounter from './components/quark-counter';
+import { nextTick } from '../src/computed';
+import './components/hello-world';
+import './components/quark-counter';
 
 const renderHelper = <T extends Element>(tag: string) => {
   return () => fixture<T>(`<${tag}></${tag}>`);
 };
 
 describe('<hello-world>', () => {
-  const render = renderHelper<HelloWorld>('hello-world');
+  const render = renderHelper<HTMLElementTagNameMap['hello-world']>('hello-world');
   
-  it('shadow root exist', async () => {
+  it('nodes exist', async () => {
     const comp = await render();
     expect(comp.shadowRoot).to.exist;
-  });
-
-  it('renders a div', async () => {
-    const comp = await render();
-    expect(comp.shadowRoot?.childNodes[0]?.nodeName).to.equal('DIV');
-  });
-
-  it('shows welcome words', async () => {
-    const comp = await render();
-    expect(comp.shadowRoot?.childNodes[0]?.textContent).to.equal('hello, world!');
+    const firstNode = comp.shadowRoot!.firstChild;
+    expect(firstNode).to.exist;
+    expect(firstNode!.nodeName).to.equal('DIV');
+    expect(firstNode!.textContent).to.equal('hello, world!');
   });
 });
 
 describe('<quark-counter>', () => {
-  const render = renderHelper<QuarkCounter>('quark-counter');
+  const render = renderHelper<HTMLElementTagNameMap['quark-counter']>('quark-counter');
   
-  it('shadow root exist', async () => {
+  it('nodes exist', async () => {
     const comp = await render();
     expect(comp.shadowRoot).to.exist;
-  });
-
-  it('add works', async () => {
-    const comp = await render();
     const compRoot = comp.shadowRoot?.firstElementChild;
     expect(compRoot).to.exist;
+    expect(compRoot!.nodeName).to.equal('DIV');
+  });
 
-    if (!compRoot) {
-      return;
-    }
-
-    expect(compRoot.nodeName).to.equal('DIV');
-    const valNode = compRoot.querySelector('.counter__val');
+  it('@state, #add and events works', async () => {
+    const comp = await render();
+    const valNode = comp.shadowRoot?.querySelector('.counter__val');
     expect(valNode).to.exist;
+    expect(valNode!.textContent).to.equal('0');
+    comp.add();
+    await nextTick();
+    expect(valNode!.textContent).to.equal('1');
+    // * test for batch-update
+    comp.add();
+    comp.add();
+    expect(valNode!.textContent).to.equal('1');
+    await nextTick();
+    expect(valNode!.textContent).to.equal('3');
+    // * test for click event
+    const addNode = comp.shadowRoot?.querySelector('.counter__add');
+    expect(addNode).to.exist;
+    addNode!.dispatchEvent(new Event('click'));
+    await nextTick();
+    expect(valNode!.textContent).to.equal('4');
+  });
 
-    if (!valNode) {
-      return;
-    }
-    
-    expect(valNode.textContent).to.equal('0');
-    // comp.add();
+  it('@property works', async () => {
+    const comp = await render();
+    const titleNode = comp.shadowRoot?.querySelector('.counter__title');
+    expect(titleNode).to.exist;
+    expect(titleNode!.textContent).to.equal('counter written with quarkc');
+    comp.setAttribute('counter-title', 'test title');
+    await nextTick();
+    expect(titleNode!.textContent).to.equal('test title');
   });
 });
