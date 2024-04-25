@@ -104,7 +104,8 @@ describe('@property', () => {
     const comp = await render();
     const node = comp.shadowRoot?.querySelector('.test7');
     expect(node).to.exist;
-    expect(node!.textContent).to.equal('true');
+    // * boolean property with its value default to true should be ignored
+    expect(node!.textContent).to.equal('false');
     // * truthy value except than 'false' and '' will be treated as true
     comp!.setAttribute('testattr7', '');
     await nextTick();

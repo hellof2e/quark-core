@@ -28,7 +28,9 @@ class TestProperty extends QuarkElement {
   testattr3 = 0;
 
   @property({
-    converter: (val) => parseInt(val, 2),
+    converter: (val) => {
+      return val ? parseInt(val, 2) : 0;
+    },
   })
   testattr4 = 0;
 
@@ -38,6 +40,7 @@ class TestProperty extends QuarkElement {
   @property({ internal: true })
   testattr6: string[] = []
 
+  /** boolean property with its value default to true should be ignored */
   @property({ type: Boolean })
   testattr7 = true;
 

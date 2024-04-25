@@ -236,18 +236,6 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
           }
 
           const isBoolProp = type === Boolean;
-
-          // * if attribute of boolean type, with its value default to truthy
-          // * we should set the attribute immediately on the element
-          if (isBoolProp && defaultValue) {
-            this.setAttribute(
-              attrName,
-              typeof defaultValue === 'boolean'
-                ? ''
-                : defaultValue
-            );
-          }
-          
           /** convert attribute's value to its decorated counterpart, that is, property's value */
           const convertAttrValue = (value: string | null) => {
             // * For boolean properties, ignore the defaultValue specified.

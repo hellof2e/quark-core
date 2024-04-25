@@ -9,8 +9,15 @@ export interface PropertyDeclaration {
    */
   readonly observed?: boolean | string;
   /**
-   * 属性类型，会针对类型做不同的特殊处理。
-   * Boolean, Number, String
+   * Specify the type of the property,
+   * and then quarkc will transform string attribute value to specified type automatically.
+   * 
+   * Boolean property's default value will be ignored (defaults to 'false'), to line up with HTML standard.
+   * 
+   * 属性类型，会针对类型做不同的特殊处理。Boolean, Number, String
+   * 
+   * 布尔值属性设置的默认值会被忽略（默认值为false）
+   * 
    */
   readonly type?: TypeHint;
   /**
