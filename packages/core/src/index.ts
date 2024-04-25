@@ -26,7 +26,11 @@ if(process.env.NODE_ENV === 'development') {
 
 type Falsy = false | 0 | '' | null | undefined
 
-/** false和0不算空 */
+/** 
+ * Check if val is empty. Falsy values except than 'false' and '0' are considered empty.
+ * 
+ * 判断是否为空值，falsy值中'false'和'0'不算
+ */
 const isEmpty = (val: unknown): val is Exclude<Falsy, false | 0> => !(val || val === false || val === 0);
 
 const defaultConverter: converterFunction = (value, type?) => {
@@ -36,7 +40,7 @@ const defaultConverter: converterFunction = (value, type?) => {
       newValue = isEmpty(value) ? value : Number(value);
       break;
     case Boolean:
-      newValue = !([null, "false", false, undefined].indexOf(value) > -1);
+      newValue = ![null, "false", false, undefined].includes(value);
       break;
   }
   return newValue;
@@ -230,28 +234,34 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
             );
             return;
           }
+
+          const isBoolProp = type === Boolean;
+
+          // * if attribute of boolean type, with its value default to truthy
+          // * we should set the attribute immediately on the element
+          if (isBoolProp && defaultValue) {
+            this.setAttribute(
+              attrName,
+              typeof defaultValue === 'boolean'
+                ? ''
+                : defaultValue
+            );
+          }
           
+          /** convert attribute's value to its decorated counterpart, that is, property's value */
           const convertAttrValue = (value: string | null) => {
-            // 判断val是否为空值
-            // const isEmpty = () => !(val || val === false || val === 0)
-            // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
-            // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
-            //
-            // 条件表达式推导过程
-            // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
-            // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
-            // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
-            // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
+            // * For boolean properties, ignore the defaultValue specified.
+            // * We should always respect to whether the boolean attribute is set.
             if (
-              isEmpty(value)
-              && (type !== Boolean || value !== '')
+              !isBoolProp
+              && isEmpty(value)
               && !isEmpty(defaultValue)
             ) {
               return defaultValue;
             }
 
             if (isFunction(converter)) {
-              return converter(value, type) as string;
+              return converter(value, type);
             }
 
             return value;
@@ -267,20 +277,14 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
             this,
             propName,
             {
-              get(this: QuarkElement): any {
+              get(this: QuarkElement) {
                 dep.depend()
                 return convertAttrValue(this.getAttribute(attrName));
               },
-              set(this: QuarkElement, newValue: string | boolean | null) {
-                let val = newValue;
-      
-                if (isFunction(converter)) {
-                  val = converter(newValue, type);
-                }
-      
+              set(this: QuarkElement, val: string | boolean | null) {
                 if (val) {
-                  if (typeof val === "boolean") {
-                    this.setAttribute(attrName, "");
+                  if (typeof val === 'boolean') {
+                    this.setAttribute(attrName, '');
                   } else {
                     this.setAttribute(attrName, val);
                   }
@@ -513,10 +517,22 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   /** update properties by DOM attributes' changes */
-  private _updateProps() {
+  private _updateObservedProps() {
     (this.constructor as QuarkElementWrapper)._observedAttrs.forEach(
-      ([attrName, { propName }]) => {
-        this[propName] = this.getAttribute(attrName);
+      ([attrName, {
+        propName,
+        options: {
+          type,
+          converter,
+        },
+      }]) => {
+        let val = this.getAttribute(attrName);
+
+        if (isFunction(converter)) {
+          val = converter(val, type);
+        }
+        
+        this[propName] = val;
       }
     );
   }
@@ -647,7 +663,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   connectedCallback() {
-    this._updateProps();
+    this._updateObservedProps();
     this._controllers?.forEach((c) => c.hostConnected?.());
     this.getOrInitRenderWatcher();
   }

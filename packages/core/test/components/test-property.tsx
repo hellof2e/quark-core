@@ -1,0 +1,58 @@
+import {
+  QuarkElement,
+  customElement,
+  property,
+} from "../../src"
+
+const tag = 'test-property';
+
+declare global {
+  interface HTMLElementTagNameMap {
+    [tag]: TestProperty;
+  }
+}
+
+@customElement({ tag })
+class TestProperty extends QuarkElement {
+  @property()
+  testattr = '0';
+
+  /** except for initial value, will work the same as testattr */
+  @property()
+  testAttr = 'camelcased';
+
+  @property({ attribute: 'test-attr2' })
+  testAttr2 = '0';
+
+  @property({ type: Number })
+  testattr3 = 0;
+
+  @property({
+    converter: (val) => parseInt(val, 2),
+  })
+  testattr4 = 0;
+
+  @property({ observed: false })
+  testattr5 = '0';
+
+  @property({ internal: true })
+  testattr6: string[] = []
+
+  @property({ type: Boolean })
+  testattr7 = true;
+
+  render() {
+    return (
+      <div className="test">
+        <div className="test1">{this.testattr}</div>
+        <div className="test1-camelcase">{this.testAttr}</div>
+        <div className="test2">{this.testAttr2}</div>
+        <div className="test3">{typeof this.testattr3}{this.testattr3}</div>
+        <div className="test4">{this.testattr4}</div>
+        <div className="test5">{this.testattr5}</div>
+        <div className="test6">{this.testattr6.join(' ')}</div>
+        <div className="test7">{this.testattr7.toString()}</div>
+      </div>
+    );
+  }
+}
