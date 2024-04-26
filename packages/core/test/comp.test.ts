@@ -18,10 +18,13 @@ describe('<hello-world>', () => {
   it('nodes exist', async () => {
     const comp = await render();
     expect(comp.shadowRoot).to.exist;
-    const firstNode = comp.shadowRoot!.firstChild;
-    expect(firstNode).to.exist;
-    expect(firstNode!.nodeName).to.equal('DIV');
-    expect(firstNode!.textContent).to.equal('hello, world!');
+    const root = comp.shadowRoot!.firstElementChild;
+    expect(root).to.exist;
+    expect(root!.nodeName).to.equal('DIV');
+    expect(root!.textContent).to.equal('hello, world!');
+    const computedStyles = getComputedStyle(root!);
+    expect(computedStyles.getPropertyValue('font-size')).to.equal('24px');
+    expect(computedStyles.getPropertyValue('color')).to.equal('rgb(136, 170, 255)');
   });
 });
 
