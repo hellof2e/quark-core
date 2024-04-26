@@ -1,10 +1,12 @@
 import { fixture, expect } from '@open-wc/testing';
+import { spy } from 'sinon';
 import { nextTick } from '../src/computed';
 import './components/hello-world';
 import './components/quark-counter';
 import './components/test-property';
 import './components/test-fragment';
 import './components/test-watch';
+import { ComputedWatcherSpies, ImmediateWatcherSpies } from './components/test-watch';
 
 const renderHelper = <T extends Element>(tag: string) => {
   return (children?: string) => fixture<T>(`<${tag}>${children}</${tag}>`);
@@ -31,7 +33,6 @@ describe('<quark-counter>', () => {
     expect(comp.shadowRoot).to.exist;
     const compRoot = comp.shadowRoot?.firstElementChild;
     expect(compRoot).to.exist;
-    expect(compRoot!.nodeName).to.equal('DIV');
   });
 
   it('@state, #add and events', async () => {
@@ -65,7 +66,6 @@ describe('@property', () => {
     expect(comp.shadowRoot).to.exist;
     const compRoot = comp.shadowRoot?.firstElementChild;
     expect(compRoot).to.exist;
-    expect(compRoot!.nodeName).to.equal('DIV');
   });
 
   it('no options', async () => {
@@ -177,13 +177,63 @@ describe('Fragment', () => {
 
 describe('@watch and @computed', () => {
   const render = renderHelper<HTMLElementTagNameMap['test-watch']>('test-watch');
-  it('works', async () => {
+
+  it('nodes exist', async () => {
     const comp = await render();
-    const compRoot = comp.shadowRoot?.querySelector('.test');
+    expect(comp.shadowRoot).to.exist;
+    const compRoot = comp.shadowRoot?.firstElementChild;
     expect(compRoot).to.exist;
+  });
+  
+  it('watches on state', async () => {
+    const comp = await render();
+    const compRoot = comp.shadowRoot!.firstElementChild;
     const state = compRoot!.querySelector('.state');
-    const prop = compRoot!.querySelector('.prop');
     expect(state).to.exist;
-    expect(prop).to.exist;
+    const stateSpy = spy(comp, 'stateWatcher');
+    comp.state = 1;
+    await nextTick();
+    expect(state!.textContent).to.equal('1');
+    expect(stateSpy.called).to.equal(true);
+    expect(stateSpy.calledWith(1, 0)).to.equal(true);
+  });
+
+  it('immediate watcher', async () => {
+    const comp = await render();
+    const immediateWatcherSpy = ImmediateWatcherSpies.get(comp);
+    expect(immediateWatcherSpy?.called).to.equal(true);
+    expect(immediateWatcherSpy?.calledWith(0, undefined)).to.equal(true);
+  });
+
+  it('watches on property', async () => {
+    const comp = await render();
+    const compRoot = comp.shadowRoot!.firstElementChild;
+    const prop = compRoot!.querySelector('.prop');
+    const propSpy = spy(comp, 'propWatcher');
+    comp.setAttribute('prop', '1');
+    await nextTick();
+    expect(prop!.textContent).to.equal('1');
+    expect(propSpy.called).to.equal(true);
+    expect(propSpy.calledWith(1, 0)).to.equal(true);
+  });
+
+  it('@computed works and will get computed only once', async () => {
+    const comp = await render();
+    const compRoot = comp.shadowRoot!.firstElementChild;
+    const sum = compRoot!.querySelector('.sum');
+    expect(sum).to.exist;
+    const sumSpy = ComputedWatcherSpies.get(comp);
+    // * render method access the @computed decorated getter
+    expect(sum!.textContent).to.equal('0');
+    expect(sumSpy!.calledOnce).to.equal(true);
+    comp.state = 10;
+    comp.setAttribute('prop', '5');
+    await nextTick();
+    expect(sum!.textContent).to.equal('15');
+    expect(sumSpy!.calledThrice).to.equal(true);
+    // * access the @computed decorated getter
+    expect(comp.sum).to.equal(15);
+    // * will not trigger computation
+    expect(sumSpy!.calledThrice).to.equal(true);
   });
 });

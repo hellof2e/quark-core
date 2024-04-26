@@ -300,8 +300,11 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
         watchers.forEach(({
           path,
           ...options
-        }) => {
-          new Watcher(this, path, options);
+        }, propName) => {
+          new Watcher(this, path, {
+            ...options,
+            cb: (...args) => this[propName](...args),
+          });
         });
       }
     }
@@ -448,7 +451,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   static computed(propName: string, descriptor: PropertyDescriptor) {
-    if (descriptor.get) {
+    if (isFunction(descriptor.get)) {
       ComputedDescriptors.set(this, propName, () => {
         let watcher: Watcher;
         return {
@@ -473,13 +476,10 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     path: string,
     options?: UserWatcherOptions,
   ) {
-    const { value } = descriptor;
-
-    if (typeof value === 'function') {
+    if (isFunction(descriptor.value)) {
       UserWatchers.set(this, propName, {
         ...options,
         path,
-        cb: value,
       });
     }
   }

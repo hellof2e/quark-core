@@ -5,9 +5,16 @@ import {
   property,
   watch,
   computed,
-} from "../../src"
+} from "../../src";
+import { spy, SinonSpy } from 'sinon';
+
 
 const tag = 'test-watch';
+export const ImmediateWatcherSpies = new WeakMap<
+  TestWatch,
+  SinonSpy<Parameters<TestWatch['immediateStateWatcher']>, ReturnType<TestWatch['immediateStateWatcher']>>
+>();
+export const ComputedWatcherSpies = new WeakMap<TestWatch, SinonSpy>();
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -17,6 +24,18 @@ declare global {
 
 @customElement({ tag })
 class TestWatch extends QuarkElement {
+  constructor() {
+    super();
+    const watcherSpy = spy(this as TestWatch, 'immediateStateWatcher');
+    ImmediateWatcherSpies.set(this, watcherSpy);
+    ComputedWatcherSpies.set(this, spy());
+  }
+
+  componentWillUnmount() {
+    ImmediateWatcherSpies.delete(this);
+    ComputedWatcherSpies.delete(this);
+  }
+  
   @state()
   state = 0;
 
@@ -24,8 +43,11 @@ class TestWatch extends QuarkElement {
   prop = 0;
 
   @watch('state')
-  stateWatcher(newVal: number, oldVal: number) {
-    console.log('stateWatcher', newVal, oldVal)
+  stateWatcher(newVal: number, oldVal: number) {}
+
+  @watch('state', { immediate: true })
+  immediateStateWatcher(newVal: number, oldVal: number) {
+    ImmediateWatcherSpies.get(this)?.(newVal, oldVal);
   }
 
   @watch('prop')
@@ -33,6 +55,7 @@ class TestWatch extends QuarkElement {
 
   @computed()
   get sum() {
+    ComputedWatcherSpies.get(this)?.();
     return this.state + this.prop;
   }
   
