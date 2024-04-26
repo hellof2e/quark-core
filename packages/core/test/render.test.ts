@@ -1,5 +1,5 @@
 import { fixture, expect } from '@open-wc/testing';
-import { createElement } from '../src/core/create-element';
+import { createElement, Fragment } from '../src/core/create-element';
 import { render } from '../src/core/render';
 
 const WELCOME = 'hello, world!';
@@ -51,6 +51,17 @@ describe('render', () => {
     expect(paraElems).to.exist;
     expect(paraElems?.length).to.equal(2);
     expect(paraElems?.[1].textContent).to.equal('lorem');
+  });
+
+  it('render fragment into root', async () => {
+    const node = createElement(Fragment, {}, [
+      createElement('div', {}, [WELCOME]),
+      createElement('div', {}, [WELCOME]),
+    ])
+    const root = await renderIntoRoot(node);
+    expect(root.firstElementChild).to.exist;
+    expect(root.childNodes.length).to.equal(2);
+    expect(root.firstElementChild!.textContent).to.equal(WELCOME);
   });
 
   it('render null into root', async () => {

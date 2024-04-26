@@ -3,9 +3,11 @@ import { nextTick } from '../src/computed';
 import './components/hello-world';
 import './components/quark-counter';
 import './components/test-property';
+import './components/test-fragment';
+import './components/test-watch';
 
 const renderHelper = <T extends Element>(tag: string) => {
-  return () => fixture<T>(`<${tag}></${tag}>`);
+  return (children?: string) => fixture<T>(`<${tag}>${children}</${tag}>`);
 };
 
 describe('<hello-world>', () => {
@@ -80,7 +82,7 @@ describe('@property', () => {
     expect(camelCaseNode!.textContent, 'camelcased name will be lowercased when setAttribute/getAttribute called').to.equal('1');
   });
 
-  it('set attribute name', async () => {
+  it('set attribute option', async () => {
     const comp = await render();
     const node = comp.shadowRoot?.querySelector('.test2');
     expect(node).to.exist;
@@ -98,6 +100,9 @@ describe('@property', () => {
     comp!.setAttribute('testattr3', '1');
     await nextTick();
     expect(node!.textContent).to.equal('number1');
+    comp!.removeAttribute('testattr3');
+    await nextTick();
+    expect(node!.textContent).to.equal('number0');
   });
 
   it('given type hint Boolean', async () => {
@@ -115,13 +120,13 @@ describe('@property', () => {
     expect(node!.textContent, 'if not set, treat as false').to.equal('false');
     comp!.setAttribute('testattr7', 'false');
     await nextTick();
-    expect(node!.textContent, 'set value to string false').to.equal('false');
+    expect(node!.textContent, 'string false will be treated as true').to.equal('true');
     comp!.testattr7 = false;
     await nextTick();
-    expect(node!.textContent, 'set value to boolean false').to.equal('false');
+    expect(node!.textContent).to.equal('false');
     comp!.testattr7 = true;
     await nextTick();
-    expect(node!.textContent, 'set value back to boolean true').to.equal('true');
+    expect(node!.textContent).to.equal('true');
   });
 
   it('given converter, from binary to decimal', async () => {
@@ -141,6 +146,8 @@ describe('@property', () => {
     expect(node!.textContent).to.equal('0');
     comp!.setAttribute('testattr5', '1');
     await nextTick();
+    expect(comp!.testattr5).to.equal('1');
+    // * property updated but will not trigger render 
     expect(node!.textContent).to.equal('0');
   });
 
@@ -149,8 +156,34 @@ describe('@property', () => {
     const node = comp.shadowRoot?.querySelector('.test6');
     expect(node).to.exist;
     expect(node!.textContent).to.equal('');
-    comp!.testattr6 = ['welcome', 'to', 'japari', 'park'];
+    comp!.testattr6 = ['welcome', 'to', 'japari', 'park!'];
     await nextTick();
-    expect(node!.textContent).to.equal('welcome to japari park');
+    expect(node!.textContent).to.equal('welcome to japari park!');
+  });
+});
+
+describe('Fragment', () => {
+  const render = renderHelper<HTMLElementTagNameMap['test-fragment']>('test-fragment');
+  it('supports multiple roots', async () => {
+    const comp = await render();
+    const node1 = comp.shadowRoot?.querySelector('.root1');
+    const node2 = comp.shadowRoot?.querySelector('.root2');
+    expect(node1).to.exist;
+    expect(node2).to.exist;
+    expect(node1!.textContent).to.equal('root1');
+    expect(node2!.textContent).to.equal('root2');
+  });
+});
+
+describe('@watch and @computed', () => {
+  const render = renderHelper<HTMLElementTagNameMap['test-watch']>('test-watch');
+  it('works', async () => {
+    const comp = await render();
+    const compRoot = comp.shadowRoot?.querySelector('.test');
+    expect(compRoot).to.exist;
+    const state = compRoot!.querySelector('.state');
+    const prop = compRoot!.querySelector('.prop');
+    expect(state).to.exist;
+    expect(prop).to.exist;
   });
 });

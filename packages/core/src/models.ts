@@ -1,5 +1,5 @@
 type TypeHint = typeof Boolean | typeof Number | typeof String;
-export type converterFunction = (val: any, type?: TypeHint) => any;
+export type converterFunction = (val: string | null, type?: TypeHint) => any;
 
 export interface PropertyDeclaration {
   /**
