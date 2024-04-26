@@ -451,7 +451,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   static computed(propName: string, descriptor: PropertyDescriptor) {
-    if (isFunction(descriptor.get)) {
+    if (descriptor.get) {
       ComputedDescriptors.set(this, propName, () => {
         let watcher: Watcher;
         return {
