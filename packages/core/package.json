@@ -4,6 +4,7 @@
   "description": "A Web Components framework",
   "type": "module",
   "module": "./lib/index.js",
+  "main": "./lib/index.umd.js",
   "browser": "./lib/index.browser.js",
   "types": "./lib/src/main.d.ts",
   "exports": {
