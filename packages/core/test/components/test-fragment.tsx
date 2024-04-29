@@ -1,7 +1,7 @@
 import {
   QuarkElement,
   customElement,
-} from "../../src"
+} from "../../src/main"
 
 const tag = 'test-fragment';
 

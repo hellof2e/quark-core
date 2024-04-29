@@ -2,7 +2,7 @@ import {
   QuarkElement,
   customElement,
   state,
-} from "../../src"
+} from "../../src/main"
 
 const tag = 'quark-counter';
 

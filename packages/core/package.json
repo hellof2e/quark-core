@@ -3,14 +3,14 @@
   "version": "2.0.0",
   "description": "A Web Components framework",
   "type": "module",
-  "main": "./lib/index.umd.js",
   "module": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "browser": "./lib/index.browser.js",
+  "types": "./lib/src/main.d.ts",
   "exports": {
     ".": {
-      "import": "./lib/index.js",
-      "require": "./lib/index.umd.js",
-      "types": "./lib/index.d.ts"
+      "browser": "./lib/index.browser.js",
+      "types": "./lib/src/main.d.ts",
+      "default": "./lib/index.js"
     }
   },
   "browserslist": "chrome >= 53, edge >= 79, firefox >= 63, opera >= 40, safari >= 10.1, ChromeAndroid >= 53,  FirefoxAndroid >= 63, ios_saf >= 10.3, Samsung >= 6.0",
@@ -39,6 +39,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/mocha": "^10.0.6",

@@ -5,7 +5,7 @@ import {
   property,
   watch,
   computed,
-} from "../../src";
+} from "../../src/main";
 import { spy, SinonSpy } from 'sinon';
 
 

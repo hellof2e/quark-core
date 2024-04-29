@@ -1,4 +1,4 @@
-import { QuarkElement, property, customElement } from "../../../packages/core"
+import { QuarkElement, customElement } from "quarkc"
 import { Routes } from "quark-router"
 import style from "./style.less?inline"
 

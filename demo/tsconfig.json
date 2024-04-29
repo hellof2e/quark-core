@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"baseUrl": ".",
-		"rootDir": ".",
+		"rootDir": "..",
 		"target": "esnext",
 		"module": "esnext",
 		"moduleResolution": "node",
@@ -21,7 +21,9 @@
 		// "outDir": "./tsc/test",
 		"types": ["vite/client"],
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": ["src/*"],
+			"quarkc": ["../packages/core"],
+			"quark-router": ["../packages/router/src"]
 		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "typings"],

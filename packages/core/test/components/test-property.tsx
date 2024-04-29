@@ -2,7 +2,7 @@ import {
   QuarkElement,
   customElement,
   property,
-} from "../../src"
+} from "../../src/main"
 
 const tag = 'test-property';
 
