@@ -9,7 +9,12 @@ import './components/test-watch';
 import { ComputedWatcherSpies, ImmediateWatcherSpies } from './components/test-watch';
 
 const renderHelper = <T extends Element>(tag: string) => {
-  return (children?: string) => fixture<T>(`<${tag}>${children}</${tag}>`);
+  return (props: Record<string, any> = {}, children?: string) => {
+    const attrs = Object.entries(props)
+      .reduce((acc, [key, value]) => [...acc, `${key}=${value}`], [] as string[])
+      .join(' ');
+    return fixture<T>(`<${tag} ${attrs}>${children}</${tag}>`);
+  };
 };
 
 describe('<hello-world>', () => {
@@ -96,10 +101,10 @@ describe('@property', () => {
   });
 
   it('given type hint Number', async () => {
-    const comp = await render();
+    const comp = await render({ testattr3: 5 });
     const node = comp.shadowRoot?.querySelector('.test3');
     expect(node).to.exist;
-    expect(node!.textContent).to.equal('number0');
+    expect(node!.textContent).to.equal('number5');
     comp!.setAttribute('testattr3', '1');
     await nextTick();
     expect(node!.textContent).to.equal('number1');
