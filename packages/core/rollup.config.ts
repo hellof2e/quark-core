@@ -9,12 +9,11 @@ import filesize from 'rollup-plugin-filesize';
 
 const extensions = [".js", ".ts", ".tsx"];
 const plugins = [
-  typescript(),
+  typescript({ exclude: 'rollup.config.ts' }),
   json(),
   commonjs(),
   nodeResolve({
     extensions,
-    // modulesOnly: true,
   }),
   babel({
     babelHelpers: "runtime",
