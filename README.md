@@ -1,15 +1,15 @@
 
 <p align="center">
   <a href="https://quarkc.hellobike.com/">
-    <img src="https://github.com/hellof2e/quark-core/assets/14307551/5968d0ed-6d60-4b13-b05b-1e9ba30a5708" >
+    <img src="https://github.com/hellof2e/quark-core/assets/14307551/11494fb6-eea8-4be8-a0d4-77f7ce9fcaa8" >
   </a>
 </p>
 <h2 align="center"> Quarkc </h2>
 <div align="center">
-Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端框架！
+Quarkc 无框架，前端组件/应用构建工具。
 </div>
 <div align="center">
-哈啰集团前端公共组件构建工具，已支撑哈啰几乎所有 C 端 / B 端项目，包括交易，支付，两轮，商城等。
+已支撑哈啰几乎所有 C 端 / B 端项目，包括交易，支付，两轮，商城等。
 </div>
 
 <p align="center">
