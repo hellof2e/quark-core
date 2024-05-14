@@ -1,4 +1,4 @@
-import { QuarkElement } from "."
+import type { QuarkElement } from "./main"
 import { noop } from "./core/util"
 
 /** dependency universal id */

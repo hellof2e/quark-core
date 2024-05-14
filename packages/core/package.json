@@ -3,14 +3,15 @@
   "version": "2.0.0",
   "description": "A Web Components framework",
   "type": "module",
-  "main": "./lib/index.umd.js",
   "module": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "./lib/index.umd.js",
+  "browser": "./lib/index.browser.js",
+  "types": "./lib/src/main.d.ts",
   "exports": {
     ".": {
-      "import": "./lib/index.js",
-      "require": "./lib/index.umd.js",
-      "types": "./lib/index.d.ts"
+      "browser": "./lib/index.browser.js",
+      "types": "./lib/src/main.d.ts",
+      "default": "./lib/index.js"
     }
   },
   "browserslist": "chrome >= 53, edge >= 79, firefox >= 63, opera >= 40, safari >= 10.1, ChromeAndroid >= 53,  FirefoxAndroid >= 63, ios_saf >= 10.3, Samsung >= 6.0",
@@ -20,8 +21,11 @@
     "package.json"
   ],
   "scripts": {
-    "dev": "rollup -c --watch",
-    "build": "rimraf lib && rollup -c"
+    "bundle": "rollup -c --configPlugin @rollup/plugin-typescript",
+    "dev": "pnpm run bundle --watch",
+    "build": "rimraf lib && pnpm run bundle",
+    "test": "web-test-runner test/**/*.test.ts --node-resolve --puppeteer",
+    "test:watch": "pnpm run test --watch"
   },
   "dependencies": {
     "@babel/runtime": "^7.22.5"
@@ -31,17 +35,25 @@
     "@babel/plugin-proposal-decorators": "^7.22.5",
     "@babel/plugin-transform-runtime": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
-    "@rollup/plugin-babel": "^5.3.1",
-    "@rollup/plugin-commonjs": "^21.1.0",
-    "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-terser": "^0.4.3",
-    "@rollup/plugin-typescript": "^8.5.0",
+    "@open-wc/testing": "^4.0.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^14.18.52",
+    "@web/dev-server-esbuild": "^1.0.2",
+    "@web/test-runner": "^0.18.1",
+    "@web/test-runner-puppeteer": "^0.16.0",
+    "mocha": "^10.4.0",
     "rimraf": "3.0.2",
-    "rollup": "2.77.0",
+    "rollup": "^4.17.0",
     "rollup-plugin-filesize": "^10.0.0",
-    "typescript": "^4.9.5"
+    "sinon": "^17.0.1",
+    "typescript": "^5.4.5"
   },
   "homepage": "https://quarkc.hellobike.com",
   "repository": {

@@ -1,7 +1,7 @@
-import { createElement as h, Fragment as OriginFragment } from './core/create-element'
+import { createElement as h, Fragment } from './core/create-element'
 import { render } from './core/render'
 import { isFunction } from './core/util'
-import { PropertyDeclaration, converterFunction } from "./models"
+import { PropertyDeclaration } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
 import {version} from '../package.json'
@@ -18,7 +18,7 @@ export function createRef<T = any>(): Ref<T | null> {
   return { current: null };
 }
 
-export const Fragment: any = OriginFragment;
+export { Fragment }
 
 if(process.env.NODE_ENV === 'development') {
   console.info(`%cquarkc@${version}`, 'color: white;background:#9f57f8;font-weight:bold;font-size:10px;padding:2px 6px;border-radius: 5px','Running in dev mode.')
@@ -26,26 +26,28 @@ if(process.env.NODE_ENV === 'development') {
 
 type Falsy = false | 0 | '' | null | undefined
 
-/** false和0不算空 */
+/** 
+ * Check if val is empty. Falsy values except than 'false' and '0' are considered empty.
+ * 
+ * 判断是否为空值，falsy值中'false'和'0'不算
+ */
 const isEmpty = (val: unknown): val is Exclude<Falsy, false | 0> => !(val || val === false || val === 0);
-
-const defaultConverter: converterFunction = (value, type?) => {
-  let newValue = value;
-  switch (type) {
-    case Number:
-      newValue = isEmpty(value) ? value : Number(value);
-      break;
-    case Boolean:
-      newValue = !([null, "false", false, undefined].indexOf(value) > -1);
-      break;
-  }
-  return newValue;
-};
 
 const defaultPropertyDeclaration: PropertyDeclaration = {
   observed: true,
   type: String,
-  converter: defaultConverter,
+  converter: (value, type) => {
+    switch (type) {
+      case Number:
+        return Number(value);
+      case Boolean:
+        return value !== null;
+      default:
+        // noop
+    }
+  
+    return value;
+  },
 };
 
 export const property = (options: PropertyDeclaration = {}) => {
@@ -123,9 +125,6 @@ const Props: DblKeyMap<
     propName: string;
   }
 > = new DblKeyMap();
-
-/** quark element instance's prop values stored */
-
 
 const ComputedDescriptors: DblKeyMap<
   typeof QuarkElement,
@@ -230,28 +229,22 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
             );
             return;
           }
-          
+
+          const isBoolProp = type === Boolean;
+          /** convert attribute's value to its decorated counterpart, that is, property's value */
           const convertAttrValue = (value: string | null) => {
-            // 判断val是否为空值
-            // const isEmpty = () => !(val || val === false || val === 0)
-            // 当类型为非Boolean时，通过isEmpty方法判断val是否为空值
-            // 当类型为Boolean时，在isEmpty判断之外，额外认定空字符串不为空值
-            //
-            // 条件表达式推导过程
-            // 由：(options.type !== Boolean && isEmpty(val)) || (options.type === Boolean && isEmpty(val) && val !== '')
-            // 变形为：isEmpty(val) && (options.type !== Boolean || (options.type === Boolean && val !== ''))
-            // 其中options.type === Boolean显然恒等于true：isEmpty(val) && (options.type !== Boolean || (true && val !== ''))
-            // 得出：isEmpty(val) && (options.type !== Boolean || val !== '')
+            // * For boolean properties, ignore the defaultValue specified.
+            // * We should always respect to whether the boolean attribute is set.
             if (
-              isEmpty(value)
-              && (type !== Boolean || value !== '')
+              !isBoolProp
+              && isEmpty(value)
               && !isEmpty(defaultValue)
             ) {
               return defaultValue;
             }
 
             if (isFunction(converter)) {
-              return converter(value, type) as string;
+              return converter(value, type);
             }
 
             return value;
@@ -267,20 +260,14 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
             this,
             propName,
             {
-              get(this: QuarkElement): any {
+              get(this: QuarkElement) {
                 dep.depend()
                 return convertAttrValue(this.getAttribute(attrName));
               },
-              set(this: QuarkElement, newValue: string | boolean | null) {
-                let val = newValue;
-      
-                if (isFunction(converter)) {
-                  val = converter(newValue, type);
-                }
-      
+              set(this: QuarkElement, val: string | boolean | null) {
                 if (val) {
-                  if (typeof val === "boolean") {
-                    this.setAttribute(attrName, "");
+                  if (typeof val === 'boolean') {
+                    this.setAttribute(attrName, '');
                   } else {
                     this.setAttribute(attrName, val);
                   }
@@ -313,8 +300,11 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
         watchers.forEach(({
           path,
           ...options
-        }) => {
-          new Watcher(this, path, options);
+        }, propName) => {
+          new Watcher(this, path, {
+            ...options,
+            cb: (...args) => this[propName](...args),
+          });
         });
       }
     }
@@ -329,7 +319,7 @@ export function customElement(
   const {
     tag,
     style = '',
-  } = typeof params === "string"
+  } = typeof params === 'string'
     ? { tag: params }
     : params;
 
@@ -356,16 +346,16 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     this._updatedQueue.push(cb)
   }
 
-  private hasDidUpdateCb() {
-    return this.hasOwnLifeCycleMethod('componentDidUpdate');
-  }
-
-  private hasOwnLifeCycleMethod(methodName: 'componentDidMount' | 'componentDidUpdate' | 'shouldComponentUpdate' | 'componentUpdated') {
+  private hasOwnLifeCycleMethod(methodName: 'componentDidMount' | 'componentDidUpdate' | 'shouldComponentUpdate' | 'componentUpdated' | 'componentWillUnmount'): boolean {
     return Object.getPrototypeOf(
       this.constructor // base class
     ) // wrapper class
       .prototype // user-defined class
       .hasOwnProperty(methodName);
+  }
+
+  private hasDidUpdateCb() {
+    return this.hasOwnLifeCycleMethod('componentDidUpdate');
   }
 
   /** handler for processing tasks after render */
@@ -486,13 +476,10 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     path: string,
     options?: UserWatcherOptions,
   ) {
-    const { value } = descriptor;
-
-    if (typeof value === 'function') {
+    if (isFunction(descriptor.value)) {
       UserWatchers.set(this, propName, {
         ...options,
         path,
-        cb: value,
       });
     }
   }
@@ -513,10 +500,22 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   /** update properties by DOM attributes' changes */
-  private _updateProps() {
+  private _updateObservedProps() {
     (this.constructor as QuarkElementWrapper)._observedAttrs.forEach(
-      ([attrName, { propName }]) => {
-        this[propName] = this.getAttribute(attrName);
+      ([attrName, {
+        propName,
+        options: {
+          type,
+          converter,
+        },
+      }]) => {
+        let val = this.getAttribute(attrName);
+
+        if (isFunction(converter)) {
+          val = converter(val, type);
+        }
+        
+        this[propName] = val;
       }
     );
   }
@@ -647,7 +646,7 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   connectedCallback() {
-    this._updateProps();
+    this._updateObservedProps();
     this._controllers?.forEach((c) => c.hostConnected?.());
     this.getOrInitRenderWatcher();
   }
@@ -664,14 +663,20 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
     const { propName } = prop;
     
-    // react specific patch, for more detailed explanation: https://github.com/facebook/react/issues/9230
+    // React specific patch, for more detailed explanation: https://github.com/facebook/react/issues/9230
+    // But also works for unintentionally set attribute value to string 'false', it's not recommended in HTML spec.
+    // For custom elements, react will pass down the boolean value as-is, that is,
+    // the attribute value will be string 'true' or 'false', they all will be treated as true by HTML spec.
+    // We should remove the attribute when its value is 'false' to prevent ambiguity and line up with HTML spec.
+    // One more thing, in CSS boolean attribute with value 'false' will match the attribute selector [attr].
+    // 
     // 对于自定义元素，React会直接将布尔值属性传递下去
     // 这时候这里的value会是字符串'true'或'false'，对于'false'我们需要手动将该属性从自定义元素上移除
     // 以避免CSS选择器将[attr="false"]视为等同于[attr]
     if (newVal !== oldVal) {
       if ((this.constructor as QuarkElementWrapper)._isBoolProp(attrName)) {
         if (newVal === 'false') {
-          if (isFunction(this.componentDidUpdate)) {
+          if (this.hasDidUpdateCb()) {
             this._oldVals.set(propName, oldVal)
           }
           
@@ -698,7 +703,6 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
 
     // notify changes to this prop's watchers
     prop.dep.notify()
-    // this._controllers?.forEach((c) => c.hostUpdated?.());
       
     if (this.hasDidUpdateCb()) {
       this.queueUpdated(() => {
@@ -712,10 +716,11 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
   }
 
   disconnectedCallback() {
-    if (isFunction(this.componentWillUnmount)) {
+    if (this.hasOwnLifeCycleMethod('componentWillUnmount')) {
       this.componentWillUnmount();
     }
 
+    Props.delete(this);
     this.eventController.removeAllListener();
     this._controllers?.forEach((c) => c.hostDisconnected?.());
     this.rootPatch(null);
