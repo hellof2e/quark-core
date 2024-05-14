@@ -45,7 +45,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm run build4Core
+        run: pnpm run build4core
 
       - name: publish
         working-directory: "packages/core"
