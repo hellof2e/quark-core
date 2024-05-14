@@ -32,35 +32,12 @@ Quarkc，跨技术栈/原生组件构建工具。组件可运行于任何前端�
 ### 联系我们
 
 
-
 <details>
   <summary>微信扫码，可进技术交流群</summary>
 <p>
   <img width="200" src="https://github.com/hellof2e/quark-core/assets/14307551/cf207f43-8220-4355-87e5-9a45d5d09a50" />
 </p>
 </details>
-
-
-
-### 优秀案例
-
-
-#### 独立应用（页面）
-|  作者   | github 地址  | 截图 / 链接
-|  ----  | ----  | ----- |
-| @xsf0105  | https://github.com/xsf0105/piano |  https://xsf0105.github.io/piano/ |
-| @hellof2e  | https://github.com/hellof2e/quark-doc-home |  ![1698373361898](https://github.com/hellof2e/quark-core/assets/14307551/a4cc3971-37c0-49f2-ac84-a53677344c9b) |
-
-#### 组件
-
-|  作者   | github 地址  | 截图 / 链接
-|  ----  | ----  | ----- |
-| @xsf0105  | https://github.com/xsf0105/dark-light-element |  https://unpkg.com/dark-light-element@latest/demo.html |
-| @yuhaiyang1  | https://github.com/yuhaiyang1/quarkc-time |  https://unpkg.com/quark-timer@0.0.2/demo.html |
-| @khno  | https://github.com/khno/quark-element-demo-celebrate |  https://unpkg.com/quarkc-demo-celebrate@latest/demo.html |
-| @hellof2e  | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark-core/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573) https://quarkc.hellobike.com/#/ |
-| @dyf19118  | https://github.com/dyf19118/quark-ui-rate |  ![image](https://github.com/hellof2e/quark-cli/assets/14307551/e11e6c49-4c18-4bca-adc3-01a7198ab2e2) |
-
 
 
 ## 介绍
