@@ -1,6 +1,6 @@
 import { createElement as h, Fragment } from './core/create-element'
 import { render } from './core/render'
-import { isFunction } from './core/util'
+import { isFunction, updateDomAttr } from './core/util'
 import { PropertyDeclaration } from "./models"
 import DblKeyMap from "./dblKeyMap"
 import { EventController, EventHandler } from "./eventController"
@@ -41,7 +41,7 @@ const defaultPropertyDeclaration: PropertyDeclaration = {
       case Number:
         return Number(value);
       case Boolean:
-        return value !== null;
+        return value !== null && value !== 'false';
       default:
         // noop
     }
@@ -265,15 +265,7 @@ function getWrapperClass(target: typeof QuarkElement, style: string) {
                 return convertAttrValue(this.getAttribute(attrName));
               },
               set(this: QuarkElement, val: string | boolean | null) {
-                if (val) {
-                  if (typeof val === 'boolean') {
-                    this.setAttribute(attrName, '');
-                  } else {
-                    this.setAttribute(attrName, val);
-                  }
-                } else {
-                  this.removeAttribute(attrName);
-                }
+                updateDomAttr(this, attrName, val);
               },
               configurable: true,
               enumerable: true,
@@ -675,12 +667,13 @@ export class QuarkElement extends HTMLElement implements ReactiveControllerHost 
     // 以避免CSS选择器将[attr="false"]视为等同于[attr]
     if (newVal !== oldVal) {
       if ((this.constructor as QuarkElementWrapper)._isBoolProp(attrName)) {
-        if (newVal === 'false') {
+        if (newVal === 'false' && attrName.indexOf('aria-') === -1) {
           if (this.hasDidUpdateCb()) {
             this._oldVals.set(propName, oldVal)
           }
           
-          this[propName] = newVal;
+          // manually remove the attribute
+          this[propName] = false;
           return;
         }
       }

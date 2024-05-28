@@ -119,7 +119,7 @@ describe('@property', () => {
     expect(node).to.exist;
     // * boolean property with its value default to true should be ignored
     expect(node!.textContent).to.equal('false');
-    // * truthy value except than 'false' and '' will be treated as true
+    // * all truthy value, or falsy value except than '' will be treated as true
     comp!.setAttribute('testattr7', '');
     await nextTick();
     expect(node!.textContent).to.equal('true');
@@ -128,13 +128,21 @@ describe('@property', () => {
     expect(node!.textContent, 'if not set, treat as false').to.equal('false');
     comp!.setAttribute('testattr7', 'false');
     await nextTick();
-    expect(node!.textContent, 'string false will be treated as true').to.equal('true');
+    expect(node!.textContent, 'string false will be treated as false').to.equal('false');
+    expect(comp!.hasAttribute('testattr7'), 'attribute with string false value should be removed').to.equal(false);
     comp!.testattr7 = false;
     await nextTick();
     expect(node!.textContent).to.equal('false');
     comp!.testattr7 = true;
     await nextTick();
     expect(node!.textContent).to.equal('true');
+
+    // test for aria-* attributes
+    const ariaNode = comp.shadowRoot?.querySelector('.test7-aria');
+    expect(ariaNode).to.exist;
+    // * boolean property with its value default to true should be ignored
+    expect(ariaNode!.textContent).to.equal('false');
+    expect(comp!.hasAttribute('aria-hidden'), 'attribute with string false value should not be removed if it starts with aria-').to.equal(true);
   });
 
   it('given converter, from binary to decimal', async () => {

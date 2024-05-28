@@ -44,6 +44,10 @@ class TestProperty extends QuarkElement {
   @property({ type: Boolean })
   testattr7 = true;
 
+  /** boolean property with its value default to true should be ignored */
+  @property({ type: Boolean, attribute: 'aria-hidden' })
+  testAriaHidden = false;
+
   render() {
     return (
       <div className="test">
@@ -55,6 +59,7 @@ class TestProperty extends QuarkElement {
         <div className="test5">{this.testattr5}</div>
         <div className="test6">{this.testattr6.join(' ')}</div>
         <div className="test7">{this.testattr7.toString()}</div>
+        <div className="test7-aria">{this.testAriaHidden.toString()}</div>
       </div>
     );
   }

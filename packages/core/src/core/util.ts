@@ -10,3 +10,13 @@ export function isFunction(value: any): value is (...args: any[]) => any {
 export const slice = Array.prototype.slice;
 
 export const noop = () => {};
+
+/** set dom attribute for consistent behavior */
+export const updateDomAttr = (dom: HTMLElement, name: string, value: any) => {
+	if (value != null && (value !== false || name.indexOf('aria-') === 0)) {
+		// any truty value, or falsy aria-* values
+		dom.setAttribute(name, value);
+	} else {
+		dom.removeAttribute(name);
+	}
+};

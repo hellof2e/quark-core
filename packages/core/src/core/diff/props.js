@@ -1,5 +1,6 @@
 import { IS_NON_DIMENSIONAL } from '../constants';
 import options from '../options';
+import { updateDomAttr } from '../util';
 
 /**
  * Diff the old and new properties of a VNode and apply changes to the DOM node
@@ -139,10 +140,8 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 
 		if (typeof value === 'function') {
 			// never serialize functions as attribute values
-		} else if (value != null && (value !== false || name.indexOf('-') != -1)) {
-			dom.setAttribute(name, value);
 		} else {
-			dom.removeAttribute(name);
+			updateDomAttr(dom, name, value)
 		}
 	}
 }
