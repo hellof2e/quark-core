@@ -13,9 +13,17 @@ export const noop = () => {};
 
 /** set dom attribute for consistent behavior */
 export const updateDomAttr = (dom: HTMLElement, name: string, value: any) => {
-	if (value != null && (value !== false || name.indexOf('aria-') === 0)) {
-		// any truty value, or falsy aria-* values
-		dom.setAttribute(name, value);
+	let isAria = false;
+	
+	if (value != null && (value !== false || (isAria = name.indexOf('aria-') === 0))) {
+		dom.setAttribute(
+			name,
+			!isAria && typeof value === 'boolean'
+				// true but not aria-*
+				? ''
+				// falsy aria-* values
+				: value
+		);
 	} else {
 		dom.removeAttribute(name);
 	}

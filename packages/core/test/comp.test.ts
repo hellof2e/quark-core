@@ -120,7 +120,7 @@ describe('@property', () => {
     // * boolean property with its value default to true should be ignored
     expect(node!.textContent).to.equal('false');
     // * all truthy value, or falsy value except than '' will be treated as true
-    comp!.setAttribute('testattr7', '');
+    comp!.setAttribute('testattr7', '123');
     await nextTick();
     expect(node!.textContent).to.equal('true');
     comp!.removeAttribute('testattr7');
