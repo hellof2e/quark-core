@@ -226,7 +226,7 @@ describe("<my-component />", async () => {
 
 ## StackBlitz
 
-https://stackblitz.com/edit/quarkc-vite-k6t2ge?file=src%2Findex.tsx
+https://stackblitz.com/edit/quarkc-vite-k6t2ge?file=index.html&file=src%2Findex.tsx
 
 
 
