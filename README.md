@@ -48,6 +48,11 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工
 *   **高性能**设计，Shadow DOM 与 Virtual DOM 融合
 *   组件直接解耦，独立打磨，按需引用
 
+## StackBlitz Demo
+
+https://stackblitz.com/edit/quarkc-vite-k6t2ge?file=index.html&file=src%2Findex.tsx
+
+
 ## 使用
 
 ### 组件起手架模版
@@ -224,9 +229,6 @@ describe("<my-component />", async () => {
 
 完整文档，请访问 [quarkc.hellobike.com](https://quarkc.hellobike.com)
 
-## StackBlitz
-
-https://stackblitz.com/edit/quarkc-vite-k6t2ge?file=index.html&file=src%2Findex.tsx
 
 
 
