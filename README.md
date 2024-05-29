@@ -70,7 +70,7 @@ npm install
 npm start
 ```
 
-2. 自定义组件
+2. 自定义组件/标签（Custom Elements）
 ```jsx
 import { QuarkElement, property, customElement } from "quarkc"
 import style from "./index.less?inline"
@@ -150,8 +150,19 @@ import "your-element"
 更多发布相关，详情点击 [发布 Publishing](https://quarkc.hellobike.com/#/zh-CN/docs/publishing)
 
 
+
+## 文档
+
+完整文档，请访问 [quarkc.hellobike.com](https://quarkc.hellobike.com)
+
+
 ## Why Quarkc ?
 
+<details/>
+ <summary>
+  
+ </summary>
+ 
 背景 1:【前端的历史】
 
 前端发展多年，无论大小公司，一般都存在各种技术栈(React, Angular, Jq, Vue) / 同种技术栈的不同版本（Vue2, Vue3）。如果要开发某个通用组件（比如：营销弹窗），工作量就是 double+（不同技术框架需要分开开发/维护/上线，同技术不同版本可能也需要分开开发/维护/上线）
@@ -161,10 +172,14 @@ import "your-element"
 前端框架会继续迭代/发展，会有新的版本，新的框架出现。用 Quarkc 开发“通用型组件”，不会随着“前端框架浪潮”而更新迭代（极大降低组件研发/维护成本）。
 
 以上背景，决定了 **前端通用型组件** 的开发和维护成本比较高。
+</details>
+
 
 ## Quarkc 目标
 
 让 Web 组件实现技术栈无关！
+
+
 
 ## 性能参考
 
@@ -172,7 +187,10 @@ import "your-element"
 
 <img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
 
+
+
 ## 单元测试
+
 <details>
   <summary>
   我们使用了 @open-wc/testing 来进行单元测试。以下是我们示例组件的 <my-component /> 的单元测试。
@@ -225,9 +243,6 @@ describe("<my-component />", async () => {
 
 </details>
 
-## 文档
-
-完整文档，请访问 [quarkc.hellobike.com](https://quarkc.hellobike.com)
 
 
 
