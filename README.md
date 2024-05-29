@@ -163,13 +163,15 @@ import "your-element"
 
 ## 性能参考
 
-一个略复杂的组件页面跑分截图：
+一个复杂的页面跑分截图：
 
 <img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
 
 ## 单元测试
-我们使用了 [@open-wc/testing](https://www.npmjs.com/package/@open-wc/testing) 来进行单元测试
-以下是我们示例组件的 <my-component /> 的单元测试
+<details>
+  <summary>
+  我们使用了 @open-wc/testing 来进行单元测试。以下是我们示例组件的 <my-component /> 的单元测试。
+  </summary>    
 
 ```js
 import { expect, fixture } from "@open-wc/testing";
@@ -213,9 +215,10 @@ describe("<my-component />", async () => {
     expect(el.count).to.equal(data.count + 1);
   });
 })
+
 ```
 
-更多复杂示例参考我们 [quarkd](https://github.com/hellof2e/quark-design) 组件库仓库
+</details>
 
 ## 文档
 
@@ -223,5 +226,7 @@ describe("<my-component />", async () => {
 
 ## StackBlitz
 
-https://stackblitz.com/edit/quarkc-vite?embed=1&file=src%2Findex.tsx
+https://stackblitz.com/edit/quarkc-vite-k6t2ge?file=src%2Findex.tsx
+
+
 
