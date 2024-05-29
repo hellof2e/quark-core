@@ -160,7 +160,7 @@ import "your-element"
 
 <details/>
  <summary>
-  
+  Why?
  </summary>
  
 背景 1:【前端的历史】
