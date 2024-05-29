@@ -1,9 +1,3 @@
-
-<p align="center">
-  <a href="https://quarkc.hellobike.com/">
-    <img src="https://github.com/hellof2e/quark-core/assets/14307551/11494fb6-eea8-4be8-a0d4-77f7ce9fcaa8" >
-  </a>
-</p>
 <h2 align="center"> Quarkc </h2>
 <div align="center">
 Quarkc 无框架，前端组件/应用构建工具。
