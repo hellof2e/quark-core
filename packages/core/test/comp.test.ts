@@ -82,8 +82,8 @@ describe('@property', () => {
     const camelCaseNode = comp.shadowRoot?.querySelector('.test1-camelcase');
     expect(node).to.exist;
     expect(camelCaseNode).to.exist;
-    expect(node!.textContent).to.equal('0');
-    expect(camelCaseNode!.textContent).to.equal('camelcased');
+    expect(node!.textContent).to.equal('lowercased');
+    expect(camelCaseNode!.textContent, 'camelcased name share the same value with lowercased name').to.equal('lowercased');
     comp!.setAttribute('testattr', '1');
     await nextTick();
     expect(node!.textContent).to.equal('1');
@@ -175,6 +175,16 @@ describe('@property', () => {
     comp!.testattr6 = ['welcome', 'to', 'japari', 'park!'];
     await nextTick();
     expect(node!.textContent).to.equal('welcome to japari park!');
+  });
+
+  it('not set, use default value', async () => {
+    const comp = await render();
+    const node = comp.shadowRoot?.querySelector('.test8');
+    expect(node).to.exist;
+    expect(node!.textContent).to.equal('18');
+    comp!.setAttribute('testattr8', '1');
+    await nextTick();
+    expect(node!.textContent).to.equal('1');
   });
 });
 
