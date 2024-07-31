@@ -11,7 +11,7 @@ Quarkc 无框架，前端组件/应用构建工具。
   <a href="https://www.npmjs.com/package/quarkc">
     <img src="https://img.shields.io/npm/v/quarkc.svg" alt="Published on NPM">
   </a>
-  <a href="https://github.com/hellof2e/quark-core/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/quark-core.svg" alt="License"></a>
+  <a href="https://github.com/hellof2e/quark-core/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/quarkc.svg" alt="License"></a>
 </p>
 
 
