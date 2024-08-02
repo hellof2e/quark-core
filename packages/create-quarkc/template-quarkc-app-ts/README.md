@@ -1,5 +1,7 @@
 # Quark App
 
+基于本工程，您可以构建前端应用。
+
 可以用下面命令生成本工程模版！
 
 ```bash
@@ -7,7 +9,6 @@ npm create quarkc@latest
 ```
 
 文档见：https://quark-ecosystem.github.io/quarkc-docs/#/
-
 
 无框架前端应用模版，底层基于 Web components。
 
