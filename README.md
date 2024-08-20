@@ -1,6 +1,6 @@
 <h2 align="center"> Quarkc </h2>
 <div align="center">
-Quarkc 无框架，前端组件/应用构建工具。
+Quarkc 无框架，前端构建工具。
 </div>
 <div align="center">
  已支撑哈啰几乎所有 C 端 / B 端项目，包括交易，支付，两轮，商城等。
@@ -33,6 +33,20 @@ Quarkc 无框架，前端组件/应用构建工具。
 添加微信：Sanqi9675
 
 
+### 优秀案例
+
+|  作者   | github 地址  | 截图 / 链接
+|  ----  | ----  | ----- |
+| @yuhaiyang1  | https://github.com/yuhaiyang1/quarkc-time |  https://unpkg.com/quark-timer@0.0.2/demo.html |
+| @khno  | https://github.com/khno/quark-element-demo-celebrate |  https://unpkg.com/quarkc-demo-celebrate@latest/demo.html |
+| @hellof2e  | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark-core/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573) https://quarkc.hellobike.com/#/ |
+| @xsf0105  | https://github.com/xsf0105/dark-light-element |  https://unpkg.com/dark-light-element@latest/demo.html |
+| @dyf19118  | https://github.com/dyf19118/quark-ui-rate |  ![image](https://github.com/hellof2e/quark-cli/assets/14307551/e11e6c49-4c18-4bca-adc3-01a7198ab2e2) |
+| @hellof2e  | https://github.com/hellof2e/quark-doc-home |  ![1686575964690](https://github.com/hellof2e/quark-core/assets/14307551/9618427c-916b-4dfd-b28b-0e8e0f6ce744)  |
+| @zhangfisher  | https://github.com/zhangfisher/lite-tree/tree/master/packages/quark |  [点击查看](https://github.com/zhangfisher/lite-tree/blob/master/docs/tree.png?raw=true)  |
+
+
+
 ## 介绍
 
 Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工具（jsx + web components）。通过它，您可以开发标准的**跨框架组件** 或 **独立前端应用**（脱离框架的原生web应用，性能可达百分百💯）。
@@ -46,6 +60,7 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工
 *   没有前端框架 Runtime，Web 组件体积小到极致
 *   **高性能**设计，Shadow DOM 与 Virtual DOM 融合
 *   组件直接解耦，独立打磨，按需引用
+
 
 
 ## 使用

@@ -1,6 +1,6 @@
 {
   "name": "quarkc",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "A Web Components framework",
   "type": "module",
   "module": "./lib/index.js",
