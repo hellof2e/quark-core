@@ -1,6 +1,6 @@
 
 <p align="center">
-  <a href="https://quarkc.hellobike.com/">
+  <a href="https://quark-ecosystem.github.io/quarkc-docs/">
     <img src="https://github.com/hellof2e/quark-core/assets/14307551/5968d0ed-6d60-4b13-b05b-1e9ba30a5708" >
   </a>
 </p>
