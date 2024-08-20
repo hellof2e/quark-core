@@ -26,7 +26,7 @@
 
 ## 介绍
 
-Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工具（jsx + web components）。通过它，您可以开发标准的**跨框架组件** 或 **独立前端应用**（脱离框架的原生web应用，性能可达百分百💯）。
+Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工具（jsx + web components）。通过它，您可以开发 [跨框架组件](https://github.com/hellof2e/quark-core/tree/main/packages/create-quarkc/template-quarkc-component-ts) 或 [独立页面](https://github.com/hellof2e/quark-core/tree/main/packages/create-quarkc/template-quarkc-app-ts)。
 
 ### 特性
 
@@ -76,7 +76,7 @@ export default class MyElement extends QuarkElement {
 }
 ```
 
-### 3、组件 Build 打包
+### 3、Build 打包
 
 打包默认输出为 UMD / ESM 格式
 
@@ -125,8 +125,7 @@ import "./lib/your-element"
 </html>
 ```
 
-需要使用多个 quarkc 组件，为了共用 quarkc 核心库，您可以开启了 `external`
-
+多个 quarkc 组件同时加载，为了共用 quarkc 核心库，您可以选择开启了 `external`：
 ```diff
 // vite.config.build.ts
 export default defineConfig({
