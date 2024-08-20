@@ -1,10 +1,8 @@
-<h2 align="center"> Quarkc </h2>
-<div align="center">
-Quarkc 无框架，前端构建工具。
-</div>
-<div align="center">
- 已支撑哈啰几乎所有 C 端 / B 端项目，包括交易，支付，两轮，商城等。
-</div>
+<p align="center">
+  <a href="https://quark-ecosystem.github.io/quarkc-docs/#/"><img src="./logo.png" width="180" alt="vite-plugin-dev-inspector"></a>
+</p>
+
+<h2 align="center"> Quarkc —— 无框架，跨框架！ </h2>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/quarkc"><img src="https://img.shields.io/npm/dt/quarkc.svg" alt="Total Downloads"></a>
@@ -32,12 +30,12 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工
 
 ### 特性
 
-*   **跨技术栈**：组件可以在任何框架或无框架的环境下使用，让你的代码更具复用性
-*   **组件体积极小，性能极高**：因为 Quarkc 使用的是浏览器原生 API，所以你的组件可以达到最优性能，且体积小巧
+*   无框架，组件可以在任何框架或无框架的环境下使用，让你的代码更具复用性
+*   产物体积极小，性能接近浏览器原生元素
 *   Web Components, Simple, Fast！
 *   浏览器原生API，组件可以跨技术栈使用
 *   没有前端框架 Runtime，Web 组件体积小到极致
-*   **高性能**设计，Shadow DOM 与 Virtual DOM 融合
+*   Shadow DOM 与 Virtual DOM 的完美融合
 *   组件直接解耦，独立打磨，按需引用
 
 
@@ -169,13 +167,11 @@ export default defineConfig({
 
 ## 文档
 
-完整文档，请访问 [quarkc.hellobike.com](https://quark-ecosystem.github.io/quarkc-docs)
-
+完整文档，请访问 [https://quark-ecosystem.github.io/quarkc-docs](https://quark-ecosystem.github.io/quarkc-docs)
 
 ### 联系我们
 
 添加微信：Sanqi9675
-
 
 ### 社区示例
 
@@ -189,3 +185,6 @@ export default defineConfig({
 | @zhangfisher  | https://github.com/zhangfisher/lite-tree/tree/master/packages/quark |  [点击查看](https://github.com/zhangfisher/lite-tree/blob/master/docs/tree.png?raw=true)  |
 
 
+## License
+
+[MIT LICENSE](./LICENSE)
