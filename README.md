@@ -98,16 +98,16 @@ import "./lib/your-element"
 <my-element count="count" />
 
 // vue
-<my-element :count="count" />
+// <my-element :count="count" />
 
 // react
-<my-element count={count} />
+// <my-element count={count} />
 
 // svelte
-<my-element {count} />
+// <my-element {count} />
 
 // angular
-<my-element [count]="count" />
+// <my-element [count]="count" />
 ```
 
 ##### （2）无工程管理的前端项目（不含有package.json/node_modules等文件，纯HTML+CSS+JS文件）
