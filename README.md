@@ -28,7 +28,7 @@
 
 Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工具（jsx + web components）。通过它，您可以开发 [跨框架组件](https://github.com/hellof2e/quark-core/tree/main/packages/create-quarkc/template-quarkc-component-ts) 或 [独立页面](https://github.com/hellof2e/quark-core/tree/main/packages/create-quarkc/template-quarkc-app-ts)。
 
-### 特性
+## 特性
 
 *   无框架，组件可以在任何框架或无框架的环境下使用，让你的代码更具复用性
 *   产物体积极小，性能接近浏览器原生元素
