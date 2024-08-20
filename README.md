@@ -22,16 +22,15 @@ Quarkc 无框架，前端组件/应用构建工具。
   </a>
 </p>
 
+<p align="center">
+<a href="https://stackblitz.com/edit/quarkc-vite-k6t2ge?file=index.html&file=src%2Findex.tsx"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt=""></a>
+</p>
+
+
 
 ### 联系我们
 
-
-<details>
-  <summary>微信扫码，可进技术交流群</summary>
-<p>
-  <img width="200" src="https://github.com/hellof2e/quark-core/assets/14307551/cf207f43-8220-4355-87e5-9a45d5d09a50" />
-</p>
-</details>
+添加微信：Sanqi9675
 
 
 ## 介绍
