@@ -112,7 +112,7 @@ import "./lib/your-element"
 
 ##### （2）无工程管理的前端项目（不含有package.json/node_modules等文件，纯HTML+CSS+JS文件）
 
-- 单个 quarkc 组件，可以直接使用：
+单个 quarkc 组件，可以直接使用：
 
 ```html
 <!DOCTYPE html>
@@ -127,9 +127,8 @@ import "./lib/your-element"
 </html>
 ```
 
-- 需要使用多个 quarkc 组件，为了共用 quarkc 核心库。
+需要使用多个 quarkc 组件，为了共用 quarkc 核心库，您可以开启了 `external`
 
-您可以开启了 `external`：
 ```diff
 // vite.config.build.ts
 export default defineConfig({
