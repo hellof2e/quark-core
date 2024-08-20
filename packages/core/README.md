@@ -88,7 +88,7 @@ npm run build
 
 此时，构建产物 `lib/` 下的资源可以直接被任何框架的前端项目中使用。
 
-### 4、像常规html标签一样去使用它
+### 4、使用
 
 ##### （1）含有工程管理的前端项目（含有package.json/node_modules等文件）
 ```jsx
@@ -98,16 +98,16 @@ import "./lib/your-element"
 <my-element count="count" />
 
 // vue
-<my-element :count="count" />
+// <my-element :count="count" />
 
 // react
-<my-element count={count} />
+// <my-element count={count} />
 
 // svelte
-<my-element {count} />
+// <my-element {count} />
 
 // angular
-<my-element [count]="count" />
+// <my-element [count]="count" />
 ```
 
 ##### （2）无工程管理的前端项目（不含有package.json/node_modules等文件，纯HTML+CSS+JS文件）
