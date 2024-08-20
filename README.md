@@ -50,9 +50,7 @@ Quarkc(Quark core缩写) 是一个拥有完美开发体验的 web components 工
 
 ## 使用
 
-### 组件起手架模版
-
-1. 工程安装
+### 1、创建组件构建模版工程
 
 创建模版
 ```bash
@@ -65,7 +63,7 @@ npm install
 npm start
 ```
 
-2. 自定义组件/标签（Custom Elements）
+### 2、自定义你的 Custom Elements（组件/元素）
 ```jsx
 import { QuarkElement, property, customElement } from "quarkc"
 import style from "./index.less?inline"
@@ -87,26 +85,7 @@ export default class MyElement extends QuarkElement {
 }
 ```
 
-3. 使用
-
-各种技术栈都能运行。
-```html
-<my-element count="count" />
-
-<!-- vue -->
-<my-element :count="count" />
-
-<!-- react -->
-<my-element count={count} />
-
-<!-- svelte -->
-<my-element {count} />
-
-<!-- angular -->
-<my-element [count]="count" />
-```
-
-### 组件打包
+### 3、组件 Build 打包
 
 打包默认输出为 UMD / ESM 格式
 
@@ -114,131 +93,92 @@ export default class MyElement extends QuarkElement {
 npm run build
 ```
 
-此时，构建产物 `lib/` 下的资源可以直接在项目中被使用。（任何前端项目都可使用～）
+此时，构建产物 `lib/` 下的资源可以直接被任何框架的前端项目中使用。
 
+### 4、像常规html标签一样去使用它
+
+##### （1）含有工程管理的前端项目（含有package.json/node_modules等文件）
 ```jsx
-import "your-element"
+import "./lib/your-element"
 
-<my-element></my-element>
+
+<my-element count="count" />
+
+// vue
+<my-element :count="count" />
+
+// react
+<my-element count={count} />
+
+// svelte
+<my-element {count} />
+
+// angular
+<my-element [count]="count" />
+```
+
+##### （2）无工程管理的前端项目（不含有package.json/node_modules等文件，纯HTML+CSS+JS文件）
+
+- 单个 quarkc 组件，可以直接使用：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- 引用 npm run build 产物 -->
+    <script type="module" src="./lib/index.mjs"></script>
+  </head>
+  <body>
+    <my-element></my-element>
+  </body>
+</html>
+```
+
+- 需要使用多个 quarkc 组件，为了共用 quarkc 核心库。
+
+您可以开启了 `external`：
+```diff
+// vite.config.build.ts
+export default defineConfig({
+  build: {
+    rollupOptions: {
++      external: ['quarkc'],
+    },
+  },
+});
+
+```
+然后，用下面方式单独加载 `quarkc` 核心库：
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="importmap">
+      {
+        "imports": {
+          "quarkc": "https://unpkg.com/quarkc@latest/lib/index.browser.js"
+        }
+      }
+    </script>
+    <!-- 引用 npm run build 产物 -->
+    <!-- quarkc 构建的组件1 -->
+    <script type="module" src="my-element1/lib/index.mjs"></script>
+    <!-- quarkc 构建的组件2 -->
+    <script type="module" src="my-element2/lib/index.mjs"></script>
+  </head>
+  <body>
+    <!-- 使用 quarkc 元素/组件 -->
+    <my-element1></my-element1>
+    <my-element2></my-element2>
+  </body>
+</html>
 ```
 
 ### 组件发布
 
-可以将组件发布到 npm，安装：
-
-```bash
-npm install your-element
-```
-
-可以作为 CDN 使用
-
-```html
-<script src="https://fastly.jsdelivr.net/npm/quarkc"></script>
-<script src="https://fastly.jsdelivr.net/npm/your-element"></script>
-```
-
-也可以作为 ES Module 使用（推荐）
-```js
-import "your-element"
-```
-
-更多发布相关，详情点击 [发布 Publishing](https://quarkc.hellobike.com/#/zh-CN/docs/publishing)
-
+更多发布相关，详情点击 [发布 Publishing](https://quark-ecosystem.github.io/quarkc-docs/#/zh-CN/docs/publishing)
 
 
 ## 文档
 
-完整文档，请访问 [quarkc.hellobike.com](https://quarkc.hellobike.com)
-
-
-## Why Quarkc ?
-
-<details/>
- <summary>
-  Why?
- </summary>
- 
-背景 1:【前端的历史】
-
-前端发展多年，无论大小公司，一般都存在各种技术栈(React, Angular, Jq, Vue) / 同种技术栈的不同版本（Vue2, Vue3）。如果要开发某个通用组件（比如：营销弹窗），工作量就是 double+（不同技术框架需要分开开发/维护/上线，同技术不同版本可能也需要分开开发/维护/上线）
-
-背景 2:【前端的未来】
-
-前端框架会继续迭代/发展，会有新的版本，新的框架出现。用 Quarkc 开发“通用型组件”，不会随着“前端框架浪潮”而更新迭代（极大降低组件研发/维护成本）。
-
-以上背景，决定了 **前端通用型组件** 的开发和维护成本比较高。
-</details>
-
-
-## Quarkc 目标
-
-让 Web 组件实现技术栈无关！
-
-
-
-## 性能参考
-
-一个复杂的页面跑分截图：
-
-<img width="600" alt="image" src="https://github.com/hellof2e/quark-core/assets/14307551/8eda52c8-4ad7-4e92-ab09-602cf7771d96">
-
-
-
-## 单元测试
-
-<details>
-  <summary>
-  我们使用了 @open-wc/testing 来进行单元测试。以下是我们示例组件的 <my-component /> 的单元测试。
-  </summary>    
-
-```js
-import { expect, fixture } from "@open-wc/testing";
-import "./lib/index";
-
-const data = {
-  count: 0,
-  text: '测试'
-};
-let el;
-
-describe("<my-component />", async () => {
-  it("property text exist", async () => {
-    el = await fixture(
-      `<my-component
-        text=${data.text}
-        >
-        </my-component>`
-    );
-    expect(el.text).to.equal(data.text);
-  });
-
-  it("property count exist", async () => {
-    el = await fixture(
-      `<my-component
-          count=${data.count}
-        >
-        </my-component>`
-    );
-    expect(el.count).to.equal(data.count);
-  });
-
-  it("property count changed", async () => {
-    el = await fixture(
-      `<my-component
-        count=${data.count}
-        >
-        </my-component>`
-    );
-    el.add()
-    expect(el.count).to.equal(data.count + 1);
-  });
-})
-
-```
-
-</details>
-
-
-
-
-
+完整文档，请访问 [quarkc.hellobike.com](https://quark-ecosystem.github.io/quarkc-docs)
