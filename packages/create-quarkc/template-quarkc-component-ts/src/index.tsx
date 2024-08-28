@@ -16,7 +16,7 @@ class MyComponent extends QuarkElement {
 
   componentDidMount() {
     // 生命周期
-    console.log("dom loaded!")
+    // console.log("dom loaded!")
     // ...
   }
 

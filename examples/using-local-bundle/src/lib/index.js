@@ -23,7 +23,7 @@ let l = class extends r {
     });
   }
   componentDidMount() {
-    console.log("dom loaded!");
+    // console.log("dom loaded!");
   }
   render() {
     return r.h(

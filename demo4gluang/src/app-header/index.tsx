@@ -15,26 +15,26 @@ class MyComponent extends connectStore(QuarkElement) {
 
   @watch('showAuthorName')
   handleShowChange(newVal) {
-    console.log('handleShowChange', newVal)
+    // console.log('handleShowChange', newVal)
     store.author = newVal ? 'Sun Tzu' : 'Guess who?';
     this.$nextTick(() => {
       const { current: btn } = this.btn;
       if (btn) {
-        console.log('nextTick, content of btn:', btn.textContent)
+        // console.log('nextTick, content of btn:', btn.textContent)
       }
     })
   }
-  
+
   handleSwitch = () => {
     this.showAuthorName = !this.showAuthorName;
   }
 
   componentDidUpdate(propName, oldVal, newVal) {
-    console.log('componentDidUpdate', propName, oldVal, newVal)
+    // console.log('componentDidUpdate', propName, oldVal, newVal)
   }
 
   componentUpdated() {
-    console.log('componentUpdated', this.showAuthorName, store.author)
+    // console.log('componentUpdated', this.showAuthorName, store.author)
   }
 
   btn = createRef(null)

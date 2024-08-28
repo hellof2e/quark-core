@@ -31,6 +31,7 @@ Quarkc, a cross technology stack / native component building tool.
 
 | author | github address | screenshot / link
 | ---- | ---- | ----- |
+| @xsf0105  | https://xsf0105.github.io/piano/ |  https://xsf0105.github.io/piano/ |
 | @yuhaiyang1 | https://github.com/yuhaiyang1/quarkc-time | https://unpkg.com/quark-timer@0.0.2/demo.html |
 | @khno | https://github.com/khno/quark-element-demo-celebrate | https://unpkg.com/quarkc-demo-celebrate@latest/demo.html |
 | @hellof2e | https://github.com/hellof2e/quark-doc-header | ![1685501041275](https://github.com/hellof2e/quark-core/assets/14307551/24dd5626-e6a9-452c-9c95-c2cdb8891573 ) https://quarkc.hellobike.com/#/ |
