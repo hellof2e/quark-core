@@ -67,11 +67,11 @@ class MyComponent extends QuarkElement {
   }
 
   componentDidUpdate() {
-    console.log("parent dom updated!")
+    // console.log("parent dom updated!")
   }
 
   componentDidMount() {
-    console.log("parent dom loaded!")
+    // console.log("parent dom loaded!")
     this.showWelcome();
   }
 

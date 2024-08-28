@@ -14,9 +14,9 @@ declare global {
 class Child1 extends QuarkElement {
   @property({ type: String })
   text = "hello world"
-  
+
   componentDidMount() {
-    console.log('dom loaded!', 'child')
+    // console.log('dom loaded!', 'child')
   }
 
   goToLink() {
@@ -29,7 +29,7 @@ class Child1 extends QuarkElement {
           word2: 'quark',
         },
         callback() {
-          console.log('enter function excuted')
+          // console.log('enter function excuted')
         }
       })
     );

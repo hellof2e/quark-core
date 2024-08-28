@@ -37,24 +37,24 @@ class MyComponent extends QuarkElement {
   }
 
   componentDidMount() {
-    console.log("home dom loaded!")
+    // console.log("home dom loaded!")
     this.initCounter();
   }
 
   componentWillUnmount() {
-    console.log('home dom will unmount');
+    // console.log('home dom will unmount');
     window.clearTimeout(this._counterTimer);
   }
 
   @watch('count', { immediate: true })
   countLogger(newVal, oldVal) {
-    console.log('home countLogger', newVal, oldVal);
+    // console.log('home countLogger', newVal, oldVal);
     this.loggerRunCount++;
   }
 
   @computed()
   get counterGreet() {
-    console.log('home @computed counterGreet')
+    // console.log('home @computed counterGreet')
     return `${this.text} ${this.counter} times`;
   }
 
