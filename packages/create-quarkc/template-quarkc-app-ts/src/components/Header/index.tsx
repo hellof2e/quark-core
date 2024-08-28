@@ -17,7 +17,7 @@ export default class Header extends QuarkElement {
 	}]
 
   componentDidMount(): void {}
-  
+
   render() {
     return (
 			<header class="header sticky">
@@ -25,7 +25,7 @@ export default class Header extends QuarkElement {
 					<div class="container">
 						<div class="left-bar">
 							<a href="/">
-								<img src="https://quark-design.hellobike.com/assets/quark-logo.f9a6a307.png" alt="" />
+								<img src="https://fastly.jsdelivr.net/npm/quark-static@latest/quark-logo.png" alt="" />
 							</a>
 							<span href="/">
 								{ this.version }
@@ -36,7 +36,7 @@ export default class Header extends QuarkElement {
 						<div class="toper-bar">
 							<div class="menu-group">
 								{
-									this.menus.map((item) => 
+									this.menus.map((item) =>
 									<div class="nav-item menu">
 										<a href={item.link}>
 											{item.name}
