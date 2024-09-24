@@ -88,7 +88,7 @@ npm run build
 
 ### 4、使用
 
-##### （1）含有工程管理的前端项目（含有package.json/node_modules等文件）
+#### 场景1：含有工程管理的前端项目（含有package.json/node_modules等文件）
 ```jsx
 import "./lib/your-element"
 
@@ -108,7 +108,7 @@ import "./lib/your-element"
 // <my-element [count]="count" />
 ```
 
-##### （2）无工程管理的前端项目（不含有package.json/node_modules等文件，纯HTML+CSS+JS文件）
+#### 场景2：无工程管理的前端项目（不含有package.json/node_modules等文件，纯HTML+CSS+JS文件）
 
 单个 quarkc 组件，可以直接使用：
 
