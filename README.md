@@ -1,7 +1,3 @@
-<p align="center">
-  <a href="https://quark-ecosystem.github.io/quarkc-docs/#/"><img src="./logo.png" width="180" alt="vite-plugin-dev-inspector"></a>
-</p>
-
 <h2 align="center"> Quarkc —— 无框架，跨框架！ </h2>
 
 <p align="center">
